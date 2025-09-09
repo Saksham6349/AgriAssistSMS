@@ -29,16 +29,11 @@ import { useAppContext } from "@/context/AppContext";
 const sampleAlert =
   "Warning: Yellow Rust detected in wheat crops in Haryana region. Farmers are advised to inspect fields for yellowish stripes on leaves. If found, spray approved fungicides like Propiconazole or Tebuconazole immediately to prevent yield loss. Consult local agricultural office for details.";
 
-type ServerActionResult = {
-  translatedText: string | null;
-  error: string | null;
-};
-
 export function AdvisoryAlerts() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
-  const [result, setResult] = useState<ServerActionResult | null>(null);
+  const [translatedText, setTranslatedText] = useState<string | null>(null);
   const [alertText, setAlertText] = useState(sampleAlert);
   const [language, setLanguage] = useState("Spanish");
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
@@ -47,26 +42,24 @@ export function AdvisoryAlerts() {
   const handleTranslate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSmsStatus(null);
+    setTranslatedText(null);
     startTranslateTransition(async () => {
       try {
         const res = await translateAdvisoryAlerts({
           text: alertText,
           language,
         });
-        if (res.translatedText) {
-          setResult({ translatedText: res.translatedText, error: null });
+        if (res?.translatedText) {
+          setTranslatedText(res.translatedText);
         } else {
-          throw new Error("Translation failed.");
+          throw new Error("The translation result was empty.");
         }
-      } catch (err) {
-         setResult({
-          translatedText: null,
-          error: "Translation failed. Please try again.",
-        });
+      } catch (err: any) {
+        console.error("Translation failed:", err);
         toast({
           variant: "destructive",
           title: "Translation Error",
-          description: "Could not translate the advisory alert.",
+          description: err.message || "Could not translate the advisory alert. Please try again.",
         });
       }
     });
@@ -81,14 +74,14 @@ export function AdvisoryAlerts() {
       });
       return;
     }
-    if (result?.translatedText) {
+    if (translatedText) {
       startSmsTransition(async () => {
         try {
-          const res = await sendSms({ to: registeredFarmer.phone, message: result.translatedText! });
+          const res = await sendSms({ to: registeredFarmer.phone, message: translatedText });
           setSmsStatus(res.status);
           addSmsToHistory({
             to: registeredFarmer.phone,
-            message: result.translatedText!,
+            message: translatedText,
             type: 'Advisory',
           });
           toast({
@@ -163,10 +156,10 @@ export function AdvisoryAlerts() {
             </Button>
           </form>
 
-          {result?.translatedText && !isTranslatePending && (
+          {translatedText && !isTranslatePending && (
             <div className="p-4 bg-muted rounded-md border mt-4">
               <h4 className="font-semibold mb-2">Translated Alert ({language}):</h4>
-              <p className="text-sm text-muted-foreground">{result.translatedText}</p>
+              <p className="text-sm text-muted-foreground">{translatedText}</p>
             </div>
           )}
 
@@ -184,7 +177,7 @@ export function AdvisoryAlerts() {
         <CardFooter>
           <Button 
             onClick={handleSendSms} 
-            disabled={!result?.translatedText || isTranslatePending || isSmsPending} 
+            disabled={!translatedText || isTranslatePending || isSmsPending} 
             className="w-full"
             variant="secondary"
           >
