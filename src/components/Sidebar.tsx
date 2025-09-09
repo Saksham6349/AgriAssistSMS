@@ -22,21 +22,20 @@ export function Sidebar() {
         <aside className="w-64 border-r p-4 hidden md:block bg-card">
           <nav className="flex flex-col space-y-2">
             {navItems.map((item) => (
-                <Link 
-                    key={item.href} 
-                    href={item.href} 
+                <Button
+                    key={item.href}
+                    asChild
+                    variant="ghost"
+                    className={cn(
+                        "w-full justify-start text-left transition-colors duration-200 ease-in-out hover:bg-primary/10 hover:text-primary",
+                        pathname === item.href && "bg-accent text-accent-foreground"
+                    )}
                 >
-                    <Button
-                        variant="ghost"
-                        className={cn(
-                            "w-full justify-start text-left transition-colors duration-200 ease-in-out hover:bg-primary/10 hover:text-primary",
-                            pathname === item.href && "bg-accent text-accent-foreground"
-                        )}
-                    >
+                    <Link href={item.href}>
                         <item.icon className="mr-2 h-5 w-5" />
                         {item.label}
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
             ))}
           </nav>
         </aside>
