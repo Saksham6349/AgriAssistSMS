@@ -109,7 +109,8 @@ export function PestDiseaseIdentification() {
     if (result) {
       startSmsTransition(async () => {
         try {
-          const message = `Crop Diagnosis for ${result.identification.commonName}: ${result.diagnosis.isHealthy ? 'Healthy' : 'Needs Attention'}. Analysis: ${result.diagnosis.diagnosis}`;
+          const healthStatus = result.diagnosis.isHealthy ? 'Healthy' : 'Needs Attention';
+          const message = `Diagnosis for ${result.identification.commonName}: ${healthStatus}. For details and recommendations, please check the app.`;
           const res = await sendSms({ to: registeredFarmer.phone, message });
           setSmsStatus(res.status);
           addSmsToHistory({
