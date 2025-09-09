@@ -11,12 +11,10 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import Twilio from 'twilio';
-import { config } from 'dotenv';
-
-config(); // Load environment variables
+import { twilioConfig } from '@/config';
 
 const SendSmsInputSchema = z.object({
-  to: z.string().describe('The phone number to send the SMS to.'),
+  to: z.string().describe('The phone number to send the SMS to, in E.164 format (e.g., +15551234567).'),
   message: z.string().describe('The content of the SMS message.'),
 });
 export type SendSmsInput = z.infer<typeof SendSmsInputSchema>;
@@ -39,12 +37,16 @@ const sendSmsFlow = ai.defineFlow(
   },
   async (input) => {
     const { to, message } = input;
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
+    const { accountSid, authToken, messagingServiceSid } = twilioConfig;
 
     if (!accountSid || !authToken || !messagingServiceSid) {
-        throw new Error('Twilio credentials are not configured correctly in the environment. Please check your .env file.');
+        throw new Error('Twilio credentials are not configured correctly. Please check your .env file.');
+    }
+
+    // Validate E.164 format
+    const e164Regex = /^\+[1-9]\d{1,14}$/;
+    if (!e164Regex.test(to)) {
+      throw new Error(`Invalid phone number format: ${to}. Number must be in E.164 format (e.g., +15551234567).`);
     }
 
     const client = Twilio(accountSid, authToken);
