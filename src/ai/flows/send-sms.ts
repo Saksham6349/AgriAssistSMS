@@ -36,9 +36,9 @@ const sendSmsFlow = ai.defineFlow(
   },
   async (input) => {
     const { to, message } = input;
-    const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } = process.env;
+    const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } = process.env;
 
-    if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+    if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_MESSAGING_SERVICE_SID) {
         throw new Error('Twilio credentials are not configured in the environment.');
     }
 
@@ -47,7 +47,7 @@ const sendSmsFlow = ai.defineFlow(
     try {
         const twilioMessage = await client.messages.create({
             body: message,
-            from: TWILIO_PHONE_NUMBER,
+            messagingServiceSid: TWILIO_MESSAGING_SERVICE_SID,
             to: to,
         });
 
