@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useTransition, ChangeEvent } from "react";
@@ -13,16 +14,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Stethoscope, Upload, X, Loader2, AlertCircle } from "lucide-react";
+import { Stethoscope, Upload, X, Loader2, AlertCircle, Send } from "lucide-react";
 import { diagnoseCropHealth, DiagnoseCropHealthOutput } from "@/ai/flows/diagnose-crop-health";
 import { useToast } from "@/hooks/use-toast";
+import { useAppContext } from "@/context/AppContext";
+import { sendSms } from "@/ai/flows/send-sms";
 
 export function PestDiseaseIdentification() {
+  const { registeredFarmer, addSmsToHistory } = useAppContext();
   const [isPending, startTransition] = useTransition();
+  const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<DiagnoseCropHealthOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<string | null>(null);
+  const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -44,6 +50,7 @@ export function PestDiseaseIdentification() {
         setImageData(dataUri);
         setResult(null);
         setError(null);
+        setSmsStatus(null);
       };
       reader.readAsDataURL(file);
     }
@@ -54,6 +61,7 @@ export function PestDiseaseIdentification() {
     setImageData(null);
     setResult(null);
     setError(null);
+    setSmsStatus(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -72,6 +80,7 @@ export function PestDiseaseIdentification() {
 
     setResult(null);
     setError(null);
+    setSmsStatus(null);
     startTransition(async () => {
       try {
         const diagnosisResult = await diagnoseCropHealth({ photoDataUri: imageData });
@@ -86,6 +95,43 @@ export function PestDiseaseIdentification() {
         });
       }
     });
+  };
+
+  const handleSendSms = () => {
+    if (!registeredFarmer) {
+      toast({
+        variant: "destructive",
+        title: "No Farmer Registered",
+        description: "Please register a farmer before sending an SMS.",
+      });
+      return;
+    }
+    if (result) {
+      startSmsTransition(async () => {
+        try {
+          const message = `Crop Diagnosis for ${result.identification.commonName}: ${result.diagnosis.isHealthy ? 'Healthy' : 'Needs Attention'}. Analysis: ${result.diagnosis.diagnosis}`;
+          const res = await sendSms({ to: registeredFarmer.phone, message });
+          setSmsStatus(res.status);
+          addSmsToHistory({
+            to: registeredFarmer.phone,
+            message: message,
+            type: 'Advisory',
+          });
+          toast({
+              title: "SMS Sent!",
+              description: `Diagnosis sent to ${registeredFarmer.name} at ${registeredFarmer.phone}`,
+          });
+        } catch (error) {
+          console.error("SMS sending failed", error);
+          setSmsStatus("Failed to send SMS.");
+          toast({
+              variant: "destructive",
+              title: "SMS Error",
+              description: "Could not send the SMS. Please try again.",
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -141,6 +187,16 @@ export function PestDiseaseIdentification() {
             </div>
           )}
         </div>
+
+        <Button onClick={handleSubmit} disabled={!imageData || isPending} className="w-full">
+          {isPending ? (
+            <>
+              <Loader2 className="animate-spin" /> Diagnosing...
+            </>
+          ) : (
+            "Diagnose Plant Health"
+          )}
+        </Button>
         
         {isPending && (
           <div className="space-y-4 pt-4">
@@ -174,16 +230,21 @@ export function PestDiseaseIdentification() {
             </ul>
           </div>
         )}
+
+        {smsStatus && !isSmsPending && (
+            <Alert className="mt-4">
+                <Send className="w-4 h-4" />
+                <AlertTitle>SMS Status</AlertTitle>
+                <AlertDescription className="text-xs whitespace-pre-wrap break-words">
+                    {smsStatus} for farmer {registeredFarmer?.name}.
+                </AlertDescription>
+            </Alert>
+        )}
+
       </CardContent>
       <CardFooter>
-        <Button onClick={handleSubmit} disabled={!imageData || isPending} className="w-full">
-          {isPending ? (
-            <>
-              <Loader2 className="animate-spin" /> Diagnosing...
-            </>
-          ) : (
-            "Diagnose Plant Health"
-          )}
+        <Button onClick={handleSendSms} disabled={!result || isPending || isSmsPending} className="w-full" variant="secondary">
+            {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
         </Button>
       </CardFooter>
     </Card>
