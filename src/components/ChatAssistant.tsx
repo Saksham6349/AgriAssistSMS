@@ -13,40 +13,87 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Bot, Loader2, Send, User } from "lucide-react";
-import { FormEvent, useRef, useState, useTransition, KeyboardEvent } from "react";
+import { Bot, Loader2, Send, User, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { FormEvent, useRef, useState, useTransition, KeyboardEvent, ChangeEvent } from "react";
+
+type ContentPart = { text: string; media?: never } | { text?: never; media: { url: string } };
 
 type Message = {
   role: "user" | "model";
-  content: { text: string }[];
+  content: ContentPart[];
 };
 
 export function ChatAssistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+        toast({
+          variant: "destructive",
+          title: "Image too large",
+          description: "Please upload an image smaller than 4MB.",
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setImagePreview(URL.createObjectURL(file));
+        setImageData(dataUri);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setImageData(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSendMessage = () => {
-    if (!input.trim() || isPending) return;
+    if ((!input.trim() && !imageData) || isPending) return;
+
+    const userMessageContent: ContentPart[] = [];
+    if (input.trim()) {
+        userMessageContent.push({ text: input });
+    }
+    if (imagePreview) {
+        userMessageContent.push({ media: { url: imagePreview } });
+    }
 
     const newMessages: Message[] = [
         ...messages,
-        {
-            role: "user",
-            content: [{ text: input }],
-        }
+        { role: "user", content: userMessageContent }
     ];
 
     setMessages(newMessages);
 
     const chatInput: ChatInput = {
-      history: messages,
+      history: messages.map(m => ({ // Map to history format without images for now
+          role: m.role,
+          content: m.content.filter(c => c.text).map(c => ({ text: c.text! }))
+      })),
       prompt: input,
+      imageDataUri: imageData || undefined,
     };
-
+    
     setInput("");
+    handleRemoveImage();
 
     startTransition(async () => {
         try {
@@ -122,13 +169,30 @@ export function ChatAssistant() {
                 )}
                 <div
                   className={cn(
-                    "max-w-xs md:max-w-md lg:max-w-2xl rounded-lg px-4 py-2 text-sm",
+                    "max-w-xs md:max-w-md lg:max-w-2xl rounded-lg px-4 py-2 text-sm space-y-2",
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground"
                   )}
                 >
-                  {msg.content[0].text}
+                  {msg.content.map((part, partIndex) => {
+                    if (part.text) {
+                      return <p key={partIndex}>{part.text}</p>;
+                    }
+                    if (part.media) {
+                      return (
+                        <Image
+                          key={partIndex}
+                          src={part.media.url}
+                          alt="User upload"
+                          width={200}
+                          height={200}
+                          className="rounded-md object-contain"
+                        />
+                      );
+                    }
+                    return null;
+                  })}
                 </div>
                  {msg.role === "user" && (
                   <div className="p-2 bg-muted/80 text-foreground rounded-full">
@@ -151,22 +215,43 @@ export function ChatAssistant() {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="pt-6">
-        <form onSubmit={handleSubmit} className="flex w-full items-center gap-2">
-          <Input
-            type="text"
-            placeholder="Ask a question..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={isPending}
-            className="flex-grow"
-          />
-          <Button type="submit" disabled={isPending || !input.trim()}>
-            {isPending ? <Loader2 className="animate-spin"/> : <Send/>}
-            <span className="sr-only">Send</span>
-          </Button>
-        </form>
+      <CardFooter className="pt-6 border-t">
+        <div className="w-full">
+            {imagePreview && (
+                <div className="mb-2 relative w-fit">
+                    <Image src={imagePreview} alt="Image preview" width={80} height={80} className="rounded-md object-cover"/>
+                    <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6" onClick={handleRemoveImage}>
+                        <X className="w-4 h-4" />
+                    </Button>
+                </div>
+            )}
+            <form onSubmit={handleSubmit} className="flex w-full items-center gap-2">
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/webp"
+                />
+                <Button type="button" variant="outline" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isPending}>
+                    <Upload />
+                    <span className="sr-only">Upload Image</span>
+                </Button>
+                <Input
+                    type="text"
+                    placeholder="Ask a question..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={isPending}
+                    className="flex-grow"
+                />
+                <Button type="submit" disabled={isPending || (!input.trim() && !imageData)}>
+                    {isPending ? <Loader2 className="animate-spin"/> : <Send/>}
+                    <span className="sr-only">Send</span>
+                </Button>
+            </form>
+        </div>
       </CardFooter>
     </Card>
   );

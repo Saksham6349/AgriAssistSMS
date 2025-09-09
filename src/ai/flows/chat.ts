@@ -8,7 +8,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {MessageData} from 'genkit/model';
+import {Content, MessageData} from 'genkit/model';
 import {z} from 'zod';
 
 const ChatInputSchema = z.object({
@@ -19,6 +19,9 @@ const ChatInputSchema = z.object({
     })
   ),
   prompt: z.string(),
+  imageDataUri: z.string().optional().describe(
+    "An optional image file, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+  ),
 });
 export type ChatInput = z.infer<typeof ChatInputSchema>;
 
@@ -27,7 +30,12 @@ export type ChatOutput = string;
 const systemPrompt = `You are a helpful and friendly AI assistant. Your goal is to have natural, human-like conversations and assist users with any question or task they have. You are fluent in all languages and should always respond in the language the user is using.`;
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
-  const {history, prompt} = input;
+  const {history, prompt, imageDataUri} = input;
+
+  const promptParts: Content[] = [{text: prompt}];
+  if (imageDataUri) {
+    promptParts.push({media: {url: imageDataUri}});
+  }
 
   const response = await ai.generate({
     model: 'googleai/gemini-2.5-flash',
@@ -35,7 +43,7 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
       {role: 'system', content: [{text: systemPrompt}]},
       ...(history as MessageData[]),
     ],
-    prompt: prompt,
+    prompt: promptParts,
   });
 
   return response.text;
