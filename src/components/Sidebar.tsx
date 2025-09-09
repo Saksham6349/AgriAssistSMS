@@ -25,8 +25,6 @@ export function Sidebar() {
                 <Link 
                     key={item.href} 
                     href={item.href} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
                 >
                     <Button
                         variant="ghost"
