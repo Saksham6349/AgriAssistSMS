@@ -13,6 +13,8 @@ import { z } from 'genkit';
 import Twilio from 'twilio';
 import { config } from 'dotenv';
 
+config(); // Load environment variables
+
 const SendSmsInputSchema = z.object({
   to: z.string().describe('The phone number to send the SMS to.'),
   message: z.string().describe('The content of the SMS message.'),
@@ -36,20 +38,21 @@ const sendSmsFlow = ai.defineFlow(
     outputSchema: SendSmsOutputSchema,
   },
   async (input) => {
-    config(); // Explicitly load .env variables
     const { to, message } = input;
-    const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } = process.env;
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
 
-    if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_MESSAGING_SERVICE_SID) {
-        throw new Error('Twilio credentials are not configured in the environment.');
+    if (!accountSid || !authToken || !messagingServiceSid) {
+        throw new Error('Twilio credentials are not configured correctly in the environment. Please check your .env file.');
     }
 
-    const client = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+    const client = Twilio(accountSid, authToken);
 
     try {
         const twilioMessage = await client.messages.create({
             body: message,
-            messagingServiceSid: TWILIO_MESSAGING_SERVICE_SID,
+            messagingServiceSid: messagingServiceSid,
             to: to,
         });
 
