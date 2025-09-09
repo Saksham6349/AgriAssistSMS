@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition } from "react";
@@ -15,6 +16,14 @@ import { MapPin, Sun, Loader2 } from "lucide-react";
 import { summarizeWeatherData } from "@/ai/flows/summarize-weather-data";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "./ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 
 type ServerActionResult = {
   summary: string | null;
@@ -45,6 +54,7 @@ export function WeatherCard() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
   const [location, setLocation] = useState("Nairobi");
+  const [language, setLanguage] = useState("English");
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,23 +70,43 @@ export function WeatherCard() {
 
     startTransition(async () => {
       try {
+        setResult(null); // Clear previous results
         const weatherData = await fetchWeatherData(location);
-        const res = await summarizeWeatherData({ location, weatherData });
-        if (res.summary) {
-          setResult({ summary: res.summary, error: null });
-        } else {
+        const summaryRes = await summarizeWeatherData({ location, weatherData });
+        
+        if (!summaryRes.summary) {
             throw new Error("Empty summary returned.");
         }
+
+        if (language === "English") {
+            setResult({ summary: summaryRes.summary, error: null });
+        } else {
+            const translationRes = await translateAdvisoryAlerts({
+                text: summaryRes.summary,
+                language: language,
+            });
+
+            if (translationRes.translatedText) {
+                setResult({ summary: translationRes.translatedText, error: null });
+            } else {
+                throw new Error("Translation failed.");
+            }
+        }
+
       } catch (error) {
         console.error(error);
+        const errorMessage = error instanceof Error && error.message.includes("Translation")
+          ? "Failed to translate weather summary."
+          : "Failed to get weather summary.";
+        
         setResult({
           summary: null,
-          error: "Failed to get weather summary.",
+          error: errorMessage,
         });
         toast({
           variant: "destructive",
           title: "API Error",
-          description: "Could not fetch the weather summary. Please try again later.",
+          description: `${errorMessage} Please try again later.`,
         });
       }
     });
@@ -99,8 +129,8 @@ export function WeatherCard() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent>
-          <div className="flex w-full items-center space-x-2">
-            <div className="relative flex-grow">
+          <div className="flex w-full flex-col sm:flex-row items-center gap-2">
+            <div className="relative flex-grow w-full">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
@@ -110,9 +140,24 @@ export function WeatherCard() {
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={isPending}>
-              Get Forecast
-            </Button>
+            <div className="flex w-full sm:w-auto gap-2">
+                <Select value={language} onValueChange={setLanguage}>
+                    <SelectTrigger className="w-full sm:w-[120px]">
+                        <SelectValue placeholder="Language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="English">English</SelectItem>
+                        <SelectItem value="Spanish">Spanish</SelectItem>
+                        <SelectItem value="French">French</SelectItem>
+                        <SelectItem value="Hindi">Hindi</SelectItem>
+                        <SelectItem value="Swahili">Swahili</SelectItem>
+                        <SelectItem value="Mandarin">Mandarin</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Button type="submit" disabled={isPending} className="flex-grow">
+                    {isPending ? <Loader2 className="animate-spin" /> : 'Get Forecast'}
+                </Button>
+            </div>
           </div>
           <div className="mt-4 pt-4 border-t">
             {isPending && (
@@ -124,6 +169,7 @@ export function WeatherCard() {
             )}
             {result?.summary && !isPending && (
               <div className="prose prose-sm max-w-none text-foreground">
+                <h4 className="font-semibold mb-2 text-foreground">Weather Summary ({language}):</h4>
                 <p>{result.summary}</p>
               </div>
             )}
