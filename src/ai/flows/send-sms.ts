@@ -40,7 +40,7 @@ const sendSmsFlow = ai.defineFlow(
     const { accountSid, authToken, messagingServiceSid } = twilioConfig;
 
     if (!accountSid || !authToken || !messagingServiceSid) {
-        throw new Error('Twilio credentials are not configured correctly. Please check your .env file.');
+        throw new Error('Twilio credentials are not configured correctly. Please check your config.ts and .env file.');
     }
 
     // Validate E.164 format
@@ -49,6 +49,7 @@ const sendSmsFlow = ai.defineFlow(
       throw new Error(`Invalid phone number format: ${to}. Number must be in E.164 format (e.g., +15551234567).`);
     }
 
+    // Initialize Twilio client inside the flow to ensure credentials are loaded
     const client = Twilio(accountSid, authToken);
 
     try {
