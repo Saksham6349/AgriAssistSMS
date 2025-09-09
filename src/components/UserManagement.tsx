@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 
@@ -42,8 +42,16 @@ const initialFormData: FarmerData = {
 };
 
 export function UserManagement() {
-  const { registeredFarmer, setRegisteredFarmer } = useAppContext();
+  const { registeredFarmer, setRegisteredFarmer, isLoaded } = useAppContext();
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
+
+  useEffect(() => {
+      if (registeredFarmer) {
+          setFormData(registeredFarmer);
+      } else {
+          setFormData(initialFormData);
+      }
+  }, [registeredFarmer])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -61,7 +69,14 @@ export function UserManagement() {
 
   const handleReset = () => {
     setRegisteredFarmer(null);
-    setFormData(initialFormData);
+  }
+
+  if (!isLoaded) {
+      return (
+          <Card className="h-full flex flex-col items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </Card>
+      )
   }
 
   return (

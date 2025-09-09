@@ -17,6 +17,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [registeredFarmer, setRegisteredFarmerState] = useState<FarmerData | null>(null);
   const [smsHistory, setSmsHistory] = useState<SmsMessage[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Load state from localStorage on initial render
@@ -31,6 +32,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         }
     } catch (error) {
         console.error("Failed to load state from localStorage", error);
+    } finally {
+        setIsLoaded(true);
     }
   }, []);
 
@@ -60,8 +63,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const value = {
+      registeredFarmer,
+      setRegisteredFarmer,
+      smsHistory,
+      addSmsToHistory,
+      isLoaded
+  }
+
   return (
-    <AppContext.Provider value={{ registeredFarmer, setRegisteredFarmer, smsHistory, addSmsToHistory }}>
+    <AppContext.Provider value={value}>
       {children}
     </AppContext.Provider>
   );
