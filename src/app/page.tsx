@@ -36,7 +36,7 @@ export default function Home() {
       case 'dashboard':
       default:
         return (
-            <div className="lg:col-span-2 flex items-center justify-center bg-muted/30 rounded-lg border-2 border-dashed border-gray-300 p-8">
+            <div className="h-full flex items-center justify-center bg-muted/30 rounded-lg border-2 border-dashed border-gray-300 p-8">
                 <div className="text-center">
                     <LayoutDashboard className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-2 text-sm font-medium text-gray-900">Welcome to your Dashboard</h3>
@@ -84,7 +84,7 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1 lg:row-span-3">
+                <div className="lg:col-span-1">
                     <UserManagement 
                         registeredFarmer={registeredFarmer} 
                         setRegisteredFarmer={setRegisteredFarmer} 
@@ -93,11 +93,6 @@ export default function Home() {
                 <div className="lg:col-span-2">
                   {renderActiveView()}
                 </div>
-                 {activeView !== 'history' && (
-                    <div className="lg:col-span-3">
-                      <SmsHistory history={smsHistory} />
-                    </div>
-                )}
             </div>
         </main>
       </div>
