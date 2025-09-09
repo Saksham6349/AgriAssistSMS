@@ -20,10 +20,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserPlus, UserCheck, FilePenLine } from "lucide-react";
-import { Badge } from "./ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 type FarmerData = {
   name: string;
+  phone: string;
   location: string;
   crop: string;
   secondaryCrop: string;
@@ -32,6 +33,7 @@ type FarmerData = {
 
 const initialFormData = {
     name: '',
+    phone: '',
     location: '',
     crop: 'Wheat',
     secondaryCrop: 'Corn',
@@ -81,7 +83,7 @@ export function UserManagement() {
           <div className="flex flex-col justify-center h-full space-y-4 bg-muted/50 p-6 rounded-lg">
              <div className="space-y-2">
                 <h3 className="text-lg font-semibold">{registeredFarmer.name}</h3>
-                <p className="text-sm text-muted-foreground">{registeredFarmer.location}</p>
+                <p className="text-sm text-muted-foreground">{registeredFarmer.location} | {registeredFarmer.phone}</p>
              </div>
              <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary">Crop: {registeredFarmer.crop}</Badge>
@@ -96,6 +98,10 @@ export function UserManagement() {
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">Farmer Name</label>
               <Input id="name" name="name" placeholder="e.g., John Doe" value={formData.name} onChange={handleChange} required />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
+              <Input id="phone" name="phone" type="tel" placeholder="e.g., +1234567890" value={formData.phone} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
               <label htmlFor="location" className="text-sm font-medium">Location / Village</label>
@@ -133,10 +139,10 @@ export function UserManagement() {
             </div>
             <div className="space-y-2">
               <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop</label>
-              <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
+              <Select name="secondaryCrop" value={formData.secondaryCrop} onValuechange={handleSelectChange('secondaryCrop')}>
                 <SelectTrigger id="secondary-crop-select">
                   <SelectValue placeholder="Select secondary crop" />
-                </SelectTrigger>
+                </Trigger>
                 <SelectContent>
                   <SelectItem value="Apples">Apples</SelectItem>
                   <SelectItem value="Bananas">Bananas</SelectItem>
@@ -166,7 +172,7 @@ export function UserManagement() {
               <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
                 <SelectTrigger id="language-pref">
                   <SelectValue placeholder="Select language" />
-                </SelectTrigger>
+                </Trigger>
                 <SelectContent>
                   <SelectItem value="English">English</SelectItem>
                   <SelectItem value="Spanish">Spanish</SelectItem>

@@ -204,7 +204,7 @@ export function WeatherCard() {
                     <Send className="w-4 h-4" />
                     <AlertTitle>SMS Sent!</AlertTitle>
                     <AlertDescription className="text-xs whitespace-pre-wrap break-words">
-                        {smsPreview}
+                        {`Message sent to registered farmer: "${smsPreview}"`}
                     </AlertDescription>
                 </Alert>
             )}
@@ -224,3 +224,5 @@ export function WeatherCard() {
     </Card>
   );
 }
+
+    
