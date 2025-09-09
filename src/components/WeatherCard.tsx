@@ -86,11 +86,11 @@ export function WeatherCard() {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-accent/10 rounded-md">
-            <Sun className="w-6 h-6 text-accent" />
+          <div className="p-2 bg-primary/10 rounded-md">
+            <Sun className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle className="font-headline">Weather Forecast</CardTitle>
+            <CardTitle>Weather Forecast</CardTitle>
             <CardDescription>
               Get AI-powered weather summaries for your location.
             </CardDescription>
@@ -110,7 +110,7 @@ export function WeatherCard() {
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={isPending} variant="secondary">
+            <Button type="submit" disabled={isPending}>
               Get Forecast
             </Button>
           </div>
@@ -127,7 +127,7 @@ export function WeatherCard() {
                 <p>{result.summary}</p>
               </div>
             )}
-            {!result?.summary && !isPending && (
+            {!result && !isPending && (
                 <div className="text-center text-muted-foreground py-4">
                     <p>Enter a location to see the weather summary.</p>
                 </div>

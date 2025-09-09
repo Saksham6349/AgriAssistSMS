@@ -8,16 +8,16 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
       <main className="flex-grow container mx-auto p-4 md:p-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold font-headline mb-2">
-            Your Farming Dashboard
+        <div className="text-left mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-1">
+            Farming Dashboard
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Get real-time weather forecasts, crop advisories, and pest warnings tailored to your needs. Empowering you to make informed decisions for a better harvest.
+          <p className="text-muted-foreground max-w-2xl">
+            Real-time weather, crop advisories, and pest warnings.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <WeatherCard />
           </div>

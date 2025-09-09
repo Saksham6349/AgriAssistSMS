@@ -56,7 +56,7 @@ export function UserManagement() {
                 <UserPlus className="w-6 h-6 text-primary" />
             </div>
             <div>
-                <CardTitle className="font-headline">Farmer Registration</CardTitle>
+                <CardTitle>Farmer Registration</CardTitle>
                 <CardDescription>
                 Register or update farmer preferences.
                 </CardDescription>
@@ -65,13 +65,13 @@ export function UserManagement() {
       </CardHeader>
       <CardContent className="flex-grow">
         {submitted ? (
-          <div className="flex flex-col items-center justify-center h-full text-center bg-muted p-6 rounded-lg">
+          <div className="flex flex-col items-center justify-center h-full text-center bg-muted/50 p-6 rounded-lg">
             <CheckCircle className="w-16 h-16 text-primary mb-4" />
             <h3 className="text-xl font-semibold">Registration Successful!</h3>
-            <p className="text-muted-foreground">The farmer's preferences have been saved.</p>
+            <p className="text-muted-foreground text-sm">The farmer's preferences have been saved.</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">Farmer Name</label>
               <Input id="name" name="name" placeholder="e.g., John Doe" value={formData.name} onChange={handleChange} required />
@@ -84,7 +84,6 @@ export function UserManagement() {
               <label htmlFor="crop-select" className="text-sm font-medium">Primary Crop</label>
               <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
                 <SelectTrigger id="crop-select">
-                  <Sprout className="mr-2" />
                   <SelectValue placeholder="Select crop" />
                 </SelectTrigger>
                 <SelectContent>
@@ -100,7 +99,6 @@ export function UserManagement() {
               <label htmlFor="language-pref" className="text-sm font-medium">Preferred Language</label>
               <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
                 <SelectTrigger id="language-pref">
-                  <Globe className="mr-2" />
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
                 <SelectContent>
@@ -117,7 +115,6 @@ export function UserManagement() {
           </form>
         )}
       </CardContent>
-       {!submitted && <CardFooter />}
     </Card>
   );
 }

@@ -68,15 +68,15 @@ export function AdvisoryAlerts() {
             <MessageSquareWarning className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle className="font-headline">Advisory & Pest Alerts</CardTitle>
+            <CardTitle>Advisory & Pest Alerts</CardTitle>
             <CardDescription>
               Translate and send critical alerts to farmers in their local language.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
+        <CardContent className="space-y-4 flex-grow">
           <div className="space-y-2">
             <label htmlFor="alert-text" className="text-sm font-medium">Alert Message</label>
             <Textarea
@@ -91,8 +91,7 @@ export function AdvisoryAlerts() {
           <div className="space-y-2">
             <label htmlFor="language-select" className="text-sm font-medium">Target Language</label>
             <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger id="language-select">
-                <Languages className="mr-2" />
+              <SelectTrigger id="language-select" className="w-full">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
               <SelectContent>
