@@ -8,7 +8,6 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {generate} from 'genkit';
 import {MessageData} from 'genkit/model';
 import {z} from 'zod';
 
@@ -30,7 +29,7 @@ const systemPrompt = `You are AgriAssist, an AI assistant for farmers. Your goal
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   const {history, prompt} = input;
 
-  const response = await generate({
+  const response = await ai.generate({
     model: 'googleai/gemini-2.5-flash',
     history: [
       {role: 'system', content: [{text: systemPrompt}]},
