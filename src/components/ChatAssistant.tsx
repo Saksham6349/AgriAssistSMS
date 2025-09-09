@@ -1,3 +1,4 @@
+
 "use client";
 
 import { chat, ChatInput } from "@/ai/flows/chat";
@@ -14,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Bot, Loader2, Send, User } from "lucide-react";
-import { FormEvent, useRef, useState, useTransition } from "react";
+import { FormEvent, useRef, useState, useTransition, KeyboardEvent } from "react";
 
 type Message = {
   role: "user" | "model";
@@ -27,17 +28,19 @@ export function ChatAssistant() {
   const [isPending, startTransition] = useTransition();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSendMessage = () => {
     if (!input.trim() || isPending) return;
 
-    const userMessage: Message = {
-      role: "user",
-      content: [{ text: input }],
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    
+    const newMessages: Message[] = [
+        ...messages,
+        {
+            role: "user",
+            content: [{ text: input }],
+        }
+    ];
+
+    setMessages(newMessages);
+
     const chatInput: ChatInput = {
       history: messages,
       prompt: input,
@@ -72,6 +75,19 @@ export function ChatAssistant() {
         }
     });
   };
+
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSendMessage();
+  };
+  
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+    }
+  }
 
   return (
     <Card className="h-full flex flex-col max-h-[85vh]">
@@ -142,6 +158,7 @@ export function ChatAssistant() {
             placeholder="Ask a question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             disabled={isPending}
             className="flex-grow"
           />
