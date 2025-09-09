@@ -128,7 +128,7 @@ export function WeatherCard() {
         startSmsTransition(async () => {
             try {
                 // Shorten the message for Twilio trial accounts
-                const shortMessage = `Weather for ${location}: ${result.summary!.substring(0, 50)}...`;
+                const shortMessage = `Weather for ${location}: ${result.summary!.substring(0, 115)}...`;
                 const res = await sendSms({ to: registeredFarmer.phone, message: shortMessage });
                 setSmsStatus(res.status);
                 addSmsToHistory({
