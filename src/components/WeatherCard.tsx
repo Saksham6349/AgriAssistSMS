@@ -127,7 +127,7 @@ export function WeatherCard() {
     if (result?.summary) {
         startSmsTransition(async () => {
             try {
-                const message = `Weather for ${location}: ${result.summary!}`;
+                const message = `Weather for ${location}: ${result.summary!}`.substring(0, 115);
                 const res = await sendSms({ to: registeredFarmer.phone, message: message });
                 setSmsStatus(res.status);
                 addSmsToHistory({

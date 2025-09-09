@@ -77,7 +77,7 @@ export function AdvisoryAlerts() {
     if (translatedText) {
       startSmsTransition(async () => {
         try {
-          const message = `Advisory Alert (${language}): ${translatedText}`;
+          const message = `Advisory Alert (${language}): ${translatedText}`.substring(0, 115);
           const res = await sendSms({ to: registeredFarmer.phone, message: message });
           setSmsStatus(res.status);
           addSmsToHistory({
