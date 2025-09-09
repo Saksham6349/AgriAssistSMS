@@ -87,11 +87,26 @@ export function UserManagement() {
                   <SelectValue placeholder="Select crop" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Wheat">Wheat</SelectItem>
-                  <SelectItem value="Rice">Rice</SelectItem>
+                  <SelectItem value="Apples">Apples</SelectItem>
+                  <SelectItem value="Bananas">Bananas</SelectItem>
+                  <SelectItem value="Barley">Barley</SelectItem>
+                  <SelectItem value="Chickpeas">Chickpeas</SelectItem>
+                  <SelectItem value="Coffee">Coffee</SelectItem>
                   <SelectItem value="Corn">Corn</SelectItem>
+                  <SelectItem value="Cotton">Cotton</SelectItem>
+                  <SelectItem value="Grapes">Grapes</SelectItem>
+                  <SelectItem value="Jute">Jute</SelectItem>
+                  <SelectItem value="Lentils">Lentils</SelectItem>
+                  <SelectItem value="Mangoes">Mangoes</SelectItem>
+                  <SelectItem value="Millet">Millet</SelectItem>
+                  <SelectItem value="Onions">Onions</SelectItem>
                   <SelectItem value="Potatoes">Potatoes</SelectItem>
+                  <SelectItem value="Rice">Rice</SelectItem>
                   <SelectItem value="Soybeans">Soybeans</SelectItem>
+                  <SelectItem value="Sugarcane">Sugarcane</SelectItem>
+                  <SelectItem value="Tea">Tea</SelectItem>
+                  <SelectItem value="Tomatoes">Tomatoes</SelectItem>
+                  <SelectItem value="Wheat">Wheat</SelectItem>
                 </SelectContent>
               </Select>
             </div>
