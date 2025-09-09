@@ -29,7 +29,7 @@ export function Sidebar() {
                     <Button
                         variant="ghost"
                         className={cn(
-                            "w-full justify-start text-left",
+                            "w-full justify-start text-left transition-colors duration-200 ease-in-out hover:bg-primary/10 hover:text-primary",
                             pathname === item.href && "bg-accent text-accent-foreground"
                         )}
                     >
