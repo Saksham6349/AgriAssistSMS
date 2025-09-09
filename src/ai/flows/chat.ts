@@ -8,7 +8,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {generate} from 'genkit/ai';
+import {generate} from 'genkit';
 import {MessageData} from 'genkit/model';
 import {z} from 'zod';
 
@@ -39,5 +39,5 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
     prompt: prompt,
   });
 
-  return response.text();
+  return response.text;
 }
