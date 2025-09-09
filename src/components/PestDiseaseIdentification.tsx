@@ -105,7 +105,7 @@ export function PestDiseaseIdentification() {
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
         <div
-          className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+          className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent hover:border-primary transition-colors"
           onClick={() => fileInputRef.current?.click()}
         >
           <input
