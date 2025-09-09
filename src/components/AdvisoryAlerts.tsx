@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -19,28 +18,83 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MessageSquareWarning, Loader2, Send } from "lucide-react";
+import { MessageSquareWarning, Loader2, Send, Lightbulb } from "lucide-react";
 import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
-
-const sampleAlert =
-  "Warning: Yellow Rust detected in wheat crops in Haryana region. Farmers are advised to inspect fields for yellowish stripes on leaves. If found, spray approved fungicides like Propiconazole or Tebuconazole immediately to prevent yield loss. Consult local agricultural office for details.";
+import { generateAdvisoryAlert } from "@/ai/flows/generate-advisory-alert";
 
 export function AdvisoryAlerts() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
+  const [isGeneratePending, startGenerateTransition] = useTransition();
   const [translatedText, setTranslatedText] = useState<string | null>(null);
-  const [alertText, setAlertText] = useState(sampleAlert);
+  const [alertText, setAlertText] = useState<string>("");
   const [language, setLanguage] = useState("Spanish");
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (registeredFarmer) {
+      setLanguage(registeredFarmer.language);
+      handleGenerateAlert();
+    } else {
+      setAlertText("");
+      setTranslatedText(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registeredFarmer]);
+
+  const handleGenerateAlert = () => {
+    if (!registeredFarmer) {
+      toast({
+        variant: "destructive",
+        title: "No Farmer Registered",
+        description: "Please register a farmer to generate an alert.",
+      });
+      return;
+    }
+
+    setAlertText("");
+    setTranslatedText(null);
+    setSmsStatus(null);
+    
+    startGenerateTransition(async () => {
+      try {
+        const res = await generateAdvisoryAlert({
+          location: registeredFarmer.location,
+          crop: registeredFarmer.crop,
+        });
+        if (res?.alert) {
+          setAlertText(res.alert);
+        } else {
+          throw new Error("Failed to generate an alert.");
+        }
+      } catch (err: any) {
+        console.error("Alert generation failed:", err);
+        toast({
+          variant: "destructive",
+          title: "Generation Error",
+          description: err.message || "Could not generate an advisory alert. Please try again.",
+        });
+      }
+    });
+  };
+
   const handleTranslate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!alertText) {
+      toast({
+        variant: "destructive",
+        title: "No Alert",
+        description: "Please generate an alert before translating.",
+      });
+      return;
+    }
+
     setSmsStatus(null);
     setTranslatedText(null);
     startTranslateTransition(async () => {
@@ -77,12 +131,11 @@ export function AdvisoryAlerts() {
     if (translatedText) {
       startSmsTransition(async () => {
         try {
-          const message = `Advisory Alert (${language}): ${translatedText}`.substring(0, 115);
-          const res = await sendSms({ to: registeredFarmer.phone, message: message });
+          const res = await sendSms({ to: registeredFarmer.phone, message: translatedText });
           setSmsStatus(res.status);
           addSmsToHistory({
             to: registeredFarmer.phone,
-            message: message,
+            message: translatedText,
             type: 'Advisory',
           });
           toast({
@@ -112,34 +165,42 @@ export function AdvisoryAlerts() {
           <div>
             <CardTitle>Advisory & Pest Alerts</CardTitle>
             <CardDescription>
-              Translate and send critical alerts to farmers.
+              Generate and send critical alerts to farmers.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <div className="flex flex-col flex-grow">
         <CardContent className="space-y-4 flex-grow">
-          <form onSubmit={handleTranslate} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="alert-text" className="text-sm font-medium">Alert Message</label>
-              <Textarea
-                id="alert-text"
-                placeholder="Enter advisory alert text..."
-                value={alertText}
-                onChange={(e) => setAlertText(e.target.value)}
-                rows={5}
-                className="resize-none"
-              />
+          <Button onClick={handleGenerateAlert} disabled={isGeneratePending || !registeredFarmer} className="w-full">
+              {isGeneratePending ? (
+                <>
+                  <Loader2 className="animate-spin" /> Generating...
+                </>
+              ) : (
+                <>
+                  <Lightbulb /> Generate Alert for {registeredFarmer ? registeredFarmer.location : '...'}
+                </>
+              )}
+          </Button>
+
+          {(alertText && !isGeneratePending) && (
+            <div className="p-4 bg-muted rounded-md border mt-4">
+              <h4 className="font-semibold mb-2">Generated Alert (English):</h4>
+              <p className="text-sm text-muted-foreground">{alertText}</p>
             </div>
+          )}
+          
+          <form onSubmit={handleTranslate} className="space-y-4 pt-4 border-t">
             <div className="space-y-2">
               <label htmlFor="language-select" className="text-sm font-medium">Target Language</label>
-              <Select value={language} onValueChange={setLanguage}>
+              <Select value={language} onValueChange={setLanguage} disabled={!alertText}>
                 <SelectTrigger id="language-select" className="w-full">
                   <SelectValue placeholder="Select a language" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="English">English</SelectItem>
                   <SelectItem value="Spanish">Spanish</SelectItem>
-                  <SelectItem value="French">French</SelectItem>
                   <SelectItem value="Hindi">Hindi</SelectItem>
                   <SelectItem value="Bengali">Bengali</SelectItem>
                   <SelectItem value="Telugu">Telugu</SelectItem>
@@ -154,7 +215,7 @@ export function AdvisoryAlerts() {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" disabled={isTranslatePending} className="w-full">
+            <Button type="submit" disabled={isTranslatePending || !alertText} className="w-full">
               {isTranslatePending ? (
                 <>
                   <Loader2 className="animate-spin" /> Translating...
