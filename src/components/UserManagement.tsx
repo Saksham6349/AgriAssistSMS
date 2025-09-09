@@ -26,6 +26,7 @@ export function UserManagement() {
     name: '',
     location: '',
     crop: 'Wheat',
+    secondaryCrop: 'Corn',
     language: 'English',
   });
 
@@ -34,7 +35,7 @@ export function UserManagement() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: 'crop' | 'language') => (value: string) => {
+  const handleSelectChange = (name: 'crop' | 'secondaryCrop' | 'language') => (value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
@@ -44,7 +45,7 @@ export function UserManagement() {
     setSubmitted(true);
     setTimeout(() => {
         setSubmitted(false);
-        setFormData({ name: '', location: '', crop: 'Wheat', language: 'English' });
+        setFormData({ name: '', location: '', crop: 'Wheat', secondaryCrop: 'Corn', language: 'English' });
     }, 3000);
   };
 
@@ -85,6 +86,36 @@ export function UserManagement() {
               <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
                 <SelectTrigger id="crop-select">
                   <SelectValue placeholder="Select crop" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Apples">Apples</SelectItem>
+                  <SelectItem value="Bananas">Bananas</SelectItem>
+                  <SelectItem value="Barley">Barley</SelectItem>
+                  <SelectItem value="Chickpeas">Chickpeas</SelectItem>
+                  <SelectItem value="Coffee">Coffee</SelectItem>
+                  <SelectItem value="Corn">Corn</SelectItem>
+                  <SelectItem value="Cotton">Cotton</SelectItem>
+                  <SelectItem value="Grapes">Grapes</SelectItem>
+                  <SelectItem value="Jute">Jute</SelectItem>
+                  <SelectItem value="Lentils">Lentils</SelectItem>
+                  <SelectItem value="Mangoes">Mangoes</SelectItem>
+                  <SelectItem value="Millet">Millet</SelectItem>
+                  <SelectItem value="Onions">Onions</SelectItem>
+                  <SelectItem value="Potatoes">Potatoes</SelectItem>
+                  <SelectItem value="Rice">Rice</SelectItem>
+                  <SelectItem value="Soybeans">Soybeans</SelectItem>
+                  <SelectItem value="Sugarcane">Sugarcane</SelectItem>
+                  <SelectItem value="Tea">Tea</SelectItem>
+                  <SelectItem value="Tomatoes">Tomatoes</SelectItem>
+                  <SelectItem value="Wheat">Wheat</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop</label>
+              <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
+                <SelectTrigger id="secondary-crop-select">
+                  <SelectValue placeholder="Select secondary crop" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Apples">Apples</SelectItem>
