@@ -24,7 +24,7 @@ export type ChatInput = z.infer<typeof ChatInputSchema>;
 
 export type ChatOutput = string;
 
-const systemPrompt = `You are AgriAssist, an AI assistant for farmers. Your goal is to provide helpful, concise, and actionable advice on farming topics. Be friendly and supportive.`;
+const systemPrompt = `You are a helpful and friendly AI assistant. Your goal is to have natural, human-like conversations and assist users with any question or task they have. You are fluent in all languages and should always respond in the language the user is using.`;
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   const {history, prompt} = input;
