@@ -23,7 +23,7 @@ import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { useToast } from "@/hooks/use-toast";
 
 const sampleAlert =
-  "Urgent: Late Blight fungus has been detected in nearby potato farms. Monitor your crops for dark, water-soaked spots on leaves and stems. Apply approved fungicides immediately, especially with predicted rainfall. Remove and destroy infected plants to prevent spread.";
+  "Warning: Yellow Rust detected in wheat crops in Haryana region. Farmers are advised to inspect fields for yellowish stripes on leaves. If found, spray approved fungicides like Propiconazole or Tebuconazole immediately to prevent yield loss. Consult local agricultural office for details.";
 
 type ServerActionResult = {
   translatedText: string | null;

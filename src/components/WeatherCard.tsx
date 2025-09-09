@@ -32,18 +32,33 @@ type ServerActionResult = {
 
 // Mock function to simulate fetching weather data. In a real app, this would call a weather API.
 async function fetchWeatherData(location: string) {
-  console.log(`Fetching weather for ${location}...`);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  // Simulate API call delay
+  await new Promise((resolve) => setTimeout(resolve, 800));
+  
+  const today = new Date();
+  const getDayOfWeek = (date: Date) => {
+    return date.toLocaleDateString('en-US', { weekday: 'long' });
+  };
+
+  // Generate a more realistic forecast
+  const forecast = Array.from({ length: 5 }).map((_, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    
+    const day = getDayOfWeek(date);
+    const baseTemp = 35; // Base temperature for a hot location like Delhi
+    const temp_c = baseTemp - i + Math.floor(Math.random() * 4) - 2;
+    const conditions = ["Clear skies", "Sunny with scattered clouds", "Hazy sunshine", "Hot and humid"];
+    const condition = conditions[Math.floor(Math.random() * conditions.length)];
+    const precipitation_mm = Math.random() < 0.1 ? Math.floor(Math.random() * 5) : 0; // Low chance of rain
+
+    return { day, temp_c, condition, precipitation_mm };
+  });
+
   return JSON.stringify(
     {
       location: location,
-      forecast: [
-        { day: "Monday", temp_c: 25, condition: "Sunny", precipitation_mm: 0 },
-        { day: "Tuesday", temp_c: 23, condition: "Partly cloudy", precipitation_mm: 2 },
-        { day: "Wednesday", temp_c: 22, condition: "Light rain", precipitation_mm: 5 },
-        { day: "Thursday", temp_c: 24, condition: "Sunny intervals", precipitation_mm: 1 },
-        { day: "Friday", temp_c: 26, condition: "Sunny", precipitation_mm: 0 },
-      ],
+      forecast,
     },
     null,
     2
@@ -53,7 +68,7 @@ async function fetchWeatherData(location: string) {
 export function WeatherCard() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
-  const [location, setLocation] = useState("Nairobi");
+  const [location, setLocation] = useState("Delhi");
   const [language, setLanguage] = useState("English");
   const { toast } = useToast();
 
