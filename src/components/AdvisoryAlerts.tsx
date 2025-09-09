@@ -77,13 +77,12 @@ export function AdvisoryAlerts() {
     if (translatedText) {
       startSmsTransition(async () => {
         try {
-          // Shorten the message for Twilio trial accounts
-          const shortMessage = `Advisory Alert (${language}): ${translatedText.substring(0, 115)}...`;
-          const res = await sendSms({ to: registeredFarmer.phone, message: shortMessage });
+          const message = `Advisory Alert (${language}): ${translatedText}`;
+          const res = await sendSms({ to: registeredFarmer.phone, message: message });
           setSmsStatus(res.status);
           addSmsToHistory({
             to: registeredFarmer.phone,
-            message: shortMessage,
+            message: message,
             type: 'Advisory',
           });
           toast({

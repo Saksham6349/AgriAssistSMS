@@ -127,13 +127,12 @@ export function WeatherCard() {
     if (result?.summary) {
         startSmsTransition(async () => {
             try {
-                // Shorten the message for Twilio trial accounts
-                const shortMessage = `Weather for ${location}: ${result.summary!.substring(0, 115)}...`;
-                const res = await sendSms({ to: registeredFarmer.phone, message: shortMessage });
+                const message = `Weather for ${location}: ${result.summary!}`;
+                const res = await sendSms({ to: registeredFarmer.phone, message: message });
                 setSmsStatus(res.status);
                 addSmsToHistory({
                   to: registeredFarmer.phone,
-                  message: shortMessage,
+                  message: message,
                   type: 'Weather',
                 });
                  toast({
@@ -190,7 +189,6 @@ export function WeatherCard() {
                       <SelectContent>
                           <SelectItem value="English">English</SelectItem>
                           <SelectItem value="Spanish">Spanish</SelectItem>
-                          <SelectItem value="French">French</SelectItem>
                           <SelectItem value="Hindi">Hindi</SelectItem>
                           <SelectItem value="Bengali">Bengali</SelectItem>
                           <SelectItem value="Telugu">Telugu</SelectItem>
