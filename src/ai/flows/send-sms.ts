@@ -11,6 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import Twilio from 'twilio';
+import { config } from 'dotenv';
 
 const SendSmsInputSchema = z.object({
   to: z.string().describe('The phone number to send the SMS to.'),
@@ -35,6 +36,7 @@ const sendSmsFlow = ai.defineFlow(
     outputSchema: SendSmsOutputSchema,
   },
   async (input) => {
+    config(); // Explicitly load .env variables
     const { to, message } = input;
     const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID } = process.env;
 
