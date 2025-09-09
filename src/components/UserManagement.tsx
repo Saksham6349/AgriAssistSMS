@@ -195,6 +195,14 @@ export function UserManagement() {
                   <SelectItem value="English">English</SelectItem>
                   <SelectItem value="Spanish">Spanish</SelectItem>
                   <SelectItem value="Hindi">Hindi</SelectItem>
+                  <SelectItem value="Bengali">Bengali</SelectItem>
+                  <SelectItem value="Telugu">Telugu</SelectItem>
+                  <SelectItem value="Marathi">Marathi</SelectItem>
+                  <SelectItem value="Tamil">Tamil</SelectItem>
+                  <SelectItem value="Urdu">Urdu</SelectItem>
+                  <SelectItem value="Gujarati">Gujarati</SelectItem>
+                  <SelectItem value="Kannada">Kannada</SelectItem>
+                  <SelectItem value="Punjabi">Punjabi</SelectItem>
                   <SelectItem value="Swahili">Swahili</SelectItem>
                 </SelectContent>
               </Select>
