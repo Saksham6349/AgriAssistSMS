@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard } from 'lucide-react';
+import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -12,6 +12,7 @@ const navItems = [
     { href: '/weather', label: 'Weather Forecast', icon: Sun },
     { href: '/advisory', label: 'Advisory Alerts', icon: MessageSquareWarning },
     { href: '/diagnosis', label: 'Crop Diagnosis', icon: Stethoscope },
+    { href: '/chat', label: 'Chat Assistant', icon: Bot },
     { href: '/history', label: 'SMS History', icon: History },
 ];
 
