@@ -139,10 +139,10 @@ export function UserManagement() {
             </div>
             <div className="space-y-2">
               <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop</label>
-              <Select name="secondaryCrop" value={formData.secondaryCrop} onValuechange={handleSelectChange('secondaryCrop')}>
+              <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
                 <SelectTrigger id="secondary-crop-select">
                   <SelectValue placeholder="Select secondary crop" />
-                </Trigger>
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Apples">Apples</SelectItem>
                   <SelectItem value="Bananas">Bananas</SelectItem>
@@ -172,7 +172,7 @@ export function UserManagement() {
               <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
                 <SelectTrigger id="language-pref">
                   <SelectValue placeholder="Select language" />
-                </Trigger>
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="English">English</SelectItem>
                   <SelectItem value="Spanish">Spanish</SelectItem>
