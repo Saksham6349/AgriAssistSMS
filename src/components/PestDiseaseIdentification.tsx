@@ -1,0 +1,191 @@
+"use client";
+
+import { useState, useRef, useTransition, ChangeEvent } from "react";
+import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Stethoscope, Upload, X, Loader2, AlertCircle } from "lucide-react";
+import { diagnoseCropHealth, DiagnoseCropHealthOutput } from "@/ai/flows/diagnose-crop-health";
+import { useToast } from "@/hooks/use-toast";
+
+export function PestDiseaseIdentification() {
+  const [isPending, startTransition] = useTransition();
+  const [result, setResult] = useState<DiagnoseCropHealthOutput | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+        toast({
+          variant: "destructive",
+          title: "Image too large",
+          description: "Please upload an image smaller than 4MB.",
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setImagePreview(URL.createObjectURL(file));
+        setImageData(dataUri);
+        setResult(null);
+        setError(null);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setImageData(null);
+    setResult(null);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+  
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!imageData) {
+      toast({
+        variant: "destructive",
+        title: "No Image Selected",
+        description: "Please upload an image of a plant to diagnose.",
+      });
+      return;
+    }
+
+    setResult(null);
+    setError(null);
+    startTransition(async () => {
+      try {
+        const diagnosisResult = await diagnoseCropHealth({ photoDataUri: imageData });
+        setResult(diagnosisResult);
+      } catch (err) {
+        console.error("Diagnosis failed:", err);
+        setError("Failed to get a diagnosis. The model may be unable to analyze this image. Please try another one.");
+        toast({
+          variant: "destructive",
+          title: "Analysis Error",
+          description: "Could not get a diagnosis for the provided image.",
+        });
+      }
+    });
+  };
+
+  return (
+    <Card className="h-full flex flex-col">
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-md">
+            <Stethoscope className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <CardTitle>Crop Health Diagnosis</CardTitle>
+            <CardDescription>
+              Upload a photo of a plant to identify pests and diseases.
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="flex-grow space-y-4">
+        <div
+          className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            className="hidden"
+            accept="image/png, image/jpeg, image/webp"
+          />
+          {imagePreview ? (
+            <div className="relative group">
+              <Image
+                src={imagePreview}
+                alt="Plant preview"
+                width={400}
+                height={300}
+                className="rounded-md mx-auto max-h-64 w-auto object-contain"
+              />
+              <Button
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <Upload className="w-8 h-8" />
+              <p className="font-semibold">Click to upload an image</p>
+              <p className="text-xs">PNG, JPG, or WEBP up to 4MB</p>
+            </div>
+          )}
+        </div>
+        
+        {isPending && (
+          <div className="space-y-4 pt-4">
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+          </div>
+        )}
+
+        {error && !isPending && (
+            <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Analysis Failed</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        )}
+
+        {result && !isPending && (
+          <div className="prose prose-sm max-w-none text-foreground pt-4">
+            <h4 className="font-semibold text-foreground mb-2">Diagnosis Results:</h4>
+            <ul>
+              <li><strong>Identification:</strong> {result.identification.commonName} (<em>{result.identification.latinName}</em>)</li>
+              <li>
+                <strong>Health Status:</strong> 
+                <span className={`font-semibold ml-1 ${result.diagnosis.isHealthy ? 'text-green-600' : 'text-destructive'}`}>
+                  {result.diagnosis.isHealthy ? 'Healthy' : 'Needs Attention'}
+                </span>
+              </li>
+              <li><strong>Analysis:</strong> {result.diagnosis.diagnosis}</li>
+            </ul>
+          </div>
+        )}
+      </CardContent>
+      <CardFooter>
+        <Button onClick={handleSubmit} disabled={!imageData || isPending} className="w-full">
+          {isPending ? (
+            <>
+              <Loader2 className="animate-spin" /> Diagnosing...
+            </>
+          ) : (
+            "Diagnose Plant Health"
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}

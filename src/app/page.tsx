@@ -1,5 +1,6 @@
 import { AdvisoryAlerts } from '@/components/AdvisoryAlerts';
 import { Header } from '@/components/Header';
+import { PestDiseaseIdentification } from '@/components/PestDiseaseIdentification';
 import { UserManagement } from '@/components/UserManagement';
 import { WeatherCard } from '@/components/WeatherCard';
 
@@ -26,6 +27,9 @@ export default function Home() {
           </div>
           <div className="lg:col-span-2">
             <AdvisoryAlerts />
+          </div>
+           <div className="lg:col-span-2">
+            <PestDiseaseIdentification />
           </div>
         </div>
       </main>
