@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -18,36 +19,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, MessageSquareText, FilePenLine } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine } from "lucide-react";
+import { Badge } from "./ui/badge";
 
-export function UserManagement() {
-  const [smsPreview, setSmsPreview] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+type FarmerData = {
+  name: string;
+  location: string;
+  crop: string;
+  secondaryCrop: string;
+  language: string;
+};
+
+const initialFormData = {
     name: '',
     location: '',
     crop: 'Wheat',
     secondaryCrop: 'Corn',
     language: 'English',
-  });
+};
+
+export function UserManagement() {
+  const [registeredFarmer, setRegisteredFarmer] = useState<FarmerData | null>(null);
+  const [formData, setFormData] = useState<FarmerData>(initialFormData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: 'crop' | 'secondaryCrop' | 'language') => (value: string) => {
+  const handleSelectChange = (name: keyof FarmerData) => (value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const message = `New Farmer Registered:\nName: ${formData.name}\nLocation: ${formData.location}\nPrimary Crop: ${formData.crop}\nSecondary Crop: ${formData.secondaryCrop}\nLanguage: ${formData.language}`;
-    setSmsPreview(message);
+    setRegisteredFarmer(formData);
   };
 
   const handleReset = () => {
-    setSmsPreview(null);
-    setFormData({ name: '', location: '', crop: 'Wheat', secondaryCrop: 'Corn', language: 'English' });
+    setRegisteredFarmer(null);
+    setFormData(initialFormData);
   }
 
   return (
@@ -55,25 +66,28 @@ export function UserManagement() {
       <CardHeader>
         <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-md">
-                <UserPlus className="w-6 h-6 text-primary" />
+                {registeredFarmer ? <UserCheck className="w-6 h-6 text-primary" /> : <UserPlus className="w-6 h-6 text-primary" />}
             </div>
             <div>
-                <CardTitle>Farmer Registration</CardTitle>
+                <CardTitle>{registeredFarmer ? 'Current Farmer' : 'Farmer Registration'}</CardTitle>
                 <CardDescription>
-                Register or update farmer preferences.
+                {registeredFarmer ? 'Ready to receive SMS alerts.' : 'Register farmer to send alerts.'}
                 </CardDescription>
             </div>
         </div>
       </CardHeader>
       <CardContent className="flex-grow">
-        {smsPreview ? (
-          <div className="flex flex-col items-center justify-center h-full text-center bg-muted/50 p-6 rounded-lg">
-            <MessageSquareText className="w-12 h-12 text-primary mb-4" />
-            <h3 className="text-xl font-semibold mb-2">SMS Preview</h3>
-            <div className="bg-background p-4 rounded-lg text-left w-full border text-sm whitespace-pre-wrap">
-                <p className="text-muted-foreground">{smsPreview}</p>
-            </div>
-            <Button onClick={handleReset} className="w-full mt-4">
+        {registeredFarmer ? (
+          <div className="flex flex-col justify-center h-full space-y-4 bg-muted/50 p-6 rounded-lg">
+             <div className="space-y-2">
+                <h3 className="text-lg font-semibold">{registeredFarmer.name}</h3>
+                <p className="text-sm text-muted-foreground">{registeredFarmer.location}</p>
+             </div>
+             <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary">Crop: {registeredFarmer.crop}</Badge>
+                <Badge variant="secondary">Language: {registeredFarmer.language}</Badge>
+             </div>
+             <Button onClick={handleReset} className="w-full mt-4 !-mb-2" variant="outline">
                 <FilePenLine /> Register Another Farmer
             </Button>
           </div>
@@ -119,7 +133,7 @@ export function UserManagement() {
             </div>
             <div className="space-y-2">
               <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop</label>
-              <Select name="secondaryCrop" value={formData.secondaryCrop} onValue-change={handleSelectChange('secondaryCrop')}>
+              <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
                 <SelectTrigger id="secondary-crop-select">
                   <SelectValue placeholder="Select secondary crop" />
                 </SelectTrigger>

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Sun, Loader2 } from "lucide-react";
+import { MapPin, Sun, Loader2, Send } from "lucide-react";
 import { summarizeWeatherData } from "@/ai/flows/summarize-weather-data";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "./ui/skeleton";
@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 type ServerActionResult = {
   summary: string | null;
@@ -70,9 +71,10 @@ export function WeatherCard() {
   const [result, setResult] = useState<ServerActionResult | null>(null);
   const [location, setLocation] = useState("Delhi");
   const [language, setLanguage] = useState("English");
+  const [smsPreview, setSmsPreview] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleGetForecast = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!location) {
         toast({
@@ -85,7 +87,8 @@ export function WeatherCard() {
 
     startTransition(async () => {
       try {
-        setResult(null); // Clear previous results
+        setResult(null);
+        setSmsPreview(null);
         const weatherData = await fetchWeatherData(location);
         const summaryRes = await summarizeWeatherData({ location, weatherData });
         
@@ -127,8 +130,14 @@ export function WeatherCard() {
     });
   };
 
+  const handleSendSms = () => {
+    if (result?.summary) {
+      setSmsPreview(result.summary);
+    }
+  }
+
   return (
-    <Card>
+    <Card className="flex flex-col">
       <CardHeader>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-md">
@@ -142,38 +151,40 @@ export function WeatherCard() {
           </div>
         </div>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent>
-          <div className="flex w-full flex-col sm:flex-row items-center gap-2">
-            <div className="relative flex-grow w-full">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Enter location..."
-                className="pl-10"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
+      <div className="flex-grow flex flex-col">
+        <CardContent className="flex-grow">
+          <form onSubmit={handleGetForecast} className="space-y-4">
+            <div className="flex w-full flex-col sm:flex-row items-center gap-2">
+              <div className="relative flex-grow w-full">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Enter location..."
+                  className="pl-10"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+              </div>
+              <div className="flex w-full sm:w-auto gap-2">
+                  <Select value={language} onValueChange={setLanguage}>
+                      <SelectTrigger className="w-full sm:w-[120px]">
+                          <SelectValue placeholder="Language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          <SelectItem value="English">English</SelectItem>
+                          <SelectItem value="Spanish">Spanish</SelectItem>
+                          <SelectItem value="French">French</SelectItem>
+                          <SelectItem value="Hindi">Hindi</SelectItem>
+                          <SelectItem value="Swahili">Swahili</SelectItem>
+                          <SelectItem value="Mandarin">Mandarin</SelectItem>
+                      </SelectContent>
+                  </Select>
+                  <Button type="submit" disabled={isPending} className="flex-grow">
+                      {isPending ? <Loader2 className="animate-spin" /> : 'Get Forecast'}
+                  </Button>
+              </div>
             </div>
-            <div className="flex w-full sm:w-auto gap-2">
-                <Select value={language} onValueChange={setLanguage}>
-                    <SelectTrigger className="w-full sm:w-[120px]">
-                        <SelectValue placeholder="Language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="English">English</SelectItem>
-                        <SelectItem value="Spanish">Spanish</SelectItem>
-                        <SelectItem value="French">French</SelectItem>
-                        <SelectItem value="Hindi">Hindi</SelectItem>
-                        <SelectItem value="Swahili">Swahili</SelectItem>
-                        <SelectItem value="Mandarin">Mandarin</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Button type="submit" disabled={isPending} className="flex-grow">
-                    {isPending ? <Loader2 className="animate-spin" /> : 'Get Forecast'}
-                </Button>
-            </div>
-          </div>
+          </form>
           <div className="mt-4 pt-4 border-t">
             {isPending && (
                 <div className="space-y-2">
@@ -188,14 +199,28 @@ export function WeatherCard() {
                 <p>{result.summary}</p>
               </div>
             )}
-            {!result && !isPending && (
+            {smsPreview && (
+                <Alert className="mt-4">
+                    <Send className="w-4 h-4" />
+                    <AlertTitle>SMS Sent!</AlertTitle>
+                    <AlertDescription className="text-xs whitespace-pre-wrap break-words">
+                        {smsPreview}
+                    </AlertDescription>
+                </Alert>
+            )}
+            {!result && !isPending && !smsPreview && (
                 <div className="text-center text-muted-foreground py-4">
                     <p>Enter a location to see the weather summary.</p>
                 </div>
             )}
           </div>
         </CardContent>
-      </form>
+        <CardFooter>
+            <Button onClick={handleSendSms} disabled={!result?.summary || isPending} className="w-full" variant="secondary">
+                <Send /> Send as SMS
+            </Button>
+        </CardFooter>
+      </div>
     </Card>
   );
 }
