@@ -1,15 +1,16 @@
 
 'use server';
 /**
- * @fileOverview A flow to simulate sending an SMS.
+ * @fileOverview A flow to send an SMS using Twilio.
  *
- * - sendSms - A function that simulates sending an SMS message.
+ * - sendSms - A function that sends an SMS message.
  * - SendSmsInput - The input type for the sendSms function.
  * - SendSmsOutput - The return type for the sendSms function.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import Twilio from 'twilio';
 
 const SendSmsInputSchema = z.object({
   to: z.string().describe('The phone number to send the SMS to.'),
@@ -19,6 +20,7 @@ export type SendSmsInput = z.infer<typeof SendSmsInputSchema>;
 
 const SendSmsOutputSchema = z.object({
   status: z.string().describe('The status of the SMS sending attempt.'),
+  messageSid: z.string().optional().describe('The SID of the message from Twilio.'),
 });
 export type SendSmsOutput = z.infer<typeof SendSmsOutputSchema>;
 
@@ -33,15 +35,30 @@ const sendSmsFlow = ai.defineFlow(
     outputSchema: SendSmsOutputSchema,
   },
   async (input) => {
-    console.log(`Simulating sending SMS to: ${input.to}`);
-    console.log(`Message: ${input.message}`);
+    const { to, message } = input;
+    const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } = process.env;
 
-    // In a real application, you would integrate with an SMS gateway like Twilio here.
-    // For this simulation, we'll just return a success message.
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+    if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+        throw new Error('Twilio credentials are not configured in the environment.');
+    }
 
-    return {
-      status: `SMS successfully simulated for ${input.to}`,
-    };
+    const client = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+
+    try {
+        const twilioMessage = await client.messages.create({
+            body: message,
+            from: TWILIO_PHONE_NUMBER,
+            to: to,
+        });
+
+        console.log(`SMS sent successfully. SID: ${twilioMessage.sid}`);
+        return {
+            status: `SMS sent successfully to ${to}`,
+            messageSid: twilioMessage.sid,
+        };
+    } catch (error: any) {
+        console.error('Failed to send SMS via Twilio:', error);
+        throw new Error(`Failed to send SMS. Twilio error: ${error.message}`);
+    }
   }
 );
