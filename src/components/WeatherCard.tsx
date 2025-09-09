@@ -25,9 +25,8 @@ import {
 } from "@/components/ui/select";
 import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import type { FarmerData } from "./UserManagement";
 import { sendSms } from "@/ai/flows/send-sms";
-import type { SmsMessage } from "./SmsHistory";
+import { useAppContext } from "@/context/AppContext";
 
 type ServerActionResult = {
   summary: string | null;
@@ -55,12 +54,8 @@ async function fetchWeatherData(location: string) {
   return JSON.stringify({ location, forecast }, null, 2);
 }
 
-interface WeatherCardProps {
-  registeredFarmer: FarmerData | null;
-  onSmsSent: (message: Omit<SmsMessage, 'timestamp'>) => void;
-}
-
-export function WeatherCard({ registeredFarmer, onSmsSent }: WeatherCardProps) {
+export function WeatherCard() {
+  const { registeredFarmer, addSmsToHistory } = useAppContext();
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
@@ -134,7 +129,7 @@ export function WeatherCard({ registeredFarmer, onSmsSent }: WeatherCardProps) {
             try {
                 const res = await sendSms({ to: registeredFarmer.phone, message: result.summary! });
                 setSmsStatus(res.status);
-                onSmsSent({
+                addSmsToHistory({
                   to: registeredFarmer.phone,
                   message: result.summary!,
                   type: 'Weather',

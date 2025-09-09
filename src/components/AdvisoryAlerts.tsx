@@ -23,9 +23,8 @@ import { MessageSquareWarning, Loader2, Send } from "lucide-react";
 import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import type { FarmerData } from "./UserManagement";
 import { sendSms } from "@/ai/flows/send-sms";
-import type { SmsMessage } from "./SmsHistory";
+import { useAppContext } from "@/context/AppContext";
 
 const sampleAlert =
   "Warning: Yellow Rust detected in wheat crops in Haryana region. Farmers are advised to inspect fields for yellowish stripes on leaves. If found, spray approved fungicides like Propiconazole or Tebuconazole immediately to prevent yield loss. Consult local agricultural office for details.";
@@ -35,12 +34,8 @@ type ServerActionResult = {
   error: string | null;
 };
 
-interface AdvisoryAlertsProps {
-  registeredFarmer: FarmerData | null;
-  onSmsSent: (message: Omit<SmsMessage, 'timestamp'>) => void;
-}
-
-export function AdvisoryAlerts({ registeredFarmer, onSmsSent }: AdvisoryAlertsProps) {
+export function AdvisoryAlerts() {
+  const { registeredFarmer, addSmsToHistory } = useAppContext();
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
@@ -91,7 +86,7 @@ export function AdvisoryAlerts({ registeredFarmer, onSmsSent }: AdvisoryAlertsPr
         try {
           const res = await sendSms({ to: registeredFarmer.phone, message: result.translatedText! });
           setSmsStatus(res.status);
-          onSmsSent({
+          addSmsToHistory({
             to: registeredFarmer.phone,
             message: result.translatedText!,
             type: 'Advisory',

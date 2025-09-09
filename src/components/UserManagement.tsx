@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { UserPlus, UserCheck, FilePenLine } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useAppContext } from "@/context/AppContext";
 
 export type FarmerData = {
   name: string;
@@ -32,20 +33,16 @@ export type FarmerData = {
 };
 
 const initialFormData: FarmerData = {
-    name: '',
-    phone: '',
-    location: '',
+    name: 'Satya Nadella',
+    phone: '+15551234567',
+    location: 'Hyderabad',
     crop: 'Wheat',
     secondaryCrop: 'Corn',
     language: 'English',
 };
 
-interface UserManagementProps {
-    registeredFarmer: FarmerData | null;
-    setRegisteredFarmer: (farmer: FarmerData | null) => void;
-}
-
-export function UserManagement({ registeredFarmer, setRegisteredFarmer }: UserManagementProps) {
+export function UserManagement() {
+  const { registeredFarmer, setRegisteredFarmer } = useAppContext();
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

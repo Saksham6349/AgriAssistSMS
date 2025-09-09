@@ -1,0 +1,43 @@
+
+"use client";
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+
+const navItems = [
+    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/weather', label: 'Weather Forecast', icon: Sun },
+    { href: '/advisory', label: 'Advisory Alerts', icon: MessageSquareWarning },
+    { href: '/diagnosis', label: 'Crop Diagnosis', icon: Stethoscope },
+    { href: '/history', label: 'SMS History', icon: History },
+];
+
+export function Sidebar() {
+    const pathname = usePathname();
+
+    return (
+        <aside className="w-64 border-r p-4 hidden md:block bg-card">
+          <nav className="flex flex-col space-y-2">
+            {navItems.map((item) => (
+                <Link key={item.href} href={item.href} passHref legacyBehavior>
+                    <a target="_blank" rel="noopener noreferrer">
+                        <Button
+                            variant="ghost"
+                            className={cn(
+                                "w-full justify-start text-left",
+                                pathname === item.href && "bg-accent text-accent-foreground"
+                            )}
+                        >
+                            <item.icon className="mr-2 h-5 w-5" />
+                            {item.label}
+                        </Button>
+                    </a>
+                </Link>
+            ))}
+          </nav>
+        </aside>
+    );
+}

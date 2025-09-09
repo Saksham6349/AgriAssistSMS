@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { History } from "lucide-react";
+import { useAppContext } from "@/context/AppContext";
 
 export type SmsMessage = {
   to: string;
@@ -19,11 +20,9 @@ export type SmsMessage = {
   timestamp: Date;
 };
 
-interface SmsHistoryProps {
-  history: SmsMessage[];
-}
+export function SmsHistory() {
+  const { smsHistory } = useAppContext();
 
-export function SmsHistory({ history }: SmsHistoryProps) {
   return (
     <Card>
       <CardHeader>
@@ -41,13 +40,13 @@ export function SmsHistory({ history }: SmsHistoryProps) {
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-72 w-full">
-          {history.length === 0 ? (
+          {smsHistory.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <p className="text-muted-foreground">No messages sent yet.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {history.map((sms, index) => (
+              {smsHistory.map((sms, index) => (
                 <div key={index} className="flex items-start gap-4">
                    <div className="flex-shrink-0">
                      <Badge variant={sms.type === 'Weather' ? 'default' : 'secondary'}>
