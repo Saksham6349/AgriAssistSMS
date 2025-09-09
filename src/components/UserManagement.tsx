@@ -46,12 +46,14 @@ export function UserManagement() {
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
 
   useEffect(() => {
-      if (registeredFarmer) {
-          setFormData(registeredFarmer);
-      } else {
-          setFormData(initialFormData);
+      if (isLoaded) {
+          if (registeredFarmer) {
+              setFormData(registeredFarmer);
+          } else {
+              setFormData(initialFormData);
+          }
       }
-  }, [registeredFarmer])
+  }, [registeredFarmer, isLoaded]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

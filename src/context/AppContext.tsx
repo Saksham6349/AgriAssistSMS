@@ -10,6 +10,7 @@ interface AppContextType {
   setRegisteredFarmer: (farmer: FarmerData | null) => void;
   smsHistory: SmsMessage[];
   addSmsToHistory: (message: Omit<SmsMessage, 'timestamp'>) => void;
+  isLoaded: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
