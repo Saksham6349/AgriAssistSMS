@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -22,7 +22,7 @@ import {
 import { UserPlus, UserCheck, FilePenLine } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-type FarmerData = {
+export type FarmerData = {
   name: string;
   phone: string;
   location: string;
@@ -31,7 +31,7 @@ type FarmerData = {
   language: string;
 };
 
-const initialFormData = {
+const initialFormData: FarmerData = {
     name: '',
     phone: '',
     location: '',
@@ -40,8 +40,12 @@ const initialFormData = {
     language: 'English',
 };
 
-export function UserManagement() {
-  const [registeredFarmer, setRegisteredFarmer] = useState<FarmerData | null>(null);
+interface UserManagementProps {
+    registeredFarmer: FarmerData | null;
+    setRegisteredFarmer: (farmer: FarmerData | null) => void;
+}
+
+export function UserManagement({ registeredFarmer, setRegisteredFarmer }: UserManagementProps) {
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

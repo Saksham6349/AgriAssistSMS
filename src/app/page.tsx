@@ -1,10 +1,16 @@
+
+"use client";
+
+import { useState } from 'react';
 import { AdvisoryAlerts } from '@/components/AdvisoryAlerts';
 import { Header } from '@/components/Header';
 import { PestDiseaseIdentification } from '@/components/PestDiseaseIdentification';
-import { UserManagement } from '@/components/UserManagement';
+import { UserManagement, FarmerData } from '@/components/UserManagement';
 import { WeatherCard } from '@/components/WeatherCard';
 
 export default function Home() {
+  const [registeredFarmer, setRegisteredFarmer] = useState<FarmerData | null>(null);
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
@@ -20,13 +26,16 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <WeatherCard />
+            <WeatherCard registeredFarmer={registeredFarmer} />
           </div>
           <div className="lg:row-span-2">
-            <UserManagement />
+            <UserManagement 
+              registeredFarmer={registeredFarmer} 
+              setRegisteredFarmer={setRegisteredFarmer} 
+            />
           </div>
           <div className="lg:col-span-2">
-            <AdvisoryAlerts />
+            <AdvisoryAlerts registeredFarmer={registeredFarmer} />
           </div>
            <div className="lg:col-span-2">
             <PestDiseaseIdentification />

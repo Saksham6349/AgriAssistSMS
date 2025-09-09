@@ -25,53 +25,46 @@ import {
 } from "@/components/ui/select";
 import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import type { FarmerData } from "./UserManagement";
+import { sendSms } from "@/ai/flows/send-sms";
 
 type ServerActionResult = {
   summary: string | null;
   error: string | null;
 };
 
-// Mock function to simulate fetching weather data. In a real app, this would call a weather API.
+// Mock function to simulate fetching weather data.
 async function fetchWeatherData(location: string) {
-  // Simulate API call delay
   await new Promise((resolve) => setTimeout(resolve, 800));
-  
   const today = new Date();
   const getDayOfWeek = (date: Date) => {
     return date.toLocaleDateString('en-US', { weekday: 'long' });
   };
-
-  // Generate a more realistic forecast
   const forecast = Array.from({ length: 5 }).map((_, i) => {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
-    
     const day = getDayOfWeek(date);
-    const baseTemp = 35; // Base temperature for a hot location like Delhi
+    const baseTemp = 35; 
     const temp_c = baseTemp - i + Math.floor(Math.random() * 4) - 2;
     const conditions = ["Clear skies", "Sunny with scattered clouds", "Hazy sunshine", "Hot and humid"];
     const condition = conditions[Math.floor(Math.random() * conditions.length)];
-    const precipitation_mm = Math.random() < 0.1 ? Math.floor(Math.random() * 5) : 0; // Low chance of rain
-
+    const precipitation_mm = Math.random() < 0.1 ? Math.floor(Math.random() * 5) : 0;
     return { day, temp_c, condition, precipitation_mm };
   });
-
-  return JSON.stringify(
-    {
-      location: location,
-      forecast,
-    },
-    null,
-    2
-  );
+  return JSON.stringify({ location, forecast }, null, 2);
 }
 
-export function WeatherCard() {
-  const [isPending, startTransition] = useTransition();
+interface WeatherCardProps {
+  registeredFarmer: FarmerData | null;
+}
+
+export function WeatherCard({ registeredFarmer }: WeatherCardProps) {
+  const [isForecastPending, startForecastTransition] = useTransition();
+  const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
   const [location, setLocation] = useState("Delhi");
   const [language, setLanguage] = useState("English");
-  const [smsPreview, setSmsPreview] = useState<string | null>(null);
+  const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleGetForecast = (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,16 +78,14 @@ export function WeatherCard() {
         return;
     }
 
-    startTransition(async () => {
+    startForecastTransition(async () => {
       try {
         setResult(null);
-        setSmsPreview(null);
+        setSmsStatus(null);
         const weatherData = await fetchWeatherData(location);
         const summaryRes = await summarizeWeatherData({ location, weatherData });
         
-        if (!summaryRes.summary) {
-            throw new Error("Empty summary returned.");
-        }
+        if (!summaryRes.summary) throw new Error("Empty summary returned.");
 
         if (language === "English") {
             setResult({ summary: summaryRes.summary, error: null });
@@ -117,10 +108,7 @@ export function WeatherCard() {
           ? "Failed to translate weather summary."
           : "Failed to get weather summary.";
         
-        setResult({
-          summary: null,
-          error: errorMessage,
-        });
+        setResult({ summary: null, error: errorMessage });
         toast({
           variant: "destructive",
           title: "API Error",
@@ -131,8 +119,33 @@ export function WeatherCard() {
   };
 
   const handleSendSms = () => {
+    if (!registeredFarmer) {
+      toast({
+        variant: "destructive",
+        title: "No Farmer Registered",
+        description: "Please register a farmer before sending an SMS.",
+      });
+      return;
+    }
     if (result?.summary) {
-      setSmsPreview(result.summary);
+        startSmsTransition(async () => {
+            try {
+                const res = await sendSms({ to: registeredFarmer.phone, message: result.summary! });
+                setSmsStatus(res.status);
+                 toast({
+                    title: "SMS Sent!",
+                    description: `Message sent to ${registeredFarmer.name} at ${registeredFarmer.phone}`,
+                });
+            } catch (error) {
+                console.error("SMS sending failed", error);
+                setSmsStatus("Failed to send SMS.");
+                toast({
+                    variant: "destructive",
+                    title: "SMS Error",
+                    description: "Could not send the SMS. Please try again.",
+                });
+            }
+        });
     }
   }
 
@@ -179,36 +192,36 @@ export function WeatherCard() {
                           <SelectItem value="Mandarin">Mandarin</SelectItem>
                       </SelectContent>
                   </Select>
-                  <Button type="submit" disabled={isPending} className="flex-grow">
-                      {isPending ? <Loader2 className="animate-spin" /> : 'Get Forecast'}
+                  <Button type="submit" disabled={isForecastPending} className="flex-grow">
+                      {isForecastPending ? <Loader2 className="animate-spin" /> : 'Get Forecast'}
                   </Button>
               </div>
             </div>
           </form>
           <div className="mt-4 pt-4 border-t">
-            {isPending && (
+            {isForecastPending && (
                 <div className="space-y-2">
                     <Skeleton className="h-4 w-3/4" />
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-5/6" />
                 </div>
             )}
-            {result?.summary && !isPending && (
+            {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
                 <h4 className="font-semibold mb-2 text-foreground">Weather Summary ({language}):</h4>
                 <p>{result.summary}</p>
               </div>
             )}
-            {smsPreview && (
+            {smsStatus && !isSmsPending && (
                 <Alert className="mt-4">
                     <Send className="w-4 h-4" />
-                    <AlertTitle>SMS Sent!</AlertTitle>
+                    <AlertTitle>SMS Status</AlertTitle>
                     <AlertDescription className="text-xs whitespace-pre-wrap break-words">
-                        {`Message sent to registered farmer: "${smsPreview}"`}
+                        {smsStatus} for farmer {registeredFarmer?.name}.
                     </AlertDescription>
                 </Alert>
             )}
-            {!result && !isPending && !smsPreview && (
+            {!result && !isForecastPending && !smsStatus && (
                 <div className="text-center text-muted-foreground py-4">
                     <p>Enter a location to see the weather summary.</p>
                 </div>
@@ -216,13 +229,11 @@ export function WeatherCard() {
           </div>
         </CardContent>
         <CardFooter>
-            <Button onClick={handleSendSms} disabled={!result?.summary || isPending} className="w-full" variant="secondary">
-                <Send /> Send as SMS
+            <Button onClick={handleSendSms} disabled={!result?.summary || isForecastPending || isSmsPending} className="w-full" variant="secondary">
+                {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
             </Button>
         </CardFooter>
       </div>
     </Card>
   );
 }
-
-    
