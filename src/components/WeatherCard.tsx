@@ -27,6 +27,7 @@ import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import type { FarmerData } from "./UserManagement";
 import { sendSms } from "@/ai/flows/send-sms";
+import type { SmsMessage } from "./SmsHistory";
 
 type ServerActionResult = {
   summary: string | null;
@@ -56,9 +57,10 @@ async function fetchWeatherData(location: string) {
 
 interface WeatherCardProps {
   registeredFarmer: FarmerData | null;
+  onSmsSent: (message: Omit<SmsMessage, 'timestamp'>) => void;
 }
 
-export function WeatherCard({ registeredFarmer }: WeatherCardProps) {
+export function WeatherCard({ registeredFarmer, onSmsSent }: WeatherCardProps) {
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
@@ -132,6 +134,11 @@ export function WeatherCard({ registeredFarmer }: WeatherCardProps) {
             try {
                 const res = await sendSms({ to: registeredFarmer.phone, message: result.summary! });
                 setSmsStatus(res.status);
+                onSmsSent({
+                  to: registeredFarmer.phone,
+                  message: result.summary!,
+                  type: 'Weather',
+                });
                  toast({
                     title: "SMS Sent!",
                     description: `Message sent to ${registeredFarmer.name} at ${registeredFarmer.phone}`,

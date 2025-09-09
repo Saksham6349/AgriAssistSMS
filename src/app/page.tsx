@@ -7,9 +7,15 @@ import { Header } from '@/components/Header';
 import { PestDiseaseIdentification } from '@/components/PestDiseaseIdentification';
 import { UserManagement, FarmerData } from '@/components/UserManagement';
 import { WeatherCard } from '@/components/WeatherCard';
+import { SmsHistory, SmsMessage } from '@/components/SmsHistory';
 
 export default function Home() {
   const [registeredFarmer, setRegisteredFarmer] = useState<FarmerData | null>(null);
+  const [smsHistory, setSmsHistory] = useState<SmsMessage[]>([]);
+
+  const addSmsToHistory = (message: Omit<SmsMessage, 'timestamp'>) => {
+    setSmsHistory(prev => [{ ...message, timestamp: new Date() }, ...prev]);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -26,19 +32,28 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <WeatherCard registeredFarmer={registeredFarmer} />
+            <WeatherCard 
+              registeredFarmer={registeredFarmer} 
+              onSmsSent={addSmsToHistory} 
+            />
           </div>
-          <div className="lg:row-span-2">
+          <div className="lg:row-span-3">
             <UserManagement 
               registeredFarmer={registeredFarmer} 
               setRegisteredFarmer={setRegisteredFarmer} 
             />
           </div>
           <div className="lg:col-span-2">
-            <AdvisoryAlerts registeredFarmer={registeredFarmer} />
+            <AdvisoryAlerts 
+              registeredFarmer={registeredFarmer} 
+              onSmsSent={addSmsToHistory} 
+            />
           </div>
            <div className="lg:col-span-2">
             <PestDiseaseIdentification />
+          </div>
+          <div className="lg:col-span-3">
+             <SmsHistory history={smsHistory} />
           </div>
         </div>
       </main>

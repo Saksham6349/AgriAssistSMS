@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import type { FarmerData } from "./UserManagement";
 import { sendSms } from "@/ai/flows/send-sms";
+import type { SmsMessage } from "./SmsHistory";
 
 const sampleAlert =
   "Warning: Yellow Rust detected in wheat crops in Haryana region. Farmers are advised to inspect fields for yellowish stripes on leaves. If found, spray approved fungicides like Propiconazole or Tebuconazole immediately to prevent yield loss. Consult local agricultural office for details.";
@@ -36,9 +37,10 @@ type ServerActionResult = {
 
 interface AdvisoryAlertsProps {
   registeredFarmer: FarmerData | null;
+  onSmsSent: (message: Omit<SmsMessage, 'timestamp'>) => void;
 }
 
-export function AdvisoryAlerts({ registeredFarmer }: AdvisoryAlertsProps) {
+export function AdvisoryAlerts({ registeredFarmer, onSmsSent }: AdvisoryAlertsProps) {
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
@@ -89,6 +91,11 @@ export function AdvisoryAlerts({ registeredFarmer }: AdvisoryAlertsProps) {
         try {
           const res = await sendSms({ to: registeredFarmer.phone, message: result.translatedText! });
           setSmsStatus(res.status);
+          onSmsSent({
+            to: registeredFarmer.phone,
+            message: result.translatedText!,
+            type: 'Advisory',
+          });
           toast({
               title: "SMS Sent!",
               description: `Message sent to ${registeredFarmer.name} at ${registeredFarmer.phone}`,
