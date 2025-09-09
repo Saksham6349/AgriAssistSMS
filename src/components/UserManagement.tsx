@@ -18,10 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, Sprout, MapPin, Globe, CheckCircle } from "lucide-react";
+import { UserPlus, MessageSquareText, FilePenLine } from "lucide-react";
 
 export function UserManagement() {
-  const [submitted, setSubmitted] = useState(false);
+  const [smsPreview, setSmsPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -41,13 +41,14 @@ export function UserManagement() {
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
-    setSubmitted(true);
-    setTimeout(() => {
-        setSubmitted(false);
-        setFormData({ name: '', location: '', crop: 'Wheat', secondaryCrop: 'Corn', language: 'English' });
-    }, 3000);
+    const message = `New Farmer Registered:\nName: ${formData.name}\nLocation: ${formData.location}\nPrimary Crop: ${formData.crop}\nSecondary Crop: ${formData.secondaryCrop}\nLanguage: ${formData.language}`;
+    setSmsPreview(message);
   };
+
+  const handleReset = () => {
+    setSmsPreview(null);
+    setFormData({ name: '', location: '', crop: 'Wheat', secondaryCrop: 'Corn', language: 'English' });
+  }
 
   return (
     <Card className="h-full flex flex-col">
@@ -65,11 +66,16 @@ export function UserManagement() {
         </div>
       </CardHeader>
       <CardContent className="flex-grow">
-        {submitted ? (
+        {smsPreview ? (
           <div className="flex flex-col items-center justify-center h-full text-center bg-muted/50 p-6 rounded-lg">
-            <CheckCircle className="w-16 h-16 text-primary mb-4" />
-            <h3 className="text-xl font-semibold">Registration Successful!</h3>
-            <p className="text-muted-foreground text-sm">The farmer's preferences have been saved.</p>
+            <MessageSquareText className="w-12 h-12 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">SMS Preview</h3>
+            <div className="bg-background p-4 rounded-lg text-left w-full border text-sm whitespace-pre-wrap">
+                <p className="text-muted-foreground">{smsPreview}</p>
+            </div>
+            <Button onClick={handleReset} className="w-full mt-4">
+                <FilePenLine /> Register Another Farmer
+            </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,7 +119,7 @@ export function UserManagement() {
             </div>
             <div className="space-y-2">
               <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop</label>
-              <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
+              <Select name="secondaryCrop" value={formData.secondaryCrop} onValue-change={handleSelectChange('secondaryCrop')}>
                 <SelectTrigger id="secondary-crop-select">
                   <SelectValue placeholder="Select secondary crop" />
                 </SelectTrigger>
