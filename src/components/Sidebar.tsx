@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot, TrendingUp } from 'lucide-react';
+import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot, TrendingUp, LifeBuoy } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +15,7 @@ const navItems = [
     { href: '/market-prices', label: 'Market Prices', icon: TrendingUp },
     { href: '/chat', label: 'Chat Assistant', icon: Bot },
     { href: '/history', label: 'SMS History', icon: History },
+    { href: '/help', label: 'Help Center', icon: LifeBuoy },
 ];
 
 export function Sidebar() {
