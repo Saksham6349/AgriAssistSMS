@@ -22,15 +22,6 @@ const firebaseConfig = {
   appId: "PASTE_YOUR_APP_ID_HERE"
 };
 
-// Check if the config is still using placeholder values
-if (firebaseConfig.apiKey.startsWith("PASTE_YOUR")) {
-  console.error("*****************************************************************");
-  console.error("FIREBASE CONFIGURATION IS MISSING!");
-  console.error("Please paste your Firebase project's config object into 'src/lib/firebase.ts'");
-  console.error("The app will not connect to Firestore until this is updated.");
-  console.error("*****************************************************************");
-}
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
