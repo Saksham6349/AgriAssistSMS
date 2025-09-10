@@ -247,6 +247,7 @@ export function AdvisoryAlerts() {
             disabled={!translatedText || isTranslatePending || isSmsPending} 
             className="w-full"
             variant="secondary"
+            size="sm"
           >
              {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
           </Button>

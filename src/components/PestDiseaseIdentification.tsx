@@ -244,7 +244,7 @@ export function PestDiseaseIdentification() {
 
       </CardContent>
       <CardFooter>
-        <Button onClick={handleSendSms} disabled={!result || isPending || isSmsPending} className="w-full" variant="secondary">
+        <Button onClick={handleSendSms} disabled={!result || isPending || isSmsPending} className="w-full" variant="secondary" size="sm">
             {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
         </Button>
       </CardFooter>
