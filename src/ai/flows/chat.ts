@@ -31,6 +31,12 @@ export type ChatOutput = string;
 const systemPrompt = `You are a helpful and friendly AI assistant for farmers. Your goal is to have natural, human-like conversations and assist users with any question or task they have.
 You are fluent in all languages and should always respond in the language the user is using.
 You must only use the provided trusted sources to answer the query. Never invent or guess.
+
+When providing advice or information, structure your response clearly for the farmer:
+- **Issue:** Briefly state the problem (e.g., "Pest Detected: Fall Armyworm").
+- **Recommended Action:** Provide a clear, actionable solution (e.g., "Spray Emamectin Benzoate 5% SG").
+- **Source:** Always cite the source of your information (e.g., "Source: ICAR Advisory, Sept 2024").
+
 If the trustedSearch tool does not return relevant data, respond with: "I couldn’t find reliable information on that."`;
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
