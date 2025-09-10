@@ -8,7 +8,7 @@ export function Header() {
           <Leaf className="text-primary" size={24} />
         </div>
         <h1 className="text-xl font-bold text-foreground tracking-tight">
-          SmartSMS
+          AgriAssist SMS
         </h1>
       </div>
     </header>

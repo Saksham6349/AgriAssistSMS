@@ -61,8 +61,8 @@ export function HelpCenter() {
                 <Mail className="w-6 h-6 text-primary" />
                 <div>
                     <p className="font-semibold">Email Support</p>
-                    <a href="mailto:support@smartsms.farm" className="text-sm text-muted-foreground hover:underline">
-                        support@smartsms.farm
+                    <a href="mailto:support@agriassistsms.farm" className="text-sm text-muted-foreground hover:underline">
+                        support@agriassistsms.farm
                     </a>
                 </div>
              </div>
@@ -80,7 +80,7 @@ export function HelpCenter() {
           <CardHeader>
             <CardTitle>Frequently Asked Questions (FAQ)</CardTitle>
             <CardDescription>
-              Find answers to common questions about the SmartSMS platform.
+              Find answers to common questions about the AgriAssist SMS platform.
             </CardDescription>
           </CardHeader>
           <CardContent>
