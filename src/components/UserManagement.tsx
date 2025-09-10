@@ -33,12 +33,12 @@ export type FarmerData = {
 };
 
 const initialFormData: FarmerData = {
-    name: 'Satya Nadella',
-    phone: '+18777804236',
-    location: 'Hyderabad',
-    crop: 'Wheat',
-    secondaryCrop: 'Corn',
-    language: 'English',
+    name: '',
+    phone: '',
+    location: '',
+    crop: '',
+    secondaryCrop: '',
+    language: '',
 };
 
 export function UserManagement() {
@@ -205,10 +205,10 @@ export function UserManagement() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <label htmlFor="language-pref" className="text-sm font-medium">Preferred Language</label>
+             <div className="space-y-2">
+              <label htmlFor="language-select" className="text-sm font-medium">Preferred Language</label>
               <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
-                <SelectTrigger id="language-pref">
+                <SelectTrigger id="language-select">
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
                 <SelectContent>
@@ -224,11 +224,12 @@ export function UserManagement() {
                   <SelectItem value="Kannada">Kannada</SelectItem>
                   <SelectItem value="Punjabi">Punjabi</SelectItem>
                   <SelectItem value="Swahili">Swahili</SelectItem>
+                  <SelectItem value="Mandarin">Mandarin</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-             <Button type="submit" className="w-full">
-                Register Farmer
+            <Button type="submit" className="w-full">
+              <UserPlus /> Register Farmer
             </Button>
           </form>
         )}
