@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot, Code } from 'lucide-react';
+import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -13,7 +13,6 @@ const navItems = [
     { href: '/diagnosis', label: 'Crop Diagnosis', icon: Stethoscope },
     { href: '/chat', label: 'Chat Assistant', icon: Bot },
     { href: '/history', label: 'SMS History', icon: History },
-    { href: '/snippets/guessing-game', label: 'Code Snippets', icon: Code },
 ];
 
 export function Sidebar() {
