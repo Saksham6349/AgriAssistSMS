@@ -132,12 +132,21 @@ export function WeatherCard() {
         console.error(error);
         const errorMessage = error instanceof Error ? error.message : "Failed to get weather summary.";
         
+        if (errorMessage.includes("Failed to geocode location")) {
+            toast({
+              variant: "destructive",
+              title: "API Key Error",
+              description: "Could not get weather data. Please check your OpenWeather API key in the .env file. It may be invalid or not yet active.",
+            });
+        } else {
+            toast({
+              variant: "destructive",
+              title: "API Error",
+              description: `${errorMessage}`,
+            });
+        }
         setResult({ summary: null, error: errorMessage });
-        toast({
-          variant: "destructive",
-          title: "API Error",
-          description: `${errorMessage}`,
-        });
+
       }
     });
   };
