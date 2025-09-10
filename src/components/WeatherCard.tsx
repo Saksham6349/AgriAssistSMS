@@ -225,7 +225,7 @@ export function WeatherCard() {
                     <AlertTitle>SMS Status</AlertTitle>
                     <AlertDescription className="text-xs whitespace-pre-wrap break-words">
                         {smsStatus} for farmer {registeredFarmer?.name}.
-                    </Description>
+                    </AlertDescription>
                 </Alert>
             )}
             {!result && !isForecastPending && !smsStatus && (
