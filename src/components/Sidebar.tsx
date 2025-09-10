@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -19,7 +20,7 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-64 border-r p-4 hidden md:block bg-card">
+        <aside className="w-64 border-r p-4 hidden md:block bg-card sticky top-16 h-[calc(100vh-4rem)]">
           <nav className="flex flex-col space-y-2">
             {navItems.map((item) => (
                 <Button
