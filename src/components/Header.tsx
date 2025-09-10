@@ -2,13 +2,6 @@
 "use client";
 
 import { Leaf, Languages } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useAppContext } from '@/context/AppContext';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -28,21 +21,6 @@ export function Header() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Languages className="h-5 w-5 text-muted-foreground" />
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(availableLanguages).map(([code, name]) => (
-                <SelectItem key={code} value={code}>
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </div>
     </header>
   );
