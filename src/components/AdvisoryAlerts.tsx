@@ -188,7 +188,7 @@ export function AdvisoryAlerts() {
         toast({
           variant: "destructive",
           title: "Audio Error",
-          description: "Could not generate audio. Please check your ElevenLabs API key.",
+          description: "Could not generate audio. Please check your Gemini API key and try again.",
         });
       }
     });
