@@ -85,12 +85,10 @@ export function ChatAssistant() {
     }
 
     const userMessage: Message = { role: "user", content: userMessageContent };
-    const newMessages: Message[] = [...messages, userMessage];
-
-    setMessages(newMessages);
     
-    // Create the input for the AI call using the *new* message list.
-    // The last message is the user's prompt, so we pass the history *before* it.
+    // Optimistically update the UI with the user's message
+    setMessages((prev) => [...prev, userMessage]);
+    
     const chatInput: ChatInput = {
       history: messages.map(m => ({
           role: m.role,
@@ -111,13 +109,19 @@ export function ChatAssistant() {
                 content: [{ text: responseText }],
             };
             setMessages((prev) => [...prev, modelMessage]);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Chat failed:", error);
+            
+            let displayMessage = "Sorry, I encountered an error. Please try again.";
+            if (error.message && error.message.includes('503 Service Unavailable')) {
+                displayMessage = "The AI model is currently overloaded. Please wait a moment and try again.";
+            }
+
             const errorMessage: Message = {
                 role: 'model',
-                content: [{ text: "Sorry, I encountered an error. Please try again." }],
+                content: [{ text: displayMessage }],
             };
-            // Revert the user's message and add an error message instead
+            // Revert the optimistic UI update and add an error message instead
             setMessages((prev) => [...prev.slice(0, -1), errorMessage]);
         }
     });
