@@ -36,27 +36,32 @@ type ServerActionResult = {
   error: string | null;
 };
 
-async function fetchWeatherData(location: string): Promise<string> {
+type WeatherDataResult = {
+  data: string | null;
+  error: string | null;
+};
+
+async function fetchWeatherData(location: string): Promise<WeatherDataResult> {
   if (!openWeatherApiKey) {
-    throw new Error("OpenWeather API key is not configured. Please add NEXT_PUBLIC_OPENWEATHER_API_KEY to your .env file.");
+    return { data: null, error: "OpenWeather API key is not configured. Please add NEXT_PUBLIC_OPENWEATHER_API_KEY to your .env file to enable this feature." };
   }
   
   // 1. Geocode location to get coordinates
   const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${openWeatherApiKey}`);
   if (!geoResponse.ok) {
     // This often happens if the API key is invalid or not yet active.
-    throw new Error("Failed to geocode location. Please check that your OpenWeather API key is correct and active.");
+    return { data: null, error: "Failed to geocode location. Please check that your OpenWeather API key is correct and active." };
   }
   const geoData = await geoResponse.json();
   if (geoData.length === 0) {
-    throw new Error(`Could not find location: ${location}`);
+    return { data: null, error: `Could not find location: ${location}` };
   }
   const { lat, lon } = geoData[0];
 
   // 2. Fetch 5-day forecast data
   const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${openWeatherApiKey}`);
   if (!forecastResponse.ok) {
-    throw new Error("Failed to fetch weather data.");
+     return { data: null, error: "Failed to fetch weather data." };
   }
   const forecastData = await forecastResponse.json();
 
@@ -69,7 +74,7 @@ async function fetchWeatherData(location: string): Promise<string> {
     precipitation_chance: item.pop,
   }));
 
-  return JSON.stringify({ location, forecast: simplifiedForecast }, null, 2);
+  return { data: JSON.stringify({ location, forecast: simplifiedForecast }, null, 2), error: null };
 }
 
 
@@ -96,11 +101,6 @@ export function WeatherCard() {
         return;
     }
 
-    if (!openWeatherApiKey) {
-        setResult({ summary: null, error: "OpenWeather API key is not configured. Please add NEXT_PUBLIC_OPENWEATHER_API_KEY to your .env file to enable this feature."});
-        return;
-    }
-
     startForecastTransition(async () => {
       try {
         setResult(null);
@@ -109,8 +109,14 @@ export function WeatherCard() {
             audio.pause();
             setAudio(null);
         }
-        const weatherData = await fetchWeatherData(loc);
-        const summaryRes = await summarizeWeatherData({ location: loc, weatherData });
+        
+        const weatherResult = await fetchWeatherData(loc);
+
+        if (weatherResult.error) {
+          throw new Error(weatherResult.error);
+        }
+
+        const summaryRes = await summarizeWeatherData({ location: loc, weatherData: weatherResult.data! });
         
         if (!summaryRes.summary) throw new Error("Empty summary returned.");
 
@@ -133,7 +139,6 @@ export function WeatherCard() {
         console.error(error);
         const errorMessage = error instanceof Error ? error.message : "Failed to get weather summary.";
         
-        // Instead of only using a toast, set the error state to display it in the UI.
         setResult({ summary: null, error: errorMessage });
         
         toast({
@@ -331,5 +336,3 @@ export function WeatherCard() {
     </Card>
   );
 }
-
-    
