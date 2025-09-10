@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Sun, Loader2, Send, PlayCircle, StopCircle } from "lucide-react";
+import { MapPin, Sun, Loader2, Send, PlayCircle, StopCircle, AlertCircle } from "lucide-react";
 import { summarizeWeatherData } from "@/ai/flows/summarize-weather-data";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "./ui/skeleton";
@@ -36,9 +36,9 @@ type ServerActionResult = {
   error: string | null;
 };
 
-async function fetchWeatherData(location: string) {
+async function fetchWeatherData(location: string): Promise<string> {
   if (!openWeatherApiKey) {
-    throw new Error("OpenWeather API key is not configured. Please add it to your .env file.");
+    throw new Error("OpenWeather API key is not configured. Please add OPENWEATHER_API_KEY to your .env file.");
   }
   
   // 1. Geocode location to get coordinates
@@ -95,6 +95,11 @@ export function WeatherCard() {
         return;
     }
 
+    if (!openWeatherApiKey) {
+        setResult({ summary: null, error: "OpenWeather API key is not configured. Please add OPENWEATHER_API_KEY to your .env file to enable this feature."});
+        return;
+    }
+
     startForecastTransition(async () => {
       try {
         setResult(null);
@@ -131,7 +136,7 @@ export function WeatherCard() {
         toast({
           variant: "destructive",
           title: "API Error",
-          description: `${errorMessage} Please check your API keys and try again.`,
+          description: `${errorMessage}`,
         });
       }
     });
@@ -282,7 +287,8 @@ export function WeatherCard() {
             )}
              {result?.error && !isForecastPending && (
               <Alert variant="destructive">
-                <AlertTitle>Error</AlertTitle>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Configuration Error</AlertTitle>
                 <AlertDescription>{result.error}</AlertDescription>
               </Alert>
             )}
@@ -322,5 +328,3 @@ export function WeatherCard() {
     </Card>
   );
 }
-
-    
