@@ -13,7 +13,7 @@ export const twilioConfig = {
 
 export const geminiApiKey = process.env.GEMINI_API_KEY;
 
-export const openWeatherApiKey = process.env.OPENWEATHER_API_KEY;
+export const openWeatherApiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 
 export const elevenLabsConfig = {
     apiKey: process.env.ELEVENLABS_API_KEY,

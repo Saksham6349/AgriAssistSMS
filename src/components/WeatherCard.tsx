@@ -38,7 +38,7 @@ type ServerActionResult = {
 
 async function fetchWeatherData(location: string): Promise<string> {
   if (!openWeatherApiKey) {
-    throw new Error("OpenWeather API key is not configured. Please add OPENWEATHER_API_KEY to your .env file.");
+    throw new Error("OpenWeather API key is not configured. Please add NEXT_PUBLIC_OPENWEATHER_API_KEY to your .env file.");
   }
   
   // 1. Geocode location to get coordinates
@@ -96,7 +96,7 @@ export function WeatherCard() {
     }
 
     if (!openWeatherApiKey) {
-        setResult({ summary: null, error: "OpenWeather API key is not configured. Please add OPENWEATHER_API_KEY to your .env file to enable this feature."});
+        setResult({ summary: null, error: "OpenWeather API key is not configured. Please add NEXT_PUBLIC_OPENWEATHER_API_KEY to your .env file to enable this feature."});
         return;
     }
 
