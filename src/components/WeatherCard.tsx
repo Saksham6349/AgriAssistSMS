@@ -27,6 +27,7 @@ import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type ServerActionResult = {
   summary: string | null;
@@ -56,6 +57,7 @@ async function fetchWeatherData(location: string) {
 
 export function WeatherCard() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
+  const { t } = useTranslation();
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
@@ -178,9 +180,9 @@ export function WeatherCard() {
             <Sun className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>Weather Forecast</CardTitle>
+            <CardTitle>{t('weather.title')}</CardTitle>
             <CardDescription>
-              Get AI-powered weather summaries for your location.
+              {t('weather.description')}
             </CardDescription>
           </div>
         </div>
@@ -193,7 +195,7 @@ export function WeatherCard() {
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Enter location..."
+                  placeholder={t('weather.locationPlaceholder')}
                   className="pl-10"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -218,7 +220,7 @@ export function WeatherCard() {
                       </SelectContent>
                   </Select>
                   <Button type="submit" disabled={isForecastPending} className="flex-grow">
-                      {isForecastPending ? <Loader2 className="animate-spin" /> : 'Get Forecast'}
+                      {isForecastPending ? <Loader2 className="animate-spin" /> : t('weather.getForecast')}
                   </Button>
               </div>
             </div>
@@ -233,7 +235,7 @@ export function WeatherCard() {
             )}
             {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
-                <h4 className="font-semibold mb-2 text-foreground">Weather Summary ({language}):</h4>
+                <h4 className="font-semibold mb-2 text-foreground">{t('weather.summary')} ({language}):</h4>
                 <p>{result.summary}</p>
               </div>
             )}
@@ -248,14 +250,14 @@ export function WeatherCard() {
             )}
             {!result && !isForecastPending && !smsStatus && (
                 <div className="text-center text-muted-foreground py-4">
-                    <p>Enter a location to see the weather summary.</p>
+                    <p>{t('weather.enterLocationPrompt')}</p>
                 </div>
             )}
           </div>
         </CardContent>
         <CardFooter>
             <Button onClick={handleSendSms} disabled={!result?.summary || isForecastPending || isSmsPending} className="w-full" variant="secondary" size="sm">
-                {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
+                {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> {t('weather.sendSms')}</>}
             </Button>
         </CardFooter>
       </div>

@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { sendSms } from "@/ai/flows/send-sms";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type CropData = {
   crop: string;
@@ -62,6 +63,7 @@ type SortDirection = "asc" | "desc";
 
 export function MarketPrices() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
+  const { t } = useTranslation();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>("crop");
@@ -169,9 +171,9 @@ export function MarketPrices() {
             <TrendingUp className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>Market Prices</CardTitle>
+            <CardTitle>{t('market.title')}</CardTitle>
             <CardDescription>
-              Live mandi rates for key crops in {registeredFarmer?.location || "your area"}. Prices per quintal.
+              {t('market.description')}
             </CardDescription>
           </div>
         </div>
@@ -182,17 +184,17 @@ export function MarketPrices() {
             <TableRow>
               <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('crop')} className="px-0 hover:bg-transparent">
-                  Crop {getSortIcon('crop')}
+                  {t('market.crop')} {getSortIcon('crop')}
                 </Button>
               </TableHead>
               <TableHead className="text-right">
                 <Button variant="ghost" onClick={() => handleSort('price')} className="px-0 hover:bg-transparent">
-                  Price (INR) {getSortIcon('price')}
+                  {t('market.price')} {getSortIcon('price')}
                 </Button>
               </TableHead>
               <TableHead className="text-right">
                 <Button variant="ghost" onClick={() => handleSort('change')} className="px-0 hover:bg-transparent">
-                  Change {getSortIcon('change')}
+                  {t('market.change')} {getSortIcon('change')}
                 </Button>
               </TableHead>
             </TableRow>
@@ -234,7 +236,7 @@ export function MarketPrices() {
       </CardContent>
       <CardFooter>
         <Button onClick={handleSendSms} disabled={!registeredFarmer || isSmsPending} className="w-full" variant="secondary" size="sm">
-            {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
+            {isSmsPending ? <><Loader2 className="animate-spin" /> {t('market.sending')}</> : <><Send /> {t('market.sendSms')}</>}
         </Button>
       </CardFooter>
     </Card>

@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 import { Bot, Loader2, Send, User, Upload, X } from "lucide-react";
 import Image from "next/image";
@@ -27,6 +28,7 @@ type Message = {
 };
 
 export function ChatAssistant() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -148,9 +150,9 @@ export function ChatAssistant() {
             <Bot className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>AI Chat Assistant</CardTitle>
+            <CardTitle>{t('chat.title')}</CardTitle>
             <CardDescription>
-              Ask me anything about farming, crops, and weather.
+              {t('chat.description')}
             </CardDescription>
           </div>
         </div>
@@ -212,7 +214,7 @@ export function ChatAssistant() {
                     </div>
                     <div className="bg-muted text-foreground rounded-lg px-4 py-2 text-sm flex items-center">
                         <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
-                        Thinking...
+                        {t('chat.thinking')}
                     </div>
                 </div>
             )}
@@ -239,11 +241,11 @@ export function ChatAssistant() {
                 />
                 <Button type="button" variant="outline" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isPending}>
                     <Upload />
-                    <span className="sr-only">Upload Image</span>
+                    <span className="sr-only">{t('chat.uploadImage')}</span>
                 </Button>
                 <Input
                     type="text"
-                    placeholder="Ask a question..."
+                    placeholder={t('chat.placeholder')}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -252,7 +254,7 @@ export function ChatAssistant() {
                 />
                 <Button type="submit" disabled={isPending || (!input.trim() && !imageData)}>
                     {isPending ? <Loader2 className="animate-spin"/> : <Send/>}
-                    <span className="sr-only">Send</span>
+                    <span className="sr-only">{t('chat.send')}</span>
                 </Button>
             </form>
         </div>
