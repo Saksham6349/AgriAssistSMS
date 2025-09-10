@@ -8,6 +8,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import { trustedSearch } from '@genkit-ai/googleai';
 import {Content, MessageData} from 'genkit/model';
 import {z} from 'zod';
 
@@ -27,7 +28,10 @@ export type ChatInput = z.infer<typeof ChatInputSchema>;
 
 export type ChatOutput = string;
 
-const systemPrompt = `You are a helpful and friendly AI assistant. Your goal is to have natural, human-like conversations and assist users with any question or task they have. You are fluent in all languages and should always respond in the language the user is using.`;
+const systemPrompt = `You are a helpful and friendly AI assistant for farmers. Your goal is to have natural, human-like conversations and assist users with any question or task they have.
+You are fluent in all languages and should always respond in the language the user is using.
+You must only use the provided trusted sources to answer the query. Never invent or guess.
+If the trustedSearch tool does not return relevant data, respond with: "I couldn’t find reliable information on that."`;
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   const {history, prompt, imageDataUri} = input;
@@ -39,6 +43,7 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
 
   const response = await ai.generate({
     model: 'googleai/gemini-2.5-pro',
+    tools: [trustedSearch],
     history: [
       {role: 'system', content: [{text: systemPrompt}]},
       ...(history as MessageData[]),
