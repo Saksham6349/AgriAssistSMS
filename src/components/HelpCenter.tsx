@@ -50,7 +50,7 @@ export function HelpCenter() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 max-w-md mx-auto">
+      <div className="space-y-6 max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Contact Support</CardTitle>
@@ -75,26 +75,26 @@ export function HelpCenter() {
              </div>
           </CardContent>
         </Card>
-      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Frequently Asked Questions (FAQ)</CardTitle>
-          <CardDescription>
-            Find answers to common questions about the SmartSMS platform.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem value={`item-${index}`} key={index}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Frequently Asked Questions (FAQ)</CardTitle>
+            <CardDescription>
+              Find answers to common questions about the SmartSMS platform.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, index) => (
+                <AccordionItem value={`item-${index}`} key={index}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
