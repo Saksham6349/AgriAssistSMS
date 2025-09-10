@@ -20,12 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
+import { cn } from "@/lib/utils";
 
 export type FarmerData = {
   name: string;
@@ -67,8 +68,11 @@ export function UserManagement() {
               if (registeredFarmer.idProof) {
                   if (registeredFarmer.idProof.startsWith('data:image')) {
                       setFilePreview({ url: registeredFarmer.idProof, type: 'image' });
+                  } else if (registeredFarmer.idProof.startsWith('data:application/pdf')) {
+                      // We can't get the name from the data URI, so just show a generic name.
+                      setFilePreview({ name: 'id_proof.pdf', type: 'pdf' });
                   }
-                  setVerificationStatus('success'); // Assume stored farmer is verified
+                  setVerificationStatus('success');
               }
           } else {
               setFormData(initialFormData);
@@ -231,104 +235,114 @@ export function UserManagement() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">Farmer Name</label>
-              <Input id="name" name="name" placeholder="e.g., John Doe" value={formData.name} onChange={handleChange} required />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
-              <Input id="phone" name="phone" type="tel" placeholder="e.g., +1234567890" value={formData.phone} onChange={handleChange} required />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="location" className="text-sm font-medium">Location / Village</label>
-               <Input id="location" name="location" placeholder="e.g., Springfield" value={formData.location} onChange={handleChange} required />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="crop-select" className="text-sm font-medium">Primary Crop</label>
-              <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
-                <SelectTrigger id="crop-select">
-                  <SelectValue placeholder="Select crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Apples">Apples</SelectItem>
-                  <SelectItem value="Bananas">Bananas</SelectItem>
-                  <SelectItem value="Barley">Barley</SelectItem>
-                  <SelectItem value="Chickpeas">Chickpeas</SelectItem>
-                  <SelectItem value="Coffee">Coffee</SelectItem>
-                  <SelectItem value="Corn">Corn</SelectItem>
-                  <SelectItem value="Cotton">Cotton</SelectItem>
-                  <SelectItem value="Grapes">Grapes</SelectItem>
-                  <SelectItem value="Jute">Jute</SelectItem>
-                  <SelectItem value="Lentils">Lentils</SelectItem>
-                  <SelectItem value="Mangoes">Mangoes</SelectItem>
-                  <SelectItem value="Millet">Millet</SelectItem>
-                  <SelectItem value="Onions">Onions</SelectItem>
-                  <SelectItem value="Potatoes">Potatoes</SelectItem>
-                  <SelectItem value="Rice">Rice</SelectItem>
-                  <SelectItem value="Soybeans">Soybeans</SelectItem>
-                  <SelectItem value="Sugarcane">Sugarcane</SelectItem>
-                  <SelectItem value="Tea">Tea</SelectItem>
-                  <SelectItem value="Tomatoes">Tomatoes</SelectItem>
-                  <SelectItem value="Wheat">Wheat</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop</label>
-              <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
-                <SelectTrigger id="secondary-crop-select">
-                  <SelectValue placeholder="Select secondary crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Apples">Apples</SelectItem>
-                  <SelectItem value="Bananas">Bananas</SelectItem>
-                  <SelectItem value="Barley">Barley</SelectItem>
-                  <SelectItem value="Chickpeas">Chickpeas</SelectItem>
-                  <SelectItem value="Coffee">Coffee</SelectItem>
-                  <SelectItem value="Corn">Corn</SelectItem>
-                  <SelectItem value="Cotton">Cotton</SelectItem>
-                  <SelectItem value="Grapes">Grapes</SelectItem>
-                  <SelectItem value="Jute">Jute</SelectItem>
-                  <SelectItem value="Lentils">Lentils</SelectItem>
-                  <SelectItem value="Mangoes">Mangoes</SelectItem>
-                  <SelectItem value="Millet">Millet</SelectItem>
-                  <SelectItem value="Onions">Onions</SelectItem>
-                  <SelectItem value="Potatoes">Potatoes</SelectItem>
-                  <SelectItem value="Rice">Rice</SelectItem>
-                  <SelectItem value="Soybeans">Soybeans</SelectItem>
-                  <SelectItem value="Sugarcane">Sugarcane</SelectItem>
-                  <SelectItem value="Tea">Tea</SelectItem>
-                  <SelectItem value="Tomatoes">Tomatoes</SelectItem>
-                  <SelectItem value="Wheat">Wheat</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-             <div className="space-y-2">
-              <label htmlFor="language-select" className="text-sm font-medium">Preferred Language</label>
-              <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
-                <SelectTrigger id="language-select">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="English">English</SelectItem>
-                  <SelectItem value="Hindi">Hindi</SelectItem>
-                  <SelectItem value="Bengali">Bengali</SelectItem>
-                  <SelectItem value="Telugu">Telugu</SelectItem>
-                  <SelectItem value="Marathi">Marathi</SelectItem>
-                  <SelectItem value="Tamil">Tamil</SelectItem>
-                  <SelectItem value="Urdu">Urdu</SelectItem>
-                  <SelectItem value="Gujarati">Gujarati</SelectItem>
-                  <SelectItem value="Kannada">Kannada</SelectItem>
-                  <SelectItem value="Punjabi">Punjabi</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">Farmer Name</label>
+                <div className="relative flex items-center">
+                    <User className="absolute left-3 w-5 h-5 text-muted-foreground" />
+                    <Input id="name" name="name" placeholder="e.g., John Doe" value={formData.name} onChange={handleChange} required className="pl-10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
+                <div className="relative flex items-center">
+                    <Phone className="absolute left-3 w-5 h-5 text-muted-foreground" />
+                    <Input id="phone" name="phone" type="tel" placeholder="e.g., +1234567890" value={formData.phone} onChange={handleChange} required className="pl-10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="location" className="text-sm font-medium">Location / Village</label>
+                <div className="relative flex items-center">
+                    <MapPin className="absolute left-3 w-5 h-5 text-muted-foreground" />
+                    <Input id="location" name="location" placeholder="e.g., Springfield" value={formData.location} onChange={handleChange} required className="pl-10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="language-select" className="text-sm font-medium">Preferred Language</label>
+                <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
+                  <SelectTrigger id="language-select">
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="English">English</SelectItem>
+                    <SelectItem value="Hindi">Hindi</SelectItem>
+                    <SelectItem value="Bengali">Bengali</SelectItem>
+                    <SelectItem value="Telugu">Telugu</SelectItem>
+                    <SelectItem value="Marathi">Marathi</SelectItem>
+                    <SelectItem value="Tamil">Tamil</SelectItem>
+                    <SelectItem value="Urdu">Urdu</SelectItem>
+                    <SelectItem value="Gujarati">Gujarati</SelectItem>
+                    <SelectItem value="Kannada">Kannada</SelectItem>
+                    <SelectItem value="Punjabi">Punjabi</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="crop-select" className="text-sm font-medium">Primary Crop</label>
+                <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
+                  <SelectTrigger id="crop-select">
+                    <SelectValue placeholder="Select crop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Apples">Apples</SelectItem>
+                    <SelectItem value="Bananas">Bananas</SelectItem>
+                    <SelectItem value="Barley">Barley</SelectItem>
+                    <SelectItem value="Chickpeas">Chickpeas</SelectItem>
+                    <SelectItem value="Coffee">Coffee</SelectItem>
+                    <SelectItem value="Corn">Corn</SelectItem>
+                    <SelectItem value="Cotton">Cotton</SelectItem>
+                    <SelectItem value="Grapes">Grapes</SelectItem>
+                    <SelectItem value="Jute">Jute</SelectItem>
+                    <SelectItem value="Lentils">Lentils</SelectItem>
+                    <SelectItem value="Mangoes">Mangoes</SelectItem>
+                    <SelectItem value="Millet">Millet</SelectItem>
+                    <SelectItem value="Onions">Onions</SelectItem>
+                    <SelectItem value="Potatoes">Potatoes</SelectItem>
+                    <SelectItem value="Rice">Rice</SelectItem>
+                    <SelectItem value="Soybeans">Soybeans</SelectItem>
+                    <SelectItem value="Sugarcane">Sugarcane</SelectItem>
+                    <SelectItem value="Tea">Tea</SelectItem>
+                    <SelectItem value="Tomatoes">Tomatoes</SelectItem>
+                    <SelectItem value="Wheat">Wheat</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="secondary-crop-select" className="text-sm font-medium">Secondary Crop (Optional)</label>
+                <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
+                  <SelectTrigger id="secondary-crop-select">
+                    <SelectValue placeholder="Select secondary crop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Apples">Apples</SelectItem>
+                    <SelectItem value="Bananas">Bananas</SelectItem>
+                    <SelectItem value="Barley">Barley</SelectItem>
+                    <SelectItem value="Chickpeas">Chickpeas</SelectItem>
+                    <SelectItem value="Coffee">Coffee</SelectItem>
+                    <SelectItem value="Corn">Corn</SelectItem>
+                    <SelectItem value="Cotton">Cotton</SelectItem>
+                    <SelectItem value="Grapes">Grapes</SelectItem>
+                    <SelectItem value="Jute">Jute</SelectItem>
+                    <SelectItem value="Lentils">Lentils</SelectItem>
+                    <SelectItem value="Mangoes">Mangoes</SelectItem>
+                    <SelectItem value="Millet">Millet</SelectItem>
+                    <SelectItem value="Onions">Onions</SelectItem>
+                    <SelectItem value="Potatoes">Potatoes</SelectItem>
+                    <SelectItem value="Rice">Rice</SelectItem>
+                    <SelectItem value="Soybeans">Soybeans</SelectItem>
+                    <SelectItem value="Sugarcane">Sugarcane</SelectItem>
+                    <SelectItem value="Tea">Tea</SelectItem>
+                    <SelectItem value="Tomatoes">Tomatoes</SelectItem>
+                    <SelectItem value="Wheat">Wheat</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 pt-2 border-t">
               <label htmlFor="id-proof-upload" className="text-sm font-medium">Government ID Proof</label>
               <div
-                className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent hover:border-primary transition-colors"
+                className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent/20 hover:border-primary transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
                   <input
@@ -368,6 +382,7 @@ export function UserManagement() {
                     <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Upload className="w-8 h-8" />
                         <p className="font-semibold">Click to upload ID</p>
+                        <p className="text-xs">Aadhar, PAN, Ration Card, or Gas Connection</p>
                         <p className="text-xs">PNG, JPG, PDF (max 4MB)</p>
                     </div>
                   )}
@@ -402,5 +417,3 @@ export function UserManagement() {
     </Card>
   );
 }
-
-    
