@@ -104,7 +104,8 @@ export function UserManagement() {
                 <p className="text-sm text-muted-foreground">{registeredFarmer.location} | {registeredFarmer.phone}</p>
              </div>
              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">Crop: {registeredFarmer.crop}</Badge>
+                <Badge variant="secondary">Primary Crop: {registeredFarmer.crop}</Badge>
+                {registeredFarmer.secondaryCrop && <Badge variant="secondary">Secondary: {registeredFarmer.secondaryCrop}</Badge>}
                 <Badge variant="secondary">Language: {registeredFarmer.language}</Badge>
              </div>
              <Button onClick={handleReset} className="w-full mt-4 !-mb-2" variant="outline">
