@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent for verifying a government ID from an image.
@@ -34,12 +35,12 @@ const prompt = ai.definePrompt({
   name: 'verifyIdPrompt',
   input: {schema: VerifyIdInputSchema},
   output: {schema: VerifyIdOutputSchema},
-  prompt: `You are an AI assistant designed to verify government-issued identification cards from images.
+  prompt: `You are an AI assistant designed to verify specific government-issued identification documents from India.
 
-Analyze the provided image. Determine if it is a legitimate government ID card (e.g., driver's license, national ID, passport card).
+Analyze the provided image. Determine if it is a legitimate Aadhar card, PAN card, ration card, or gas connection document.
 
-- If it is a valid ID, set 'isIdCard' to true and provide a positive reason. Attempt to extract the person's full name.
-- If it is not a valid ID, set 'isIdCard' to false and explain why (e.g., "Image is a photo of a cat," "Appears to be a credit card," "Image is too blurry to read.").
+- If it is one of the accepted valid ID types and is legible, set 'isIdCard' to true and provide a positive reason (e.g., "Verified as a valid Aadhar card."). Attempt to extract the person's full name.
+- If it is not one of the accepted ID types, or if it is illegible, set 'isIdCard' to false and explain why (e.g., "The document is not an Aadhar, PAN, Ration, or gas connection card," "Appears to be a credit card," "Image is too blurry to read.").
 
 Your final output must be in the specified JSON format.
 
