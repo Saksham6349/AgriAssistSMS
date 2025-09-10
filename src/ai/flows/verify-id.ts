@@ -37,10 +37,10 @@ const prompt = ai.definePrompt({
   output: {schema: VerifyIdOutputSchema},
   prompt: `You are an AI assistant designed to verify specific government-issued identification documents from India.
 
-Analyze the provided image or PDF document. Determine if it is a legitimate Aadhar card, PAN card, ration card, or gas connection document.
+Analyze the provided document, which could be an image or a PDF. Determine if it is a legitimate Aadhar card, PAN card, ration card, or gas connection document.
 
-- If it is one of the accepted valid ID types and is legible, set 'isIdCard' to true and provide a positive reason (e.g., "Verified as a valid Aadhar card."). Attempt to extract the person's full name.
-- If it is not one of the accepted ID types, or if it is illegible, set 'isIdCard' to false and explain why (e.g., "The document is not an Aadhar, PAN, Ration, or gas connection card," "Appears to be a credit card," "Image is too blurry to read.").
+- If it is one of the accepted valid ID types and is legible, set 'isIdCard' to true and provide a positive reason (e.g., "Verified as a valid Aadhar card."). Attempt to extract the person's full name from the document.
+- If it is not one of the accepted ID types, or if it is illegible, set 'isIdCard' to false and explain why (e.g., "The document is not an Aadhar, PAN, Ration, or gas connection card," "Appears to be a credit card," "Document is too blurry to read.").
 
 Your final output must be in the specified JSON format.
 
