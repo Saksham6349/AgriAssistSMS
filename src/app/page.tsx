@@ -5,7 +5,7 @@ import { UserManagement } from '@/components/UserManagement';
 
 export default function Home() {
   return (
-        <main className="flex-grow container mx-auto p-4 md:p-8">
+        <div className="container mx-auto p-4 md:p-8">
             <div className="text-left mb-8">
               <h2 className="text-2xl md:text-3xl font-bold mb-1">
                 Farming Dashboard
@@ -19,6 +19,6 @@ export default function Home() {
                     <UserManagement />
                 </div>
             </div>
-        </main>
+        </div>
   );
 }
