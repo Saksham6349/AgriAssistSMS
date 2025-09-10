@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 40 33% 96%; /* Soft cream */
+    --background: 40 52% 94%; /* Warmer Cream */
     --foreground: 140 25% 15%; /* Dark green */
-    --card: 40 33% 99%; /* Lighter cream */
+    --card: 40 50% 97%; /* Lighter Warm Cream */
     --card-foreground: 140 25% 15%;
-    --popover: 40 33% 99%;
+    --popover: 40 50% 97%;
     --popover-foreground: 140 25% 15%;
     --primary: 140 60% 40%; /* Strong green */
     --primary-foreground: 40 10% 98%;
-    --secondary: 40 20% 93%; /* Slightly darker cream/beige */
+    --secondary: 40 30% 92%; /* Slightly darker cream/beige */
     --secondary-foreground: 140 25% 15%;
-    --muted: 40 20% 93%;
+    --muted: 40 30% 92%;
     --muted-foreground: 140 10% 45%;
     --accent: 140 60% 50%; /* Brighter green for accents */
     --accent-foreground: 40 10% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 9.1% 97.8%;
-    --border: 40 20% 90%;
-    --input: 40 20% 90%;
+    --border: 40 30% 88%;
+    --input: 40 30% 88%;
     --ring: 140 60% 40%;
     --radius: 0.5rem;
     --chart-1: 12;
