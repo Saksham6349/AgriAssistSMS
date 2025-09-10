@@ -13,7 +13,7 @@ export function Sidebar() {
     const { t } = useTranslation();
 
     const navItems = [
-        { href: '/', label: t('sidebar.dashboard'), icon: LayoutDashboard },
+        { href: '/dashboard', label: t('sidebar.dashboard'), icon: LayoutDashboard },
         { href: '/weather', label: t('sidebar.weather'), icon: Sun },
         { href: '/advisory', label: t('sidebar.advisory'), icon: MessageSquareWarning },
         { href: '/diagnosis', label: t('sidebar.diagnosis'), icon: Stethoscope },
