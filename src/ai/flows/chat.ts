@@ -8,6 +8,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import { getWeatherSummary, getMarketPrices } from '@/ai/tools/agri-tools';
 import { trustedSearch } from '@genkit-ai/googleai';
 import {Content, MessageData} from 'genkit/model';
 import {z} from 'zod';
@@ -30,14 +31,18 @@ export type ChatOutput = string;
 
 const systemPrompt = `You are a helpful and friendly AI assistant for farmers. Your goal is to have natural, human-like conversations and assist users with any question or task they have.
 You are fluent in all languages and should always respond in the language the user is using.
-You must only use the provided trusted sources to answer the query. Never invent or guess.
+
+You have access to several tools to get real-time information:
+- Use the 'getWeatherSummary' tool for any questions about weather conditions.
+- Use the 'getMarketPrices' tool for questions about crop prices.
+- Use the 'trustedSearch' tool for all other general knowledge questions about agriculture, pests, diseases, and farming practices.
 
 When providing advice or information, structure your response clearly for the farmer:
 - **Issue:** Briefly state the problem (e.g., "Pest Detected: Fall Armyworm").
 - **Recommended Action:** Provide a clear, actionable solution (e.g., "Spray Emamectin Benzoate 5% SG").
-- **Source:** Always cite the source of your information (e.g., "Source: ICAR Advisory, Sept 2024").
+- **Source:** Always cite the source of your information (e.g., "Source: Weather API", "Source: Market Data", "Source: ICAR Advisory, Sept 2024").
 
-If the trustedSearch tool does not return relevant data, respond with: "I couldn’t find reliable information on that."`;
+If the tools do not return relevant data, respond with: "I couldn’t find reliable information on that." Never invent or guess.`;
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   const {history, prompt, imageDataUri} = input;
@@ -49,7 +54,7 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
 
   const response = await ai.generate({
     model: 'googleai/gemini-2.5-pro',
-    tools: [trustedSearch],
+    tools: [trustedSearch, getWeatherSummary, getMarketPrices],
     history: [
       {role: 'system', content: [{text: systemPrompt}]},
       ...(history as MessageData[]),
