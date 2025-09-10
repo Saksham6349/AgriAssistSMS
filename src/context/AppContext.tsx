@@ -4,6 +4,8 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import type { FarmerData } from '@/components/UserManagement';
 import type { SmsMessage } from '@/components/SmsHistory';
+import { db } from '@/lib/firebase';
+import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 import en from '@/translations/en.json';
 import hi from '@/translations/hi.json';
@@ -56,6 +58,9 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+// Using a fixed ID for the single farmer document
+const FARMER_DOC_ID = 'single-farmer-profile';
+
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [registeredFarmer, setRegisteredFarmerState] = useState<FarmerData | null>(null);
   const [smsHistory, setSmsHistory] = useState<SmsMessage[]>([]);
@@ -76,41 +81,52 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    try {
-      const storedFarmer = localStorage.getItem('registeredFarmer');
-      if (storedFarmer) {
-        const farmer = JSON.parse(storedFarmer);
-        setRegisteredFarmerState(farmer);
+    const loadData = async () => {
+      try {
+        // Load farmer from Firestore
+        const farmerDocRef = doc(db, 'farmers', FARMER_DOC_ID);
+        const farmerDocSnap = await getDoc(farmerDocRef);
+
+        if (farmerDocSnap.exists()) {
+          setRegisteredFarmerState(farmerDocSnap.data() as FarmerData);
+        } else {
+          setRegisteredFarmerState(null);
+        }
+
+        // Load language and history from localStorage (as they are less critical)
+        const storedLanguage = localStorage.getItem('appLanguage');
+        if (storedLanguage && translations[storedLanguage]) {
+          setLanguage(storedLanguage);
+        } else {
+          setLanguage('English');
+        }
+        
+        const storedHistory = localStorage.getItem('smsHistory');
+        if (storedHistory) {
+          setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({ ...sms, timestamp: new Date(sms.timestamp) })));
+        }
+      } catch (error) {
+        console.error("Failed to load state from Firestore/localStorage", error);
+      } finally {
+        setIsLoaded(true);
       }
-      
-      const storedLanguage = localStorage.getItem('appLanguage');
-      if (storedLanguage && translations[storedLanguage]) {
-        setLanguage(storedLanguage);
-      } else {
-        setLanguage('English');
-      }
-      
-      const storedHistory = localStorage.getItem('smsHistory');
-      if (storedHistory) {
-        setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({ ...sms, timestamp: new Date(sms.timestamp) })));
-      }
-    } catch (error) {
-      console.error("Failed to load state from localStorage", error);
-    } finally {
-      setIsLoaded(true);
-    }
+    };
+    
+    loadData();
   }, [setLanguage]);
 
-  const setRegisteredFarmer = (farmer: FarmerData | null) => {
-    setRegisteredFarmerState(farmer);
+  const setRegisteredFarmer = async (farmer: FarmerData | null) => {
+    const farmerDocRef = doc(db, 'farmers', FARMER_DOC_ID);
     try {
       if (farmer) {
-        localStorage.setItem('registeredFarmer', JSON.stringify(farmer));
+        await setDoc(farmerDocRef, farmer);
+        setRegisteredFarmerState(farmer);
       } else {
-        localStorage.removeItem('registeredFarmer');
+        await deleteDoc(farmerDocRef);
+        setRegisteredFarmerState(null);
       }
     } catch (error) {
-      console.error("Failed to save farmer to localStorage", error);
+      console.error("Failed to save farmer to Firestore", error);
     }
   };
 
