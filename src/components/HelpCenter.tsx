@@ -24,20 +24,20 @@ export function HelpCenter() {
 
   const faqs = [
     {
-      question: "How do I register a new farmer?",
-      answer: "Navigate to the main Dashboard. If no farmer is registered, you will see a form. Fill in the farmer's name, phone number, location, primary and secondary crops, and preferred language, then click 'Register Farmer'.",
+      question: t('help.faq1.question'),
+      answer: t('help.faq1.answer'),
     },
     {
-      question: "How do I get a weather forecast?",
-      answer: "Go to the 'Weather Forecast' page from the sidebar. If a farmer is registered, their location will be automatically used. You can also manually enter a location and select a language, then click 'Get Forecast'.",
+      question: t('help.faq2.question'),
+      answer: t('help.faq2.answer'),
     },
     {
-      question: "How do I send an SMS alert?",
-      answer: "On pages like Weather Forecast, Advisory Alerts, Crop Diagnosis, and Market Prices, there is a 'Send as SMS' button at the bottom. After generating content (like a forecast or diagnosis), click this button to send the information to the registered farmer.",
+      question: t('help.faq3.question'),
+      answer: t('help.faq3.answer'),
     },
     {
-      question: "Can I change the registered farmer?",
-      answer: "Yes. On the Dashboard, if a farmer is already registered, you will see their details. Click the 'Register Another Farmer' button to clear the current farmer and show the registration form again.",
+      question: t('help.faq4.question'),
+      answer: t('help.faq4.answer'),
     },
   ];
 
