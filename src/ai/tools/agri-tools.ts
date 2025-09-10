@@ -90,7 +90,7 @@ export const getWeatherSummary = ai.defineTool(
 export const getMarketPrices = ai.defineTool(
     {
       name: 'getMarketPrices',
-      description: 'Returns the current market price (per quintal) for one or more specified crops.',
+      description: 'Returns the current market price (per quintal) for one or more specified crops from Agmarknet.',
       inputSchema: z.object({
         crops: z.array(z.string()).describe('An array of crop names to get the prices for.'),
       }),
