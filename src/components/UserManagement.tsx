@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, ChangeEvent } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent, useTransition } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -20,10 +20,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
+import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
+import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 
 export type FarmerData = {
   name: string;
@@ -45,10 +47,15 @@ const initialFormData: FarmerData = {
     idProof: '',
 };
 
+type VerificationStatus = 'unverified' | 'pending' | 'success' | 'failed';
+
 export function UserManagement() {
   const { registeredFarmer, setRegisteredFarmer, isLoaded } = useAppContext();
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isVerifyPending, startVerifyTransition] = useTransition();
+  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('unverified');
+  const [verificationResult, setVerificationResult] = useState<VerifyIdOutput | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -58,10 +65,12 @@ export function UserManagement() {
               setFormData(registeredFarmer);
               if (registeredFarmer.idProof) {
                   setImagePreview(registeredFarmer.idProof);
+                  setVerificationStatus('success'); // Assume stored farmer is verified
               }
           } else {
               setFormData(initialFormData);
               setImagePreview(null);
+              setVerificationStatus('unverified');
           }
       }
   }, [registeredFarmer, isLoaded]);
@@ -91,6 +100,8 @@ export function UserManagement() {
         const dataUri = reader.result as string;
         setFormData(prev => ({ ...prev, idProof: dataUri }));
         setImagePreview(dataUri);
+        setVerificationStatus('unverified');
+        setVerificationResult(null);
       };
       reader.readAsDataURL(file);
     }
@@ -99,27 +110,65 @@ export function UserManagement() {
   const handleRemoveImage = () => {
     setFormData(prev => ({ ...prev, idProof: undefined }));
     setImagePreview(null);
+    setVerificationStatus('unverified');
+    setVerificationResult(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
   
+  const handleVerify = () => {
+    if (!formData.idProof) {
+        toast({ variant: "destructive", title: "No ID", description: "Please upload an ID to verify." });
+        return;
+    }
+    setVerificationResult(null);
+    setVerificationStatus('pending');
+    startVerifyTransition(async () => {
+        try {
+            const result = await verifyId({ photoDataUri: formData.idProof! });
+            setVerificationResult(result);
+            if (result.isIdCard) {
+                setVerificationStatus('success');
+                if (result.extractedName) {
+                    setFormData(prev => ({...prev, name: result.extractedName!}));
+                }
+                toast({ title: "Verification Successful", description: result.reason });
+            } else {
+                setVerificationStatus('failed');
+                toast({ variant: "destructive", title: "Verification Failed", description: result.reason });
+            }
+        } catch (error) {
+            console.error("Verification failed:", error);
+            setVerificationStatus('failed');
+            setVerificationResult({ isIdCard: false, reason: 'An unexpected error occurred during verification.' });
+            toast({ variant: "destructive", title: "Verification Error", description: "Could not verify the ID. Please try again." });
+        }
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.idProof) {
+    if (verificationStatus !== 'success') {
       toast({
         variant: "destructive",
-        title: "ID Proof Required",
-        description: "Please upload a government ID proof to register.",
+        title: "ID Not Verified",
+        description: "Please verify the government ID proof before registering.",
       });
       return;
     }
     setRegisteredFarmer(formData);
+    toast({
+        title: "Farmer Registered!",
+        description: `${formData.name} is now ready to receive alerts.`,
+    })
   };
 
   const handleReset = () => {
     setRegisteredFarmer(null);
     setImagePreview(null);
+    setVerificationStatus('unverified');
+    setVerificationResult(null);
     if (fileInputRef.current) {
         fileInputRef.current.value = "";
     }
@@ -158,7 +207,10 @@ export function UserManagement() {
               {registeredFarmer.idProof && (
                 <div>
                   <p className="text-sm font-medium mb-2">Government ID:</p>
-                  <Image src={registeredFarmer.idProof} alt="ID Proof" width={200} height={120} className="rounded-md object-cover border" />
+                  <div className="relative w-fit">
+                    <Image src={registeredFarmer.idProof} alt="ID Proof" width={200} height={120} className="rounded-md object-cover border" />
+                    <BadgeCheck className="absolute -top-2 -right-2 h-7 w-7 text-white bg-green-600 rounded-full p-1" />
+                  </div>
                 </div>
               )}
              <div className="flex flex-wrap gap-2">
@@ -306,9 +358,28 @@ export function UserManagement() {
                     </div>
                   )}
               </div>
+              
+              {imagePreview && (
+                  <div className="space-y-2">
+                    <Button type="button" onClick={handleVerify} disabled={isVerifyPending || verificationStatus === 'success'} className="w-full">
+                        {isVerifyPending && <><Loader2 className="animate-spin" /> Verifying...</>}
+                        {verificationStatus === 'unverified' && <><ShieldCheck /> Verify ID</>}
+                        {verificationStatus === 'pending' && <><Loader2 className="animate-spin" /> Verifying...</>}
+                        {verificationStatus === 'success' && <><BadgeCheck /> ID Verified</>}
+                        {verificationStatus === 'failed' && <><ShieldAlert /> Verification Failed</>}
+                    </Button>
+                    {verificationStatus === 'failed' && verificationResult && (
+                        <Alert variant="destructive">
+                            <ShieldAlert className="h-4 w-4" />
+                            <AlertTitle>Verification Failed</AlertTitle>
+                            <AlertDescription>{verificationResult.reason}</AlertDescription>
+                        </Alert>
+                    )}
+                  </div>
+              )}
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={verificationStatus !== 'success' || isVerifyPending}>
               <UserPlus /> Register Farmer
             </Button>
           </form>
