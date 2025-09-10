@@ -150,7 +150,7 @@ export function WeatherCard() {
             }
         });
     }
-  }
+  };
 
   return (
     <Card className="flex flex-col">
