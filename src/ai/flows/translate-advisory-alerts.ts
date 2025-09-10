@@ -45,7 +45,7 @@ const translateAdvisoryAlertsFlow = ai.defineFlow(
     outputSchema: TranslateAdvisoryAlertsOutputSchema,
   },
   async input => {
-    const {output} = await translateAdvisoryAlertsPrompt(input);
+    const {output} = await translateAdvisoryAlertsPrompt(input, { model: 'googleai/gemini-2.5-pro' });
     return output!;
   }
 );
