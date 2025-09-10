@@ -84,15 +84,15 @@ export function ChatAssistant() {
         userMessageContent.push({ media: { url: imagePreview } });
     }
 
-    const newMessages: Message[] = [
-        ...messages,
-        { role: "user", content: userMessageContent }
-    ];
+    const userMessage: Message = { role: "user", content: userMessageContent };
+    const newMessages: Message[] = [...messages, userMessage];
 
     setMessages(newMessages);
-
+    
+    // Create the input for the AI call using the *new* message list.
+    // The last message is the user's prompt, so we pass the history *before* it.
     const chatInput: ChatInput = {
-      history: messages.map(m => ({ // Map to history format without images for now
+      history: messages.map(m => ({
           role: m.role,
           content: m.content.filter(c => c.text).map(c => ({ text: c.text! }))
       })),
@@ -117,7 +117,8 @@ export function ChatAssistant() {
                 role: 'model',
                 content: [{ text: "Sorry, I encountered an error. Please try again." }],
             };
-            setMessages((prev) => [...prev, errorMessage]);
+            // Revert the user's message and add an error message instead
+            setMessages((prev) => [...prev.slice(0, -1), errorMessage]);
         }
     });
   };
