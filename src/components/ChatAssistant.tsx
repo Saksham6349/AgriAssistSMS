@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Bot, Loader2, Send, User, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { FormEvent, useRef, useState, useTransition, KeyboardEvent, ChangeEvent } from "react";
+import { FormEvent, useRef, useState, useTransition, KeyboardEvent, ChangeEvent, useEffect } from "react";
 
 type ContentPart = { text: string; media?: never } | { text?: never; media: { url: string } };
 
@@ -35,6 +35,14 @@ export function ChatAssistant() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (viewportRef.current) {
+      viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+    }
+  }, [messages, isPending]);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -110,15 +118,6 @@ export function ChatAssistant() {
                 content: [{ text: "Sorry, I encountered an error. Please try again." }],
             };
             setMessages((prev) => [...prev, errorMessage]);
-        } finally {
-            setTimeout(() => {
-                if (scrollAreaRef.current) {
-                    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-                    if (viewport) {
-                        viewport.scrollTop = viewport.scrollHeight;
-                    }
-                }
-            }, 100);
         }
     });
   };
@@ -151,8 +150,8 @@ export function ChatAssistant() {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow overflow-hidden">
-        <ScrollArea className="h-full" ref={scrollAreaRef}>
+      <CardContent className="flex-grow flex flex-col min-h-0">
+        <ScrollArea className="flex-grow" ref={scrollAreaRef} viewportRef={viewportRef}>
           <div className="space-y-4 pr-4">
             {messages.map((msg, index) => (
               <div
@@ -169,7 +168,7 @@ export function ChatAssistant() {
                 )}
                 <div
                   className={cn(
-                    "max-w-xs md:max-w-md lg:max-w-2xl rounded-lg px-4 py-2 text-sm space-y-2",
+                    "max-w-xs md:max-w-md lg:max-w-2xl rounded-lg px-4 py-2 text-sm space-y-2 break-words",
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground"
