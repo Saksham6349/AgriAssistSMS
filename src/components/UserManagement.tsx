@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
@@ -48,11 +48,12 @@ const initialFormData: FarmerData = {
 };
 
 type VerificationStatus = 'unverified' | 'pending' | 'success' | 'failed';
+type FilePreview = { url: string; type: 'image' } | { name: string; type: 'pdf' };
 
 export function UserManagement() {
   const { registeredFarmer, setRegisteredFarmer, isLoaded } = useAppContext();
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [filePreview, setFilePreview] = useState<FilePreview | null>(null);
   const [isVerifyPending, startVerifyTransition] = useTransition();
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('unverified');
   const [verificationResult, setVerificationResult] = useState<VerifyIdOutput | null>(null);
@@ -64,12 +65,14 @@ export function UserManagement() {
           if (registeredFarmer) {
               setFormData(registeredFarmer);
               if (registeredFarmer.idProof) {
-                  setImagePreview(registeredFarmer.idProof);
+                  if (registeredFarmer.idProof.startsWith('data:image')) {
+                      setFilePreview({ url: registeredFarmer.idProof, type: 'image' });
+                  }
                   setVerificationStatus('success'); // Assume stored farmer is verified
               }
           } else {
               setFormData(initialFormData);
-              setImagePreview(null);
+              setFilePreview(null);
               setVerificationStatus('unverified');
           }
       }
@@ -84,14 +87,14 @@ export function UserManagement() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 4 * 1024 * 1024) { // 4MB limit
         toast({
           variant: "destructive",
-          title: "Image too large",
-          description: "Please upload an image smaller than 4MB.",
+          title: "File too large",
+          description: "Please upload a file smaller than 4MB.",
         });
         return;
       }
@@ -99,7 +102,11 @@ export function UserManagement() {
       reader.onloadend = () => {
         const dataUri = reader.result as string;
         setFormData(prev => ({ ...prev, idProof: dataUri }));
-        setImagePreview(dataUri);
+        if (file.type.startsWith('image/')) {
+            setFilePreview({ url: dataUri, type: 'image' });
+        } else if (file.type === 'application/pdf') {
+            setFilePreview({ name: file.name, type: 'pdf' });
+        }
         setVerificationStatus('unverified');
         setVerificationResult(null);
       };
@@ -107,9 +114,9 @@ export function UserManagement() {
     }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveFile = () => {
     setFormData(prev => ({ ...prev, idProof: undefined }));
-    setImagePreview(null);
+    setFilePreview(null);
     setVerificationStatus('unverified');
     setVerificationResult(null);
     if (fileInputRef.current) {
@@ -166,7 +173,7 @@ export function UserManagement() {
 
   const handleReset = () => {
     setRegisteredFarmer(null);
-    setImagePreview(null);
+    setFilePreview(null);
     setVerificationStatus('unverified');
     setVerificationResult(null);
     if (fileInputRef.current) {
@@ -204,11 +211,11 @@ export function UserManagement() {
                 <h3 className="text-lg font-semibold">{registeredFarmer.name}</h3>
                 <p className="text-sm text-muted-foreground">{registeredFarmer.location} | {registeredFarmer.phone}</p>
              </div>
-              {registeredFarmer.idProof && (
+              {registeredFarmer.idProof && filePreview?.type === 'image' && (
                 <div>
                   <p className="text-sm font-medium mb-2">Government ID:</p>
                   <div className="relative w-fit">
-                    <Image src={registeredFarmer.idProof} alt="ID Proof" width={200} height={120} className="rounded-md object-cover border" />
+                    <Image src={(filePreview as {url: string}).url} alt="ID Proof" width={200} height={120} className="rounded-md object-cover border" />
                     <BadgeCheck className="absolute -top-2 -right-2 h-7 w-7 text-white bg-green-600 rounded-full p-1" />
                   </div>
                 </div>
@@ -328,24 +335,31 @@ export function UserManagement() {
                     type="file"
                     id="id-proof-upload"
                     ref={fileInputRef}
-                    onChange={handleImageChange}
+                    onChange={handleFileChange}
                     className="hidden"
-                    accept="image/png, image/jpeg, image/webp"
+                    accept="image/png, image/jpeg, image/webp, application/pdf"
                   />
-                  {imagePreview ? (
+                  {filePreview ? (
                      <div className="relative group w-fit mx-auto">
-                        <Image
-                            src={imagePreview}
-                            alt="ID preview"
-                            width={200}
-                            height={120}
-                            className="rounded-md mx-auto max-h-32 w-auto object-contain"
-                        />
+                        {filePreview.type === 'image' ? (
+                            <Image
+                                src={filePreview.url}
+                                alt="ID preview"
+                                width={200}
+                                height={120}
+                                className="rounded-md mx-auto max-h-32 w-auto object-contain"
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground p-4">
+                                <FileText className="w-12 h-12" />
+                                <p className="text-sm font-semibold">{filePreview.name}</p>
+                            </div>
+                        )}
                         <Button
                             variant="destructive"
                             size="icon"
                             className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }}
+                            onClick={(e) => { e.stopPropagation(); handleRemoveFile(); }}
                         >
                             <X className="w-4 h-4" />
                         </Button>
@@ -354,12 +368,12 @@ export function UserManagement() {
                     <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Upload className="w-8 h-8" />
                         <p className="font-semibold">Click to upload ID</p>
-                        <p className="text-xs">PNG, JPG, or WEBP (max 4MB)</p>
+                        <p className="text-xs">PNG, JPG, PDF (max 4MB)</p>
                     </div>
                   )}
               </div>
               
-              {imagePreview && (
+              {filePreview && (
                   <div className="space-y-2">
                     <Button type="button" onClick={handleVerify} disabled={isVerifyPending || verificationStatus === 'success'} className="w-full">
                         {isVerifyPending && <><Loader2 className="animate-spin" /> Verifying...</>}
@@ -388,3 +402,5 @@ export function UserManagement() {
     </Card>
   );
 }
+
+    

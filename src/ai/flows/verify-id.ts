@@ -15,7 +15,7 @@ const VerifyIdInputSchema = z.object({
   photoDataUri: z
     .string()
     .describe(
-      "A photo of a government-issued ID, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A photo or PDF of a government-issued ID, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
 });
 export type VerifyIdInput = z.infer<typeof VerifyIdInputSchema>;
@@ -37,14 +37,14 @@ const prompt = ai.definePrompt({
   output: {schema: VerifyIdOutputSchema},
   prompt: `You are an AI assistant designed to verify specific government-issued identification documents from India.
 
-Analyze the provided image. Determine if it is a legitimate Aadhar card, PAN card, ration card, or gas connection document.
+Analyze the provided image or PDF document. Determine if it is a legitimate Aadhar card, PAN card, ration card, or gas connection document.
 
 - If it is one of the accepted valid ID types and is legible, set 'isIdCard' to true and provide a positive reason (e.g., "Verified as a valid Aadhar card."). Attempt to extract the person's full name.
 - If it is not one of the accepted ID types, or if it is illegible, set 'isIdCard' to false and explain why (e.g., "The document is not an Aadhar, PAN, Ration, or gas connection card," "Appears to be a credit card," "Image is too blurry to read.").
 
 Your final output must be in the specified JSON format.
 
-Photo: {{media url=photoDataUri}}`,
+Document: {{media url=photoDataUri}}`,
 });
 
 const verifyIdFlow = ai.defineFlow(
@@ -58,3 +58,5 @@ const verifyIdFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    
