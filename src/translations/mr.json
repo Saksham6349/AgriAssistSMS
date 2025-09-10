@@ -1,0 +1,124 @@
+
+{
+  "header": {
+    "title": "ऍग्रीअसिस्ट एसएमएस"
+  },
+  "sidebar": {
+    "dashboard": "डॅशबोर्ड",
+    "weather": "हवामान अंदाज",
+    "advisory": "सल्ला सूचना",
+    "diagnosis": "पीक निदान",
+    "market": "बाजार भाव",
+    "chat": "चॅट सहाय्यक",
+    "history": "एसएमएस इतिहास",
+    "help": "मदत केंद्र"
+  },
+  "dashboard": {
+    "title": "शेती डॅशबोर्ड",
+    "description": "शेतकऱ्यांची नोंदणी करा आणि त्यांना रिअल-टाइम सूचना पाठवा."
+  },
+  "userManagement": {
+    "currentFarmer": "सध्याचे शेतकरी",
+    "ready": "एसएमएस सूचना प्राप्त करण्यास तयार.",
+    "registration": "शेतकरी नोंदणी",
+    "registerPrompt": "सूचना पाठवण्यासाठी शेतकऱ्याची नोंदणी करा.",
+    "idProof": "सरकारी ओळखपत्र:",
+    "primaryCrop": "मुख्य पीक:",
+    "secondaryCrop": "दुय्यम पीक:",
+    "language": "भाषा:",
+    "registerAnother": "दुसऱ्या शेतकऱ्याची नोंदणी करा",
+    "farmerName": "शेतकऱ्याचे नाव",
+    "farmerNamePlaceholder": "उदा., जॉन डो",
+    "phone": "फोन नंबर",
+    "phonePlaceholder": "उदा., +911234567890",
+    "location": "स्थान / गाव",
+    "locationPlaceholder": "उदा., स्प्रिंगफील्ड",
+    "preferredLanguage": "पसंतीची भाषा",
+    "selectLanguage": "भाषा निवडा",
+    "primaryCropLabel": "मुख्य पीक",
+    "selectCrop": "पीक निवडा",
+    "secondaryCropLabel": "दुय्यम पीक (पर्यायी)",
+    "selectSecondaryCrop": "दुय्यम पीक निवडा",
+    "govIdProof": "सरकारी ओळखपत्र पुरावा",
+    "uploadId": "ओळखपत्र अपलोड करण्यासाठी क्लिक करा",
+    "idTypes": "आधार, पॅन, रेशन कार्ड, किंवा गॅस कनेक्शन",
+    "fileTypes": "PNG, JPG, PDF (जास्तीत जास्त 4MB)",
+    "verifyId": "ओळखपत्र सत्यापित करा",
+    "verifying": "सत्यापित करत आहे...",
+    "idVerified": "ओळखपत्र सत्यापित",
+    "verificationFailed": "सत्यापन अयशस्वी",
+    "registerFarmer": "शेतकऱ्याची नोंदणी करा"
+  },
+  "weather": {
+    "title": "हवामान अंदाज",
+    "description": "तुमच्या स्थानासाठी एआय-चालित हवामान सारांश मिळवा.",
+    "locationPlaceholder": "स्थान प्रविष्ट करा...",
+    "getForecast": "अंदाज मिळवा",
+    "summary": "हवामान सारांश",
+    "enterLocationPrompt": "हवामान सारांश पाहण्यासाठी स्थान प्रविष्ट करा.",
+    "sendSms": "एसएमएस म्हणून पाठवा"
+  },
+  "advisory": {
+    "title": "सल्ला आणि कीड सूचना",
+    "description": "शेतकऱ्यांसाठी महत्त्वपूर्ण सूचना तयार करा आणि पाठवा.",
+    "generateAlert": "साठी सूचना तयार करा",
+    "generating": "तयार करत आहे...",
+    "generatedAlert": "तयार केलेली सूचना (इंग्रजी):",
+    "targetLanguage": "लक्ष्य भाषा",
+    "selectLanguage": "एक भाषा निवडा",
+    "translate": "सूचना भाषांतरित करा",
+    "translating": "भाषांतरित करत आहे...",
+    "translatedAlert": "भाषांतरित सूचना",
+    "smsStatus": "एसएमएस स्थिती",
+    "sendSms": "एसएमएस म्हणून पाठवा",
+    "sending": "पाठवत आहे..."
+  },
+  "diagnosis": {
+    "title": "पीक आरोग्य निदान",
+    "description": "कीड आणि रोग ओळखण्यासाठी वनस्पतीचा फोटो अपलोड करा.",
+    "uploadPrompt": "एक प्रतिमा अपलोड करण्यासाठी क्लिक करा",
+    "uploadHint": "PNG, JPG, किंवा WEBP 4MB पर्यंत",
+    "diagnose": "वनस्पतीच्या आरोग्याचे निदान करा",
+    "diagnosing": "निदान करत आहे...",
+    "results": "निदान परिणाम:",
+    "identification": "ओळख:",
+    "healthStatus": "आरोग्य स्थिती:",
+    "healthy": "निरोगी",
+    "needsAttention": "लक्ष देण्याची गरज आहे",
+    "analysis": "विश्लेषण:",
+    "sendSms": "एसएमएस म्हणून पाठवा",
+    "sending": "पाठवत आहे..."
+  },
+  "market": {
+    "title": "बाजार भाव",
+    "description": "तुमच्या भागातील प्रमुख पिकांसाठी थेट मंडी दर. प्रति क्विंटल भाव.",
+    "crop": "पीक",
+    "price": "भाव (INR)",
+    "change": "बदल",
+    "sendSms": "एसएमएस म्हणून पाठवा",
+    "sending": "पाठवत आहे..."
+  },
+  "chat": {
+    "title": "एआय चॅट सहाय्यक",
+    "description": "शेती, पिके आणि हवामानाबद्दल काहीही विचारा.",
+    "thinking": "विचार करत आहे...",
+    "placeholder": "एक प्रश्न विचारा...",
+    "uploadImage": "प्रतिमा अपलोड करा",
+    "send": "पाठवा"
+  },
+  "history": {
+    "title": "एसएमएस इतिहास",
+    "description": "सर्व पाठवलेल्या हवामान आणि सल्ला सूचनांचा लॉग.",
+    "noMessages": "अद्याप कोणतेही संदेश पाठवले नाहीत."
+  },
+  "help": {
+    "title": "मदत केंद्र",
+    "description": "तुमच्या प्रश्नांची उत्तरे शोधा आणि आवश्यक समर्थन मिळवा.",
+    "contact": "समर्थनाशी संपर्क साधा",
+    "contactDescription": "कोणत्याही चौकशीसाठी थेट आमच्याशी संपर्क साधा.",
+    "emailSupport": "ईमेल समर्थन",
+    "phoneSupport": "फोन समर्थन",
+    "faq": "सतत विचारले जाणारे प्रश्न (FAQ)",
+    "faqDescription": "ऍग्रीअसिस्ट एसएमएस प्लॅटफॉर्मबद्दल सामान्य प्रश्नांची उत्तरे शोधा."
+  }
+}

@@ -1,0 +1,124 @@
+
+{
+  "header": {
+    "title": "ਐਗਰੀਅਸਿਸਟ ਐਸਐਮਐਸ"
+  },
+  "sidebar": {
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "weather": "ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ",
+    "advisory": "ਸਲਾਹ ਚੇਤਾਵਨੀਆਂ",
+    "diagnosis": "ਫਸਲ ਦੀ ਜਾਂਚ",
+    "market": "ਬਾਜ਼ਾਰ ਦੀਆਂ ਕੀਮਤਾਂ",
+    "chat": "ਚੈਟ ਸਹਾਇਕ",
+    "history": "ਐਸਐਮਐਸ ਇਤਿਹਾਸ",
+    "help": "ਸਹਾਇਤਾ ਕੇਂਦਰ"
+  },
+  "dashboard": {
+    "title": "ਖੇਤੀਬਾੜੀ ਡੈਸ਼ਬੋਰਡ",
+    "description": "ਕਿਸਾਨਾਂ ਨੂੰ ਰਜਿਸਟਰ ਕਰੋ ਅਤੇ ਉਹਨਾਂ ਨੂੰ ਰੀਅਲ-ਟਾਈਮ ਚੇਤਾਵਨੀਆਂ ਭੇਜੋ।"
+  },
+  "userManagement": {
+    "currentFarmer": "ਮੌਜੂਦਾ ਕਿਸਾਨ",
+    "ready": "SMS ਚੇਤਾਵਨੀਆਂ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਤਿਆਰ।",
+    "registration": "ਕਿਸਾਨ ਰਜਿਸਟ੍ਰੇਸ਼ਨ",
+    "registerPrompt": "ਚੇਤਾਵਨੀਆਂ ਭੇਜਣ ਲਈ ਕਿਸਾਨ ਨੂੰ ਰਜਿਸਟਰ ਕਰੋ।",
+    "idProof": "ਸਰਕਾਰੀ ਆਈਡੀ:",
+    "primaryCrop": "ਮੁੱਖ ਫਸਲ:",
+    "secondaryCrop": "ਦੂਜੀ ਫਸਲ:",
+    "language": "ਭਾਸ਼ਾ:",
+    "registerAnother": "ਕਿਸੇ ਹੋਰ ਕਿਸਾਨ ਨੂੰ ਰਜਿਸਟਰ ਕਰੋ",
+    "farmerName": "ਕਿਸਾਨ ਦਾ ਨਾਮ",
+    "farmerNamePlaceholder": "ਜਿਵੇਂ, ਜੌਨ ਡੋ",
+    "phone": "ਫੋਨ ਨੰਬਰ",
+    "phonePlaceholder": "ਜਿਵੇਂ, +911234567890",
+    "location": "ਸਥਾਨ / ਪਿੰਡ",
+    "locationPlaceholder": "ਜਿਵੇਂ, ਸਪਰਿੰਗਫੀਲਡ",
+    "preferredLanguage": "ਪਸੰਦੀਦਾ ਭਾਸ਼ਾ",
+    "selectLanguage": "ਭਾਸ਼ਾ ਚੁਣੋ",
+    "primaryCropLabel": "ਮੁੱਖ ਫਸਲ",
+    "selectCrop": "ਫਸਲ ਚੁਣੋ",
+    "secondaryCropLabel": "ਦੂਜੀ ਫਸਲ (ਵਿਕਲਪਿਕ)",
+    "selectSecondaryCrop": "ਦੂਜੀ ਫਸਲ ਚੁਣੋ",
+    "govIdProof": "ਸਰਕਾਰੀ ਆਈਡੀ ਸਬੂਤ",
+    "uploadId": "ਆਈਡੀ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ",
+    "idTypes": "ਆਧਾਰ, ਪੈਨ, ਰਾਸ਼ਨ ਕਾਰਡ, ਜਾਂ ਗੈਸ ਕਨੈਕਸ਼ਨ",
+    "fileTypes": "PNG, JPG, PDF (ਵੱਧ ਤੋਂ ਵੱਧ 4MB)",
+    "verifyId": "ਆਈਡੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
+    "verifying": "ਪੁਸ਼ਟੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...",
+    "idVerified": "ਆਈਡੀ ਦੀ ਪੁਸ਼ਟੀ ਹੋ ਗਈ",
+    "verificationFailed": "ਪੁਸ਼ਟੀ ਫੇਲ੍ਹ ਹੋ ਗਈ",
+    "registerFarmer": "ਕਿਸਾਨ ਨੂੰ ਰਜਿਸਟਰ ਕਰੋ"
+  },
+  "weather": {
+    "title": "ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ",
+    "description": "ਆਪਣੇ ਸਥਾਨ ਲਈ ਏਆਈ-ਸੰਚਾਲਿਤ ਮੌਸਮ ਦੇ ਸੰਖੇਪ ਪ੍ਰਾਪਤ ਕਰੋ।",
+    "locationPlaceholder": "ਸਥਾਨ ਦਾਖਲ ਕਰੋ...",
+    "getForecast": "ਭਵਿੱਖਬਾਣੀ ਪ੍ਰਾਪਤ ਕਰੋ",
+    "summary": "ਮੌਸਮ ਦਾ ਸੰਖੇਪ",
+    "enterLocationPrompt": "ਮੌਸਮ ਦਾ ਸੰਖੇਪ ਦੇਖਣ ਲਈ ਇੱਕ ਸਥਾਨ ਦਾਖਲ ਕਰੋ।",
+    "sendSms": "SMS ਵਜੋਂ ਭੇਜੋ"
+  },
+  "advisory": {
+    "title": "ਸਲਾਹ ਅਤੇ ਕੀਟ ਚੇਤਾਵਨੀਆਂ",
+    "description": "ਕਿਸਾਨਾਂ ਨੂੰ ਮਹੱਤਵਪੂਰਨ ਚੇਤਾਵਨੀਆਂ ਤਿਆਰ ਕਰੋ ਅਤੇ ਭੇਜੋ।",
+    "generateAlert": "ਲਈ ਚੇਤਾਵਨੀ ਤਿਆਰ ਕਰੋ",
+    "generating": "ਤਿਆਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+    "generatedAlert": "ਤਿਆਰ ਕੀਤੀ ਚੇਤਾਵਨੀ (ਅੰਗਰੇਜ਼ੀ):",
+    "targetLanguage": "ਟੀਚਾ ਭਾਸ਼ਾ",
+    "selectLanguage": "ਇੱਕ ਭਾਸ਼ਾ ਚੁਣੋ",
+    "translate": "ਚੇਤਾਵਨੀ ਦਾ ਅਨੁਵਾਦ ਕਰੋ",
+    "translating": "ਅਨੁਵਾਦ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+    "translatedAlert": "ਅਨੁਵਾਦਿਤ ਚੇਤਾਵਨੀ",
+    "smsStatus": "SMS ਸਥਿਤੀ",
+    "sendSms": "SMS ਵਜੋਂ ਭੇਜੋ",
+    "sending": "ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ..."
+  },
+  "diagnosis": {
+    "title": "ਫਸਲ ਸਿਹਤ ਜਾਂਚ",
+    "description": "ਕੀੜਿਆਂ ਅਤੇ ਬਿਮਾਰੀਆਂ ਦੀ ਪਛਾਣ ਕਰਨ ਲਈ ਇੱਕ ਪੌਦੇ ਦੀ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰੋ।",
+    "uploadPrompt": "ਇੱਕ ਚਿੱਤਰ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ",
+    "uploadHint": "PNG, JPG, ਜਾਂ WEBP 4MB ਤੱਕ",
+    "diagnose": "ਪੌਦੇ ਦੀ ਸਿਹਤ ਦੀ ਜਾਂਚ ਕਰੋ",
+    "diagnosing": "ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...",
+    "results": "ਜਾਂਚ ਦੇ ਨਤੀਜੇ:",
+    "identification": "ਪਛਾਣ:",
+    "healthStatus": "ਸਿਹਤ ਸਥਿਤੀ:",
+    "healthy": "ਸਿਹਤਮੰਦ",
+    "needsAttention": "ਧਿਆਨ ਦੀ ਲੋੜ ਹੈ",
+    "analysis": "ਵਿਸ਼ਲੇਸ਼ਣ:",
+    "sendSms": "SMS ਵਜੋਂ ਭੇਜੋ",
+    "sending": "ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ..."
+  },
+  "market": {
+    "title": "ਬਾਜ਼ਾਰ ਦੀਆਂ ਕੀਮਤਾਂ",
+    "description": "ਤੁਹਾਡੇ ਖੇਤਰ ਵਿੱਚ ਮੁੱਖ ਫਸਲਾਂ ਲਈ ਲਾਈਵ ਮੰਡੀ ਦਰਾਂ। ਪ੍ਰਤੀ ਕੁਇੰਟਲ ਕੀਮਤਾਂ।",
+    "crop": "ਫਸਲ",
+    "price": "ਕੀਮਤ (INR)",
+    "change": "ਬਦਲੋ",
+    "sendSms": "SMS ਵਜੋਂ ਭੇਜੋ",
+    "sending": "ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ..."
+  },
+  "chat": {
+    "title": "ਏਆਈ ਚੈਟ ਸਹਾਇਕ",
+    "description": "ਮੈਨੂੰ ਖੇਤੀਬਾੜੀ, ਫਸਲਾਂ ਅਤੇ ਮੌਸਮ ਬਾਰੇ ਕੁਝ ਵੀ ਪੁੱਛੋ।",
+    "thinking": "ਸੋਚ ਰਿਹਾ ਹੈ...",
+    "placeholder": "ਇੱਕ ਸਵਾਲ ਪੁੱਛੋ...",
+    "uploadImage": "ਚਿੱਤਰ ਅੱਪਲੋਡ ਕਰੋ",
+    "send": "ਭੇਜੋ"
+  },
+  "history": {
+    "title": "SMS ਇਤਿਹਾਸ",
+    "description": "ਸਾਰੇ ਭੇਜੇ ਗਏ ਮੌਸਮ ਅਤੇ ਸਲਾਹ ਚੇਤਾਵਨੀਆਂ ਦਾ ਇੱਕ ਲੌਗ।",
+    "noMessages": "ਅਜੇ ਤੱਕ ਕੋਈ ਸੁਨੇਹਾ ਨਹੀਂ ਭੇਜਿਆ ਗਿਆ ਹੈ।"
+  },
+  "help": {
+    "title": "ਸਹਾਇਤਾ ਕੇਂਦਰ",
+    "description": "ਆਪਣੇ ਸਵਾਲਾਂ ਦੇ ਜਵਾਬ ਲੱਭੋ ਅਤੇ ਤੁਹਾਨੂੰ ਲੋੜੀਂਦੀ ਸਹਾਇਤਾ ਪ੍ਰਾਪਤ ਕਰੋ।",
+    "contact": "ਸਹਾਇਤਾ ਨਾਲ ਸੰਪਰਕ ਕਰੋ",
+    "contactDescription": "ਕਿਸੇ ਵੀ ਪੁੱਛਗਿੱਛ ਲਈ ਸਿੱਧੇ ਸਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।",
+    "emailSupport": "ਈਮੇਲ ਸਹਾਇਤਾ",
+    "phoneSupport": "ਫੋਨ ਸਹਾਇਤਾ",
+    "faq": "ਅਕਸਰ ਪੁੱਛੇ ਜਾਣ ਵਾਲੇ ਸਵਾਲ (FAQ)",
+    "faqDescription": "ਐਗਰੀਅਸਿਸਟ ਐਸਐਮਐਸ ਪਲੇਟਫਾਰਮ ਬਾਰੇ ਆਮ ਸਵਾਲਾਂ ਦੇ ਜਵਾਬ ਲੱਭੋ।"
+  }
+}

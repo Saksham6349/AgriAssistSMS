@@ -1,0 +1,124 @@
+
+{
+  "header": {
+    "title": "એગ્રીઆસિસ્ટ એસએમએસ"
+  },
+  "sidebar": {
+    "dashboard": "ડેશબોર્ડ",
+    "weather": "હવામાન આગાહી",
+    "advisory": "સલાહ ચેતવણીઓ",
+    "diagnosis": "પાક નિદાન",
+    "market": "બજાર ભાવ",
+    "chat": "ચેટ સહાયક",
+    "history": "એસએમએસ ઇતિહાસ",
+    "help": "સહાય કેન્દ્ર"
+  },
+  "dashboard": {
+    "title": "ખેતી ડેશબોર્ડ",
+    "description": "ખેડૂતોની નોંધણી કરો અને તેમને રીઅલ-ટાઇમ ચેતવણીઓ મોકલો."
+  },
+  "userManagement": {
+    "currentFarmer": "વર્તમાન ખેડૂત",
+    "ready": "એસએમએસ ચેતવણીઓ મેળવવા માટે તૈયાર.",
+    "registration": "ખેડૂત નોંધણી",
+    "registerPrompt": "ચેતવણીઓ મોકલવા માટે ખેડૂતની નોંધણી કરો.",
+    "idProof": "સરકારી આઈડી:",
+    "primaryCrop": "મુખ્ય પાક:",
+    "secondaryCrop": "ગૌણ પાક:",
+    "language": "ભાષા:",
+    "registerAnother": "બીજા ખેડૂતની નોંધણી કરો",
+    "farmerName": "ખેડૂતનું નામ",
+    "farmerNamePlaceholder": "દા.ત., જ્હોન ડો",
+    "phone": "ફોન નંબર",
+    "phonePlaceholder": "દા.ત., +911234567890",
+    "location": "સ્થળ / ગામ",
+    "locationPlaceholder": "દા.ત., સ્પ્રિંગફીલ્ડ",
+    "preferredLanguage": "પસંદગીની ભાષા",
+    "selectLanguage": "ભાષા પસંદ કરો",
+    "primaryCropLabel": "મુખ્ય પાક",
+    "selectCrop": "પાક પસંદ કરો",
+    "secondaryCropLabel": "ગૌણ પાક (વૈકલ્પિક)",
+    "selectSecondaryCrop": "ગૌણ પાક પસંદ કરો",
+    "govIdProof": "સરકારી આઈડી પુરાવો",
+    "uploadId": "આઈડી અપલોડ કરવા માટે ક્લિક કરો",
+    "idTypes": "આધાર, પાન, રેશન કાર્ડ, અથવા ગેસ કનેક્શન",
+    "fileTypes": "PNG, JPG, PDF (મહત્તમ 4MB)",
+    "verifyId": "આઈડી ચકાસો",
+    "verifying": "ચકાસી રહ્યું છે...",
+    "idVerified": "આઈડી ચકાસાયેલ છે",
+    "verificationFailed": "ચકાસણી નિષ્ફળ",
+    "registerFarmer": "ખેડૂતની નોંધણી કરો"
+  },
+  "weather": {
+    "title": "હવામાન આગાહી",
+    "description": "તમારા સ્થાન માટે AI-સંચાલિત હવામાન સારાંશ મેળવો.",
+    "locationPlaceholder": "સ્થળ દાખલ કરો...",
+    "getForecast": "આગાહી મેળવો",
+    "summary": "હવામાન સારાંશ",
+    "enterLocationPrompt": "હવામાન સારાંશ જોવા માટે એક સ્થળ દાખલ કરો.",
+    "sendSms": "એસએમએસ તરીકે મોકલો"
+  },
+  "advisory": {
+    "title": "સલાહ અને જંતુ ચેતવણીઓ",
+    "description": "ખેડૂતો માટે નિર્ણાયક ચેતવણીઓ બનાવો અને મોકલો.",
+    "generateAlert": "માટે ચેતવણી બનાવો",
+    "generating": "બનાવી રહ્યું છે...",
+    "generatedAlert": "બનાવેલ ચેતવણી (અંગ્રેજી):",
+    "targetLanguage": "લક્ષ્ય ભાષા",
+    "selectLanguage": "એક ભાષા પસંદ કરો",
+    "translate": "ચેતવણીનો અનુવાદ કરો",
+    "translating": "અનુવાદ કરી રહ્યું છે...",
+    "translatedAlert": "અનુવાદિત ચેતવણી",
+    "smsStatus": "એસએમએસ સ્થિતિ",
+    "sendSms": "એસએમએસ તરીકે મોકલો",
+    "sending": "મોકલી રહ્યું છે..."
+  },
+  "diagnosis": {
+    "title": "પાક આરોગ્ય નિદાન",
+    "description": "જંતુઓ અને રોગોને ઓળખવા માટે છોડનો ફોટો અપલોડ કરો.",
+    "uploadPrompt": "એક છબી અપલોડ કરવા માટે ક્લિક કરો",
+    "uploadHint": "PNG, JPG, અથવા WEBP 4MB સુધી",
+    "diagnose": "છોડના આરોગ્યનું નિદાન કરો",
+    "diagnosing": "નિદાન કરી રહ્યું છે...",
+    "results": "નિદાન પરિણામો:",
+    "identification": "ઓળખ:",
+    "healthStatus": "આરોગ્ય સ્થિતિ:",
+    "healthy": "સ્વસ્થ",
+    "needsAttention": "ધ્યાનની જરૂર છે",
+    "analysis": "વિશ્લેષણ:",
+    "sendSms": "એસએમએસ તરીકે મોકલો",
+    "sending": "મોકલી રહ્યું છે..."
+  },
+  "market": {
+    "title": "બજાર ભાવ",
+    "description": "તમારા વિસ્તારમાં મુખ્ય પાકો માટે લાઇવ મંડી દરો. પ્રતિ ક્વિન્ટલ ભાવ.",
+    "crop": "પાક",
+    "price": "ભાવ (INR)",
+    "change": "બદલો",
+    "sendSms": "એસએમએસ તરીકે મોકલો",
+    "sending": "મોકલી રહ્યું છે..."
+  },
+  "chat": {
+    "title": "એઆઈ ચેટ સહાયક",
+    "description": "ખેતી, પાક અને હવામાન વિશે મને કંઈપણ પૂછો.",
+    "thinking": "વિચારી રહ્યું છે...",
+    "placeholder": "એક પ્રશ્ન પૂછો...",
+    "uploadImage": "છબી અપલોડ કરો",
+    "send": "મોકલો"
+  },
+  "history": {
+    "title": "એસએમએસ ઇતિહાસ",
+    "description": "બધા મોકલેલા હવામાન અને સલાહ ચેતવણીઓનો લોગ.",
+    "noMessages": "હજુ સુધી કોઈ સંદેશા મોકલવામાં આવ્યા નથી."
+  },
+  "help": {
+    "title": "સહાય કેન્દ્ર",
+    "description": "તમારા પ્રશ્નોના જવાબો શોધો અને તમને જરૂરી સમર્થન મેળવો.",
+    "contact": "આધારનો સંપર્ક કરો",
+    "contactDescription": "કોઈપણ પૂછપરછ માટે સીધો અમારો સંપર્ક કરો.",
+    "emailSupport": "ઇમેઇલ આધાર",
+    "phoneSupport": "ફોન આધાર",
+    "faq": "વારંવાર પૂછાતા પ્રશ્નો (FAQ)",
+    "faqDescription": "એગ્રીઆસિસ્ટ એસએમએસ પ્લેટફોર્મ વિશે સામાન્ય પ્રશ્નોના જવાબો શોધો."
+  }
+}

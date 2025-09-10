@@ -1,0 +1,124 @@
+
+{
+  "header": {
+    "title": "एग्रीअसिस्ट एसएमएस"
+  },
+  "sidebar": {
+    "dashboard": "डैशबोर्ड",
+    "weather": "मौसम पूर्वानुमान",
+    "advisory": "सलाह अलर्ट",
+    "diagnosis": "फसल निदान",
+    "market": "बाजार मूल्य",
+    "chat": "चैट सहायक",
+    "history": "एसएमएस इतिहास",
+    "help": "सहायता केंद्र"
+  },
+  "dashboard": {
+    "title": "खेती डैशबोर्ड",
+    "description": "किसानों को पंजीकृत करें और उन्हें वास्तविक समय पर अलर्ट भेजें।"
+  },
+  "userManagement": {
+    "currentFarmer": "वर्तमान किसान",
+    "ready": "एसएमएस अलर्ट प्राप्त करने के लिए तैयार।",
+    "registration": "किसान पंजीकरण",
+    "registerPrompt": "अलर्ट भेजने के लिए किसान को पंजीकृत करें।",
+    "idProof": "सरकारी आईडी:",
+    "primaryCrop": "मुख्य फसल:",
+    "secondaryCrop": "दूसरी फसल:",
+    "language": "भाषा:",
+    "registerAnother": "दूसरे किसान को पंजीकृत करें",
+    "farmerName": "किसान का नाम",
+    "farmerNamePlaceholder": "उदा., जॉन डो",
+    "phone": "फ़ोन नंबर",
+    "phonePlaceholder": "उदा., +911234567890",
+    "location": "स्थान / गाँव",
+    "locationPlaceholder": "उदा., स्प्रिंगफील्ड",
+    "preferredLanguage": "पसंदीदा भाषा",
+    "selectLanguage": "भाषा चुनें",
+    "primaryCropLabel": "मुख्य फसल",
+    "selectCrop": "फसल चुनें",
+    "secondaryCropLabel": "दूसरी फसल (वैकल्पिक)",
+    "selectSecondaryCrop": "दूसरी फसल चुनें",
+    "govIdProof": "सरकारी आईडी प्रमाण",
+    "uploadId": "आईडी अपलोड करने के लिए क्लिक करें",
+    "idTypes": "आधार, पैन, राशन कार्ड, या गैस कनेक्शन",
+    "fileTypes": "PNG, JPG, PDF (अधिकतम 4MB)",
+    "verifyId": "आईडी सत्यापित करें",
+    "verifying": "सत्यापित हो रहा है...",
+    "idVerified": "आईडी सत्यापित",
+    "verificationFailed": "सत्यापन विफल",
+    "registerFarmer": "किसान पंजीकृत करें"
+  },
+  "weather": {
+    "title": "मौसम पूर्वानुमान",
+    "description": "अपने स्थान के लिए एआई-संचालित मौसम सारांश प्राप्त करें।",
+    "locationPlaceholder": "स्थान दर्ज करें...",
+    "getForecast": "पूर्वानुमान प्राप्त करें",
+    "summary": "मौसम सारांश",
+    "enterLocationPrompt": "मौसम सारांश देखने के लिए एक स्थान दर्ज करें।",
+    "sendSms": "एसएमएस के रूप में भेजें"
+  },
+  "advisory": {
+    "title": "सलाह और कीट अलर्ट",
+    "description": "किसानों को महत्वपूर्ण अलर्ट उत्पन्न करें और भेजें।",
+    "generateAlert": "के लिए अलर्ट उत्पन्न करें",
+    "generating": "उत्पन्न हो रहा है...",
+    "generatedAlert": "उत्पन्न अलर्ट (अंग्रेजी):",
+    "targetLanguage": "लक्षित भाषा",
+    "selectLanguage": "एक भाषा चुनें",
+    "translate": "अलर्ट का अनुवाद करें",
+    "translating": "अनुवाद हो रहा है...",
+    "translatedAlert": "अनुवादित अलर्ट",
+    "smsStatus": "एसएमएस स्थिति",
+    "sendSms": "एसएमएस के रूप में भेजें",
+    "sending": "भेजा जा रहा है..."
+  },
+  "diagnosis": {
+    "title": "फसल स्वास्थ्य निदान",
+    "description": "कीटों और बीमारियों की पहचान के लिए पौधे की एक तस्वीर अपलोड करें।",
+    "uploadPrompt": "एक छवि अपलोड करने के लिए क्लिक करें",
+    "uploadHint": "PNG, JPG, या WEBP 4MB तक",
+    "diagnose": "पौधे के स्वास्थ्य का निदान करें",
+    "diagnosing": "निदान हो रहा है...",
+    "results": "निदान परिणाम:",
+    "identification": "पहचान:",
+    "healthStatus": "स्वास्थ्य स्थिति:",
+    "healthy": "स्वस्थ",
+    "needsAttention": "ध्यान देने की आवश्यकता है",
+    "analysis": "विश्लेषण:",
+    "sendSms": "एसएमएस के रूप में भेजें",
+    "sending": "भेजा जा रहा है..."
+  },
+  "market": {
+    "title": "बाजार मूल्य",
+    "description": "आपके क्षेत्र में प्रमुख फसलों के लिए लाइव मंडी दरें। प्रति क्विंटल मूल्य।",
+    "crop": "फसल",
+    "price": "मूल्य (INR)",
+    "change": "बदलाव",
+    "sendSms": "एसएमएस के रूप में भेजें",
+    "sending": "भेजा जा रहा है..."
+  },
+  "chat": {
+    "title": "एआई चैट सहायक",
+    "description": "खेती, फसलों और मौसम के बारे में कुछ भी पूछें।",
+    "thinking": "सोच रहा हूँ...",
+    "placeholder": "एक प्रश्न पूछें...",
+    "uploadImage": "छवि अपलोड करें",
+    "send": "भेजें"
+  },
+  "history": {
+    "title": "एसएमएस इतिहास",
+    "description": "सभी भेजे गए मौसम और सलाह अलर्ट का एक लॉग।",
+    "noMessages": "अभी तक कोई संदेश नहीं भेजा गया है।"
+  },
+  "help": {
+    "title": "सहायता केंद्र",
+    "description": "अपने प्रश्नों के उत्तर खोजें और आवश्यक सहायता प्राप्त करें।",
+    "contact": "समर्थन से संपर्क करें",
+    "contactDescription": "किसी भी पूछताछ के लिए सीधे हमसे संपर्क करें।",
+    "emailSupport": "ईमेल समर्थन",
+    "phoneSupport": "फोन समर्थन",
+    "faq": "अक्सर पूछे जाने वाले प्रश्न (FAQ)",
+    "faqDescription": "एग्रीअसिस्ट एसएमएस प्लेटफॉर्म के बारे में सामान्य प्रश्नों के उत्तर खोजें।"
+  }
+}

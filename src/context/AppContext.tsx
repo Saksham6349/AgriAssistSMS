@@ -1,9 +1,46 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import type { FarmerData } from '@/components/UserManagement';
 import type { SmsMessage } from '@/components/SmsHistory';
+
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import bn from '@/translations/bn.json';
+import te from '@/translations/te.json';
+import mr from '@/translations/mr.json';
+import ta from '@/translations/ta.json';
+import ur from '@/translations/ur.json';
+import gu from '@/translations/gu.json';
+import kn from '@/translations/kn.json';
+import pa from '@/translations/pa.json';
+
+const translations: { [key: string]: any } = {
+  English: en,
+  Hindi: hi,
+  Bengali: bn,
+  Telugu: te,
+  Marathi: mr,
+  Tamil: ta,
+  Urdu: ur,
+  Gujarati: gu,
+  Kannada: kn,
+  Punjabi: pa,
+};
+
+const availableLanguages = {
+  English: "English",
+  Hindi: "हिन्दी",
+  Bengali: "বাংলা",
+  Telugu: "తెలుగు",
+  Marathi: "मराठी",
+  Tamil: "தமிழ்",
+  Urdu: "اردو",
+  Gujarati: "ગુજરાતી",
+  Kannada: "ಕನ್ನಡ",
+  Punjabi: "ਪੰਜਾਬੀ",
+};
 
 interface AppContextType {
   registeredFarmer: FarmerData | null;
@@ -11,6 +48,10 @@ interface AppContextType {
   smsHistory: SmsMessage[];
   addSmsToHistory: (message: Omit<SmsMessage, 'timestamp'>) => void;
   isLoaded: boolean;
+  language: string;
+  setLanguage: (language: string) => void;
+  translations: any;
+  availableLanguages: { [key: string]: string };
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -19,58 +60,91 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [registeredFarmer, setRegisteredFarmerState] = useState<FarmerData | null>(null);
   const [smsHistory, setSmsHistory] = useState<SmsMessage[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [language, setLanguageState] = useState<string>('English');
+  const [currentTranslations, setCurrentTranslations] = useState(translations.English);
 
-  useEffect(() => {
-    // Load state from localStorage on initial render
-    try {
-        const storedFarmer = localStorage.getItem('registeredFarmer');
-        if (storedFarmer) {
-            setRegisteredFarmerState(JSON.parse(storedFarmer));
-        }
-        const storedHistory = localStorage.getItem('smsHistory');
-        if (storedHistory) {
-            setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({...sms, timestamp: new Date(sms.timestamp)})));
-        }
-    } catch (error) {
-        console.error("Failed to load state from localStorage", error);
-    } finally {
-        setIsLoaded(true);
+  const setLanguage = useCallback((lang: string) => {
+    if (translations[lang]) {
+      setLanguageState(lang);
+      setCurrentTranslations(translations[lang]);
+      try {
+        localStorage.setItem('appLanguage', lang);
+      } catch (error) {
+        console.error("Failed to save language to localStorage", error);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      const storedFarmer = localStorage.getItem('registeredFarmer');
+      if (storedFarmer) {
+        const farmer = JSON.parse(storedFarmer);
+        setRegisteredFarmerState(farmer);
+        if (farmer.language && translations[farmer.language]) {
+          setLanguage(farmer.language);
+        }
+      } else {
+        const storedLanguage = localStorage.getItem('appLanguage');
+        if (storedLanguage && translations[storedLanguage]) {
+          setLanguage(storedLanguage);
+        }
+      }
+      
+      const storedHistory = localStorage.getItem('smsHistory');
+      if (storedHistory) {
+        setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({ ...sms, timestamp: new Date(sms.timestamp) })));
+      }
+    } catch (error) {
+      console.error("Failed to load state from localStorage", error);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, [setLanguage]);
 
   const setRegisteredFarmer = (farmer: FarmerData | null) => {
     setRegisteredFarmerState(farmer);
     try {
-        if (farmer) {
-            localStorage.setItem('registeredFarmer', JSON.stringify(farmer));
-        } else {
-            localStorage.removeItem('registeredFarmer');
+      if (farmer) {
+        localStorage.setItem('registeredFarmer', JSON.stringify(farmer));
+        if (farmer.language) {
+          setLanguage(farmer.language);
         }
+      } else {
+        localStorage.removeItem('registeredFarmer');
+        // Keep the last selected language, don't reset to English
+        const storedLanguage = localStorage.getItem('appLanguage') || 'English';
+        setLanguage(storedLanguage);
+      }
     } catch (error) {
-        console.error("Failed to save farmer to localStorage", error);
+      console.error("Failed to save farmer to localStorage", error);
     }
   };
 
   const addSmsToHistory = (message: Omit<SmsMessage, 'timestamp'>) => {
     const newSms: SmsMessage = { ...message, timestamp: new Date() };
     setSmsHistory(prev => {
-        const newHistory = [newSms, ...prev];
-        try {
-            localStorage.setItem('smsHistory', JSON.stringify(newHistory));
-        } catch (error) {
-            console.error("Failed to save SMS history to localStorage", error);
-        }
-        return newHistory;
+      const newHistory = [newSms, ...prev];
+      try {
+        localStorage.setItem('smsHistory', JSON.stringify(newHistory));
+      } catch (error) {
+        console.error("Failed to save SMS history to localStorage", error);
+      }
+      return newHistory;
     });
   };
 
   const value = {
-      registeredFarmer,
-      setRegisteredFarmer,
-      smsHistory,
-      addSmsToHistory,
-      isLoaded
-  }
+    registeredFarmer,
+    setRegisteredFarmer,
+    smsHistory,
+    addSmsToHistory,
+    isLoaded,
+    language,
+    setLanguage,
+    translations: currentTranslations,
+    availableLanguages
+  };
 
   return (
     <AppContext.Provider value={value}>

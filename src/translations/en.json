@@ -1,0 +1,124 @@
+
+{
+  "header": {
+    "title": "AgriAssist SMS"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "weather": "Weather Forecast",
+    "advisory": "Advisory Alerts",
+    "diagnosis": "Crop Diagnosis",
+    "market": "Market Prices",
+    "chat": "Chat Assistant",
+    "history": "SMS History",
+    "help": "Help Center"
+  },
+  "dashboard": {
+    "title": "Farming Dashboard",
+    "description": "Register farmers and send them real-time alerts."
+  },
+  "userManagement": {
+    "currentFarmer": "Current Farmer",
+    "ready": "Ready to receive SMS alerts.",
+    "registration": "Farmer Registration",
+    "registerPrompt": "Register farmer to send alerts.",
+    "idProof": "Government ID:",
+    "primaryCrop": "Primary Crop:",
+    "secondaryCrop": "Secondary:",
+    "language": "Language:",
+    "registerAnother": "Register Another Farmer",
+    "farmerName": "Farmer Name",
+    "farmerNamePlaceholder": "e.g., John Doe",
+    "phone": "Phone Number",
+    "phonePlaceholder": "e.g., +1234567890",
+    "location": "Location / Village",
+    "locationPlaceholder": "e.g., Springfield",
+    "preferredLanguage": "Preferred Language",
+    "selectLanguage": "Select language",
+    "primaryCropLabel": "Primary Crop",
+    "selectCrop": "Select crop",
+    "secondaryCropLabel": "Secondary Crop (Optional)",
+    "selectSecondaryCrop": "Select secondary crop",
+    "govIdProof": "Government ID Proof",
+    "uploadId": "Click to upload ID",
+    "idTypes": "Aadhar, PAN, Ration Card, or Gas Connection",
+    "fileTypes": "PNG, JPG, PDF (max 4MB)",
+    "verifyId": "Verify ID",
+    "verifying": "Verifying...",
+    "idVerified": "ID Verified",
+    "verificationFailed": "Verification Failed",
+    "registerFarmer": "Register Farmer"
+  },
+  "weather": {
+    "title": "Weather Forecast",
+    "description": "Get AI-powered weather summaries for your location.",
+    "locationPlaceholder": "Enter location...",
+    "getForecast": "Get Forecast",
+    "summary": "Weather Summary",
+    "enterLocationPrompt": "Enter a location to see the weather summary.",
+    "sendSms": "Send as SMS"
+  },
+  "advisory": {
+    "title": "Advisory & Pest Alerts",
+    "description": "Generate and send critical alerts to farmers.",
+    "generateAlert": "Generate Alert for",
+    "generating": "Generating...",
+    "generatedAlert": "Generated Alert (English):",
+    "targetLanguage": "Target Language",
+    "selectLanguage": "Select a language",
+    "translate": "Translate Alert",
+    "translating": "Translating...",
+    "translatedAlert": "Translated Alert",
+    "smsStatus": "SMS Status",
+    "sendSms": "Send as SMS",
+    "sending": "Sending..."
+  },
+  "diagnosis": {
+    "title": "Crop Health Diagnosis",
+    "description": "Upload a photo of a plant to identify pests and diseases.",
+    "uploadPrompt": "Click to upload an image",
+    "uploadHint": "PNG, JPG, or WEBP up to 4MB",
+    "diagnose": "Diagnose Plant Health",
+    "diagnosing": "Diagnosing...",
+    "results": "Diagnosis Results:",
+    "identification": "Identification:",
+    "healthStatus": "Health Status:",
+    "healthy": "Healthy",
+    "needsAttention": "Needs Attention",
+    "analysis": "Analysis:",
+    "sendSms": "Send as SMS",
+    "sending": "Sending..."
+  },
+  "market": {
+    "title": "Market Prices",
+    "description": "Live mandi rates for key crops in your area. Prices per quintal.",
+    "crop": "Crop",
+    "price": "Price (INR)",
+    "change": "Change",
+    "sendSms": "Send as SMS",
+    "sending": "Sending..."
+  },
+  "chat": {
+    "title": "AI Chat Assistant",
+    "description": "Ask me anything about farming, crops, and weather.",
+    "thinking": "Thinking...",
+    "placeholder": "Ask a question...",
+    "uploadImage": "Upload Image",
+    "send": "Send"
+  },
+  "history": {
+    "title": "SMS History",
+    "description": "A log of all sent weather and advisory alerts.",
+    "noMessages": "No messages sent yet."
+  },
+  "help": {
+    "title": "Help Center",
+    "description": "Find answers to your questions and get the support you need.",
+    "contact": "Contact Support",
+    "contactDescription": "Reach out to us directly for any inquiries.",
+    "emailSupport": "Email Support",
+    "phoneSupport": "Phone Support",
+    "faq": "Frequently Asked Questions (FAQ)",
+    "faqDescription": "Find answers to common questions about the AgriAssist SMS platform."
+  }
+}
