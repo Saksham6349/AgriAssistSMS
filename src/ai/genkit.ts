@@ -1,7 +1,6 @@
-import {genkit} from 'genkit';
-import {googleAI} from '@gen-ai/googleai';
+import {genkit, retriable} from 'genkit';
+import {googleAI} from '@genkit-ai/googleai';
 import { config } from 'dotenv';
-import { retriable } from 'genkit/util/retries';
 
 config(); // Load environment variables from .env file
 
