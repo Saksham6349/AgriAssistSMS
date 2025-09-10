@@ -186,48 +186,6 @@ export function UserManagement() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="id-proof-upload" className="text-sm font-medium">Government ID Proof</label>
-              <div
-                className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent hover:border-primary transition-colors"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                  <input
-                    type="file"
-                    id="id-proof-upload"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    className="hidden"
-                    accept="image/png, image/jpeg, image/webp"
-                  />
-                  {imagePreview ? (
-                     <div className="relative group w-fit mx-auto">
-                        <Image
-                            src={imagePreview}
-                            alt="ID preview"
-                            width={200}
-                            height={120}
-                            className="rounded-md mx-auto max-h-32 w-auto object-contain"
-                        />
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }}
-                        >
-                            <X className="w-4 h-4" />
-                        </Button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                        <Upload className="w-8 h-8" />
-                        <p className="font-semibold">Click to upload ID</p>
-                        <p className="text-xs">PNG, JPG, or WEBP (max 4MB)</p>
-                    </div>
-                  )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
               <label htmlFor="crop-select" className="text-sm font-medium">Primary Crop</label>
               <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
                 <SelectTrigger id="crop-select">
@@ -307,6 +265,49 @@ export function UserManagement() {
                 </SelectContent>
               </Select>
             </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="id-proof-upload" className="text-sm font-medium">Government ID Proof</label>
+              <div
+                className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent hover:border-primary transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                  <input
+                    type="file"
+                    id="id-proof-upload"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/webp"
+                  />
+                  {imagePreview ? (
+                     <div className="relative group w-fit mx-auto">
+                        <Image
+                            src={imagePreview}
+                            alt="ID preview"
+                            width={200}
+                            height={120}
+                            className="rounded-md mx-auto max-h-32 w-auto object-contain"
+                        />
+                        <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }}
+                        >
+                            <X className="w-4 h-4" />
+                        </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <Upload className="w-8 h-8" />
+                        <p className="font-semibold">Click to upload ID</p>
+                        <p className="text-xs">PNG, JPG, or WEBP (max 4MB)</p>
+                    </div>
+                  )}
+              </div>
+            </div>
+
             <Button type="submit" className="w-full">
               <UserPlus /> Register Farmer
             </Button>
@@ -316,5 +317,3 @@ export function UserManagement() {
     </Card>
   );
 }
-
-    
