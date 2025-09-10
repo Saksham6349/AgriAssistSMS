@@ -29,32 +29,48 @@ import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
+import { openWeatherApiKey } from "@/config";
 
 type ServerActionResult = {
   summary: string | null;
   error: string | null;
 };
 
-// Mock function to simulate fetching weather data.
 async function fetchWeatherData(location: string) {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  const today = new Date();
-  const getDayOfWeek = (date: Date) => {
-    return date.toLocaleDateString('en-US', { weekday: 'long' });
-  };
-  const forecast = Array.from({ length: 5 }).map((_, i) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const day = getDayOfWeek(date);
-    const baseTemp = 35; 
-    const temp_c = baseTemp - i + Math.floor(Math.random() * 4) - 2;
-    const conditions = ["Clear skies", "Sunny with scattered clouds", "Hazy sunshine", "Hot and humid"];
-    const condition = conditions[Math.floor(Math.random() * conditions.length)];
-    const precipitation_mm = Math.random() < 0.1 ? Math.floor(Math.random() * 5) : 0;
-    return { day, temp_c, condition, precipitation_mm };
-  });
-  return JSON.stringify({ location, forecast }, null, 2);
+  if (!openWeatherApiKey) {
+    throw new Error("OpenWeather API key is not configured. Please add it to your .env file.");
+  }
+  
+  // 1. Geocode location to get coordinates
+  const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${openWeatherApiKey}`);
+  if (!geoResponse.ok) {
+    throw new Error("Failed to geocode location.");
+  }
+  const geoData = await geoResponse.json();
+  if (geoData.length === 0) {
+    throw new Error(`Could not find location: ${location}`);
+  }
+  const { lat, lon } = geoData[0];
+
+  // 2. Fetch 5-day forecast data
+  const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${openWeatherApiKey}`);
+  if (!forecastResponse.ok) {
+    throw new Error("Failed to fetch weather data.");
+  }
+  const forecastData = await forecastResponse.json();
+
+  // 3. Simplify the data to pass to the AI
+  const simplifiedForecast = forecastData.list.map((item: any) => ({
+    date: item.dt_txt,
+    temp_c: item.main.temp,
+    condition: item.weather[0].description,
+    wind_speed_mps: item.wind.speed,
+    precipitation_chance: item.pop,
+  }));
+
+  return JSON.stringify({ location, forecast: simplifiedForecast }, null, 2);
 }
+
 
 export function WeatherCard() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
@@ -109,15 +125,13 @@ export function WeatherCard() {
 
       } catch (error) {
         console.error(error);
-        const errorMessage = error instanceof Error && error.message.includes("Translation")
-          ? "Failed to translate weather summary."
-          : "Failed to get weather summary.";
+        const errorMessage = error instanceof Error ? error.message : "Failed to get weather summary.";
         
         setResult({ summary: null, error: errorMessage });
         toast({
           variant: "destructive",
           title: "API Error",
-          description: `${errorMessage} Please try again later.`,
+          description: `${errorMessage} Please check your API keys and try again.`,
         });
       }
     });
@@ -266,6 +280,12 @@ export function WeatherCard() {
                     <Skeleton className="h-4 w-5/6" />
                 </div>
             )}
+             {result?.error && !isForecastPending && (
+              <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{result.error}</AlertDescription>
+              </Alert>
+            )}
             {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
                 <div className="flex justify-between items-start">
@@ -302,3 +322,5 @@ export function WeatherCard() {
     </Card>
   );
 }
+
+    

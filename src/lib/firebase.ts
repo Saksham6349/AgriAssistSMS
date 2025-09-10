@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getFirestore, Firestore } from "firebase/firestore";
 
 // =================================================================================================
 // IMPORTANT: PASTE YOUR FIREBASE CONFIG OBJECT HERE TO FIX THE CONNECTION ERROR
@@ -22,8 +22,20 @@ const firebaseConfig = {
   appId: "PASTE_YOUR_APP_ID_HERE"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+let app: FirebaseApp | null = null;
+let db: Firestore | null = null;
+
+// Only initialize Firebase if the config is not using placeholder values
+if (!firebaseConfig.apiKey.startsWith("PASTE_YOUR")) {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+} else {
+    console.warn("*****************************************************************");
+    console.warn("FIREBASE CONFIGURATION IS MISSING!");
+    console.warn("Please paste your Firebase project's config object into 'src/lib/firebase.ts'");
+    console.warn("The app will not connect to Firestore until this is updated.");
+    console.warn("*****************************************************************");
+}
+
 
 export { app, db };
