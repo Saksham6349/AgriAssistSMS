@@ -81,14 +81,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       if (storedFarmer) {
         const farmer = JSON.parse(storedFarmer);
         setRegisteredFarmerState(farmer);
-        if (farmer.language && translations[farmer.language]) {
-          setLanguage(farmer.language);
-        }
+      }
+      
+      const storedLanguage = localStorage.getItem('appLanguage');
+      if (storedLanguage && translations[storedLanguage]) {
+        setLanguage(storedLanguage);
       } else {
-        const storedLanguage = localStorage.getItem('appLanguage');
-        if (storedLanguage && translations[storedLanguage]) {
-          setLanguage(storedLanguage);
-        }
+        setLanguage('English');
       }
       
       const storedHistory = localStorage.getItem('smsHistory');
@@ -107,14 +106,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     try {
       if (farmer) {
         localStorage.setItem('registeredFarmer', JSON.stringify(farmer));
-        if (farmer.language) {
-          setLanguage(farmer.language);
-        }
       } else {
         localStorage.removeItem('registeredFarmer');
-        // Keep the last selected language, don't reset to English
-        const storedLanguage = localStorage.getItem('appLanguage') || 'English';
-        setLanguage(storedLanguage);
       }
     } catch (error) {
       console.error("Failed to save farmer to localStorage", error);
