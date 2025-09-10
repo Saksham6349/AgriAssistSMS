@@ -12,3 +12,8 @@ export const twilioConfig = {
 };
 
 export const geminiApiKey = process.env.GEMINI_API_KEY;
+
+export const elevenLabsConfig = {
+    apiKey: process.env.ELEVENLABS_API_KEY,
+    voiceId: process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM', // Default voice ID for Rachel
+};

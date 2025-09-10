@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Sun, Loader2, Send } from "lucide-react";
+import { MapPin, Sun, Loader2, Send, PlayCircle, StopCircle } from "lucide-react";
 import { summarizeWeatherData } from "@/ai/flows/summarize-weather-data";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "./ui/skeleton";
@@ -28,6 +28,7 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 
 type ServerActionResult = {
   summary: string | null;
@@ -60,10 +61,12 @@ export function WeatherCard() {
   const { t } = useTranslation();
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
+  const [isAudioPending, startAudioTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
   const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("English");
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
   const getForecastForLocation = (loc: string, lang: string) => {
@@ -80,6 +83,10 @@ export function WeatherCard() {
       try {
         setResult(null);
         setSmsStatus(null);
+        if (audio) {
+            audio.pause();
+            setAudio(null);
+        }
         const weatherData = await fetchWeatherData(loc);
         const summaryRes = await summarizeWeatherData({ location: loc, weatherData });
         
@@ -172,6 +179,32 @@ export function WeatherCard() {
     }
   };
 
+  const handlePlayAudio = () => {
+    if (audio) {
+        audio.pause();
+        setAudio(null);
+        return;
+    }
+    if (!result?.summary) return;
+
+    startAudioTransition(async () => {
+      try {
+        const res = await textToSpeech({ text: result.summary! });
+        const newAudio = new Audio(res.audioDataUri);
+        setAudio(newAudio);
+        newAudio.play();
+        newAudio.addEventListener('ended', () => setAudio(null));
+      } catch (error) {
+        console.error("Audio generation failed", error);
+        toast({
+          variant: "destructive",
+          title: "Audio Error",
+          description: "Could not generate audio. Please check your ElevenLabs API key.",
+        });
+      }
+    });
+  };
+
   return (
     <Card className="flex flex-col">
       <CardHeader>
@@ -235,7 +268,12 @@ export function WeatherCard() {
             )}
             {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
-                <h4 className="font-semibold mb-2 text-foreground">{t('weather.summary')} ({language}):</h4>
+                <div className="flex justify-between items-start">
+                    <h4 className="font-semibold mb-2 text-foreground">{t('weather.summary')} ({language}):</h4>
+                    <Button variant="ghost" size="icon" onClick={handlePlayAudio} disabled={isAudioPending}>
+                        {isAudioPending ? <Loader2 className="animate-spin" /> : (audio ? <StopCircle /> : <PlayCircle />)}
+                    </Button>
+                </div>
                 <p>{result.summary}</p>
               </div>
             )}

@@ -9,3 +9,4 @@ import '@/ai/flows/send-sms.ts';
 import '@/ai/flows/chat.ts';
 import '@/ai/flows/generate-advisory-alert.ts';
 import '@/ai/flows/verify-id.ts';
+import '@/ai/flows/text-to-speech.ts';

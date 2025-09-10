@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MessageSquareWarning, Loader2, Send, Lightbulb } from "lucide-react";
+import { MessageSquareWarning, Loader2, Send, Lightbulb, PlayCircle, StopCircle } from "lucide-react";
 import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -26,6 +26,7 @@ import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
 import { generateAdvisoryAlert } from "@/ai/flows/generate-advisory-alert";
 import { useTranslation } from "@/hooks/useTranslation";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 
 export function AdvisoryAlerts() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
@@ -33,10 +34,12 @@ export function AdvisoryAlerts() {
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [isGeneratePending, startGenerateTransition] = useTransition();
+  const [isAudioPending, startAudioTransition] = useTransition();
   const [translatedText, setTranslatedText] = useState<string | null>(null);
   const [alertText, setAlertText] = useState<string>("");
   const [language, setLanguage] = useState("English");
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -63,6 +66,10 @@ export function AdvisoryAlerts() {
     setAlertText("");
     setTranslatedText(null);
     setSmsStatus(null);
+    if (audio) {
+        audio.pause();
+        setAudio(null);
+    }
     
     startGenerateTransition(async () => {
       try {
@@ -99,6 +106,10 @@ export function AdvisoryAlerts() {
 
     setSmsStatus(null);
     setTranslatedText(null);
+    if (audio) {
+        audio.pause();
+        setAudio(null);
+    }
     startTranslateTransition(async () => {
       try {
         const res = await translateAdvisoryAlerts({
@@ -157,6 +168,32 @@ export function AdvisoryAlerts() {
     }
   };
 
+  const handlePlayAudio = (textToPlay: string | null) => {
+    if (audio) {
+      audio.pause();
+      setAudio(null);
+      return;
+    }
+    if (!textToPlay) return;
+
+    startAudioTransition(async () => {
+      try {
+        const res = await textToSpeech({ text: textToPlay });
+        const newAudio = new Audio(res.audioDataUri);
+        setAudio(newAudio);
+        newAudio.play();
+        newAudio.addEventListener('ended', () => setAudio(null));
+      } catch (error) {
+        console.error("Audio generation failed", error);
+        toast({
+          variant: "destructive",
+          title: "Audio Error",
+          description: "Could not generate audio. Please check your ElevenLabs API key.",
+        });
+      }
+    });
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
@@ -188,7 +225,12 @@ export function AdvisoryAlerts() {
 
           {(alertText && !isGeneratePending) && (
             <div className="p-4 bg-muted rounded-md border mt-4">
-              <h4 className="font-semibold mb-2">{t('advisory.generatedAlert')}</h4>
+              <div className="flex justify-between items-start">
+                  <h4 className="font-semibold mb-2">{t('advisory.generatedAlert')}</h4>
+                   <Button variant="ghost" size="icon" onClick={() => handlePlayAudio(alertText)} disabled={isAudioPending}>
+                      {isAudioPending && !translatedText ? <Loader2 className="animate-spin" /> : (audio && !translatedText ? <StopCircle /> : <PlayCircle />)}
+                   </Button>
+              </div>
               <p className="text-sm text-muted-foreground">{alertText}</p>
             </div>
           )}
@@ -227,7 +269,12 @@ export function AdvisoryAlerts() {
 
           {translatedText && !isTranslatePending && (
             <div className="p-4 bg-muted rounded-md border mt-4">
-              <h4 className="font-semibold mb-2">{t('advisory.translatedAlert')} ({language}):</h4>
+              <div className="flex justify-between items-start">
+                  <h4 className="font-semibold mb-2">{t('advisory.translatedAlert')} ({language}):</h4>
+                  <Button variant="ghost" size="icon" onClick={() => handlePlayAudio(translatedText)} disabled={isAudioPending}>
+                      {isAudioPending && !!translatedText ? <Loader2 className="animate-spin" /> : (audio && !!translatedText ? <StopCircle /> : <PlayCircle />)}
+                   </Button>
+              </div>
               <p className="text-sm text-muted-foreground">{translatedText}</p>
             </div>
           )}

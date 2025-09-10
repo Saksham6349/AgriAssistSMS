@@ -14,23 +14,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Stethoscope, Upload, X, Loader2, AlertCircle, Send } from "lucide-react";
+import { Stethoscope, Upload, X, Loader2, AlertCircle, Send, PlayCircle, StopCircle } from "lucide-react";
 import { diagnoseCropHealth, DiagnoseCropHealthOutput } from "@/ai/flows/diagnose-crop-health";
 import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from "@/context/AppContext";
 import { sendSms } from "@/ai/flows/send-sms";
 import { useTranslation } from "@/hooks/useTranslation";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 
 export function PestDiseaseIdentification() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
   const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
+  const [isAudioPending, startAudioTransition] = useTransition();
   const [result, setResult] = useState<DiagnoseCropHealthOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<string | null>(null);
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -53,6 +56,10 @@ export function PestDiseaseIdentification() {
         setResult(null);
         setError(null);
         setSmsStatus(null);
+        if (audio) {
+            audio.pause();
+            setAudio(null);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -64,6 +71,10 @@ export function PestDiseaseIdentification() {
     setResult(null);
     setError(null);
     setSmsStatus(null);
+    if (audio) {
+        audio.pause();
+        setAudio(null);
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -83,6 +94,10 @@ export function PestDiseaseIdentification() {
     setResult(null);
     setError(null);
     setSmsStatus(null);
+    if (audio) {
+        audio.pause();
+        setAudio(null);
+    }
     startTransition(async () => {
       try {
         const diagnosisResult = await diagnoseCropHealth({ photoDataUri: imageData });
@@ -135,6 +150,32 @@ export function PestDiseaseIdentification() {
         }
       });
     }
+  };
+
+  const handlePlayAudio = () => {
+    if (audio) {
+      audio.pause();
+      setAudio(null);
+      return;
+    }
+    if (!result?.diagnosis.diagnosis) return;
+
+    startAudioTransition(async () => {
+      try {
+        const res = await textToSpeech({ text: result.diagnosis.diagnosis });
+        const newAudio = new Audio(res.audioDataUri);
+        setAudio(newAudio);
+        newAudio.play();
+        newAudio.addEventListener('ended', () => setAudio(null));
+      } catch (error) {
+        console.error("Audio generation failed", error);
+        toast({
+          variant: "destructive",
+          title: "Audio Error",
+          description: "Could not generate audio. Please check your ElevenLabs API key.",
+        });
+      }
+    });
   };
 
   return (
@@ -220,7 +261,12 @@ export function PestDiseaseIdentification() {
 
         {result && !isPending && (
           <div className="prose prose-sm max-w-none text-foreground pt-4">
-            <h4 className="font-semibold text-foreground mb-2">{t('diagnosis.results')}</h4>
+            <div className="flex justify-between items-start">
+                <h4 className="font-semibold text-foreground mb-2">{t('diagnosis.results')}</h4>
+                <Button variant="ghost" size="icon" onClick={handlePlayAudio} disabled={isAudioPending}>
+                    {isAudioPending ? <Loader2 className="animate-spin" /> : (audio ? <StopCircle /> : <PlayCircle />)}
+                </Button>
+            </div>
             <ul>
               <li><strong>{t('diagnosis.identification')}</strong> {result.identification.commonName} (<em>{result.identification.latinName}</em>)</li>
               <li>
