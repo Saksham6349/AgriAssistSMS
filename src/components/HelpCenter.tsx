@@ -50,22 +50,7 @@ export function HelpCenter() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="flex flex-col">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Need immediate assistance? Chat with our AI.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-grow flex items-center justify-center">
-            <Button asChild size="lg" className="w-full py-8 text-lg">
-              <Link href="/chat">
-                <Bot className="mr-4" />
-                Chat with AI Assistant
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 max-w-md mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Contact Support</CardTitle>
