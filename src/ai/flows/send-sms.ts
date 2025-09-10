@@ -36,11 +36,16 @@ const sendSmsFlow = ai.defineFlow(
     outputSchema: SendSmsOutputSchema,
   },
   async (input) => {
-    const { to, message } = input;
+    let { to, message } = input;
     const { accountSid, authToken, messagingServiceSid } = twilioConfig;
 
     if (!accountSid || !authToken || !messagingServiceSid) {
         throw new Error('Twilio credentials are not configured correctly. Please check your config.ts and .env file.');
+    }
+
+    // Automatically add '+' if missing
+    if (!to.startsWith('+')) {
+      to = `+${to}`;
     }
 
     // Validate E.164 format
