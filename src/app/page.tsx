@@ -1,7 +1,7 @@
-import { LandingPage } from "@/components/LandingPage";
+import { RoleSelectionPage } from "@/components/RoleSelectionPage";
 
 export default function Home() {
   return (
-    <LandingPage />
+    <RoleSelectionPage />
   );
 }

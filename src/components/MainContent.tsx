@@ -7,8 +7,8 @@ import { Sidebar } from '@/components/Sidebar';
 export function MainContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Don't render Header and Sidebar on the landing page
-  if (pathname === '/') {
+  // Don't render Header and Sidebar on the landing page or farmer page
+  if (pathname === '/' || pathname === '/farmer') {
     return <>{children}</>;
   }
 

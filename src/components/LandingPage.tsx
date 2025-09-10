@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Bot, Languages, MessageSquareWarning, Speaker, Stethoscope, Sun, TrendingUp } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Header } from "./Header";
 
 export function LandingPage() {
   const { t } = useTranslation();
