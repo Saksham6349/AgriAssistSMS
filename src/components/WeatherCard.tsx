@@ -44,7 +44,8 @@ async function fetchWeatherData(location: string): Promise<string> {
   // 1. Geocode location to get coordinates
   const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${openWeatherApiKey}`);
   if (!geoResponse.ok) {
-    throw new Error("Failed to geocode location.");
+    // This often happens if the API key is invalid or not yet active.
+    throw new Error("Failed to geocode location. Please check that your OpenWeather API key is correct and active.");
   }
   const geoData = await geoResponse.json();
   if (geoData.length === 0) {
@@ -297,7 +298,7 @@ export function WeatherCard() {
              {result?.error && !isForecastPending && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Configuration Error</AlertTitle>
+                <AlertTitle>API Error</AlertTitle>
                 <AlertDescription>{result.error}</AlertDescription>
               </Alert>
             )}
@@ -337,3 +338,5 @@ export function WeatherCard() {
     </Card>
   );
 }
+
+    
