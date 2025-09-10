@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, FormEvent } from "react";
 import {
   Card,
   CardContent,
@@ -59,14 +59,13 @@ export function WeatherCard() {
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [result, setResult] = useState<ServerActionResult | null>(null);
-  const [location, setLocation] = useState("Delhi");
+  const [location, setLocation] = useState("");
   const [language, setLanguage] = useState("English");
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleGetForecast = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!location) {
+  const getForecastForLocation = (loc: string, lang: string) => {
+    if (!loc) {
         toast({
             variant: "destructive",
             title: "Missing Location",
@@ -79,17 +78,17 @@ export function WeatherCard() {
       try {
         setResult(null);
         setSmsStatus(null);
-        const weatherData = await fetchWeatherData(location);
-        const summaryRes = await summarizeWeatherData({ location, weatherData });
+        const weatherData = await fetchWeatherData(loc);
+        const summaryRes = await summarizeWeatherData({ location: loc, weatherData });
         
         if (!summaryRes.summary) throw new Error("Empty summary returned.");
 
-        if (language === "English") {
+        if (lang === "English") {
             setResult({ summary: summaryRes.summary, error: null });
         } else {
             const translationRes = await translateAdvisoryAlerts({
                 text: summaryRes.summary,
-                language: language,
+                language: lang,
             });
 
             if (translationRes.translatedText) {
@@ -113,6 +112,25 @@ export function WeatherCard() {
         });
       }
     });
+  };
+  
+  useEffect(() => {
+    if (registeredFarmer) {
+      setLocation(registeredFarmer.location);
+      setLanguage(registeredFarmer.language);
+      if (registeredFarmer.location) {
+        getForecastForLocation(registeredFarmer.location, registeredFarmer.language);
+      }
+    } else {
+      setLocation("");
+      setResult(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registeredFarmer]);
+  
+  const handleGetForecast = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    getForecastForLocation(location, language);
   };
 
   const handleSendSms = () => {
