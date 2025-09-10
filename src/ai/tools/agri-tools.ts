@@ -12,29 +12,35 @@ import { z } from 'genkit';
 import { summarizeWeatherData } from '@/ai/flows/summarize-weather-data';
 import { openWeatherApiKey } from '@/config';
 
-// Define the mock data directly in the tool for simplicity
-const mockMarketData: Array<{ cropKey: string; price: number; }> = [
-  { cropKey: "wheat", price: 2275 },
-  { cropKey: "rice", price: 3100 },
-  { cropKey: "corn", price: 2150 },
-  { cropKey: "soybeans", price: 4800 },
-  { cropKey: "cotton", price: 7200 },
-  { cropKey: "sugarcane", price: 350 },
-  { cropKey: "potatoes", price: 1800 },
-  { cropKey: "onions", price: 2500 },
-  { cropKey: "tomatoes", price: 2000 },
-  { cropKey: "apples", price: 8500 },
-  { cropKey: "bananas", price: 1500 },
-  { cropKey: "barley", price: 1900 },
-  { cropKey: "chickpeas", price: 5200 },
-  { cropKey: "coffee", price: 10500 },
-  { cropKey: "grapes", price: 6000 },
-  { cropKey: "jute", price: 4500 },
-  { cropKey: "lentils", price: 6800 },
-  { cropKey: "mangoes", price: 7500 },
-  { cropKey: "millet", price: 2800 },
-  { cropKey: "tea", price: 12000 },
-];
+// More realistic mock data with min, modal, and max prices per location.
+const mockMarketData = {
+  wheat: {
+    Patna: { min: 2000, modal: 2150, max: 2250 },
+    Indore: { min: 2100, modal: 2200, max: 2300 },
+    Mumbai: { min: 2200, modal: 2350, max: 2450 },
+  },
+  rice: {
+    Lucknow: { min: 2800, modal: 2950, max: 3050 },
+    Pune: { min: 3000, modal: 3100, max: 3200 },
+    Kolkata: { min: 2900, modal: 3000, max: 3100 },
+  },
+  corn: {
+    Patna: { min: 1500, modal: 1650, max: 1720 },
+    Indore: { min: 1600, modal: 1700, max: 1800 },
+    'Hyderabad': { min: 1650, modal: 1750, max: 1850 },
+  },
+  tomatoes: {
+      'Bangalore': { min: 1800, modal: 2000, max: 2200 },
+      'Delhi': { min: 1900, modal: 2100, max: 2300 },
+      'Pune': { min: 1700, modal: 1900, max: 2100 },
+  },
+  onions: {
+      'Nasik': { min: 2200, modal: 2500, max: 2800 },
+      'Indore': { min: 2100, modal: 2400, max: 2700 },
+      'Delhi': { min: 2300, modal: 2600, max: 2900 },
+  }
+};
+
 
 async function fetchWeatherDataForTool(location: string): Promise<string> {
     if (!openWeatherApiKey) {
@@ -88,22 +94,34 @@ export const getWeatherSummary = ai.defineTool(
 );
 
 export const getMarketPrices = ai.defineTool(
-    {
-      name: 'getMarketPrices',
-      description: 'Returns the current market price (per quintal) for one or more specified crops from Agmarknet.',
-      inputSchema: z.object({
-        crops: z.array(z.string()).describe('An array of crop names to get the prices for.'),
-      }),
-      outputSchema: z.string(),
-    },
-    async (input) => {
-      const results = input.crops.map(cropName => {
-        const cropData = mockMarketData.find(c => c.cropKey.toLowerCase() === cropName.toLowerCase());
-        if (cropData) {
-          return `${cropName}: ₹${cropData.price} per quintal`;
-        }
-        return `${cropName}: No price data available`;
-      });
-      return results.join('; ');
+  {
+    name: 'getMarketPrices',
+    description: 'Returns the current market price (per quintal) for a specified crop in a given location from Agmarknet.',
+    inputSchema: z.object({
+      crop: z.string().describe('The name of the crop to get the price for.'),
+      location: z.string().describe('The market location (mandi) for the price check.'),
+    }),
+    outputSchema: z.string(),
+  },
+  async (input) => {
+    const cropName = input.crop.toLowerCase() as keyof typeof mockMarketData;
+    const locationName = input.location;
+
+    const cropData = mockMarketData[cropName];
+    if (!cropData) {
+      return `No price data available for ${input.crop}.`;
     }
+
+    // Find the location with a case-insensitive match
+    const locationKey = Object.keys(cropData).find(
+      (loc) => loc.toLowerCase() === locationName.toLowerCase()
+    ) as keyof typeof cropData | undefined;
+    
+    if (!locationKey) {
+        return `No price data available for ${input.crop} in ${input.location}.`;
+    }
+
+    const priceInfo = cropData[locationKey];
+    return `The price for ${input.crop} in ${locationKey} is: Min: ₹${priceInfo.min}, Modal: ₹${priceInfo.modal}, Max: ₹${priceInfo.max} per quintal.`;
+  }
 );
