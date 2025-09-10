@@ -10,7 +10,7 @@ import { AppProvider } from '@/context/AppContext';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
-  title: 'AgriAssist SMS',
+  title: 'SmartSMS',
   description: 'Crop Advisory & Weather Alerts for Farmers',
 };
 
