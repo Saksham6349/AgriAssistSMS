@@ -32,8 +32,8 @@ export function Sidebar() {
                     asChild
                     variant="ghost"
                     className={cn(
-                        "w-full justify-start text-left transition-colors duration-200 ease-in-out hover:bg-primary/20 hover:text-primary h-auto",
-                        pathname === item.href && "bg-primary/20 text-primary-foreground font-semibold"
+                        "w-full justify-start text-left transition-colors duration-200 ease-in-out h-auto",
+                        pathname === item.href && "bg-primary/10 text-primary font-semibold"
                     )}
                 >
                     <Link href={item.href} className="flex items-center py-2">
