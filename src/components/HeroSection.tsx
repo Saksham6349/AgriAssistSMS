@@ -42,7 +42,7 @@ export function HeroSection() {
         <nav className="flex items-center justify-between p-4 md:px-16 lg:px-24 xl:px-32 md:py-6 w-full text-white">
           <Link href="/" aria-label="AgriAssist SMS home" className="flex items-center gap-2">
             <Leaf className="w-8 h-8 text-primary" />
-            <span className="font-bold text-lg">AgriAssist SMS</span>
+            <span className="font-bold text-lg text-black">AgriAssist SMS</span>
           </Link>
 
           <div
@@ -56,9 +56,9 @@ export function HeroSection() {
             ].join(' ')}
             aria-hidden={!menuOpen}
           >
-            <a href="#features" className="hover:text-primary transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
-            <a href="#testimonials" className="hover:text-primary transition-colors">Testimonials</a>
+            <a href="#features" className="hover:text-primary transition-colors text-black">Features</a>
+            <a href="#how-it-works" className="hover:text-primary transition-colors text-black">How It Works</a>
+            <a href="#testimonials" className="hover:text-primary transition-colors text-black">Testimonials</a>
 
             <button
               onClick={() => setMenuOpen(false)}
