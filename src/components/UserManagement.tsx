@@ -238,6 +238,15 @@ export function UserManagement() {
     }
   };
 
+  const isFormValid =
+    formData.name &&
+    formData.phone &&
+    formData.village &&
+    formData.district &&
+    formData.crop &&
+    verificationStatus === 'success';
+
+
   if (!isLoaded) {
       return (
           <Card className="h-full flex flex-col items-center justify-center">
@@ -339,7 +348,7 @@ export function UserManagement() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="crop-select" className="text-sm font-medium">{t('userManagement.primaryCropLabel')}</label>
-                <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
+                <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')} required>
                   <SelectTrigger id="crop-select">
                     <SelectValue placeholder={t('userManagement.selectCrop')} />
                   </SelectTrigger>
@@ -438,7 +447,7 @@ export function UserManagement() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={verificationStatus !== 'success' || isVerifyPending || isRegisterPending}>
+            <Button type="submit" className="w-full" disabled={!isFormValid || isRegisterPending}>
               {isRegisterPending ? <Loader2 className="animate-spin" /> : <UserPlus />}
               {t('userManagement.registerFarmer')}
             </Button>
@@ -448,5 +457,3 @@ export function UserManagement() {
     </Card>
   );
 }
-
-    
