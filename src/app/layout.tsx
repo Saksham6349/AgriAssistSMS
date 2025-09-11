@@ -1,4 +1,3 @@
-
 import type {Metadata} from 'next';
 import { Inter } from 'next/font/google'
 import './globals.css';
@@ -20,6 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="/landing.css" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <AppProvider>
           <div className="min-h-screen bg-background text-foreground">

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Bot, Languages, MessageSquareWarning, Speaker, Stethoscope, Sun, TrendingUp } from "lucide-react";
+import { ArrowRight, Leaf, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, CheckCircle, Smartphone, Wheat } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import Image from "next/image";
 
 export function LandingPage() {
   const { t } = useTranslation();
@@ -53,42 +54,70 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b border-border/50">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Leaf className="w-6 h-6 text-primary" />
+            <span className="text-lg font-bold">AgriAssist SMS</span>
+          </Link>
+          <nav className="hidden md:flex gap-6 text-sm font-medium">
+            <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
+            <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
+            <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
+          </nav>
+          <Button asChild>
+            <Link href="/dashboard">Get Started</Link>
+          </Button>
+        </div>
+      </header>
+      
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6 text-center">
-            <div className="max-w-3xl mx-auto space-y-4">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-foreground">
-                Welcome to AgriAssist SMS
-              </h1>
-              <p className="text-lg text-muted-foreground md:text-xl">
-                Empowering farmers with AI-driven insights and real-time alerts, delivered directly via SMS. Bridge the information gap and boost agricultural productivity.
-              </p>
-              <div className="flex justify-center">
-                <Button asChild size="lg">
-                  <Link href="/dashboard">
-                    Go to Dashboard <ArrowRight className="ml-2" />
-                  </Link>
-                </Button>
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-muted/20">
+          <div className="container px-4 md:px-6">
+            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
+              <div className="flex flex-col justify-center space-y-4 fade-in">
+                <div className="space-y-2">
+                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                    Empowering Farmers with AI-Powered SMS Alerts
+                  </h1>
+                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                    Bridge the information gap with real-time, actionable insights on weather, market prices, and crop health, delivered directly to any mobile phone.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                  <Button asChild size="lg">
+                    <Link href="/dashboard">Go to Dashboard <ArrowRight className="ml-2" /></Link>
+                  </Button>
+                </div>
               </div>
+              <Image 
+                src="https://picsum.photos/seed/farmer/600/400"
+                alt="Farmer using a phone in a field"
+                width={600}
+                height={400}
+                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last fade-in delay-200"
+                data-ai-hint="farmer phone"
+              />
             </div>
           </div>
         </section>
 
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-foreground">
-                Key Features
+            <div className="text-center mb-12 space-y-2 fade-in">
+              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Key Features</div>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                A Comprehensive Toolkit for Modern Agriculture
               </h2>
-              <p className="max-w-2xl mx-auto mt-2 text-muted-foreground">
-                A comprehensive suite of tools designed for the modern farmer.
+              <p className="max-w-[900px] mx-auto text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                From weather predictions to pest detection, get everything you need to make informed decisions and boost your yield.
               </p>
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {features.map((feature, index) => (
-                <Card key={index} className="flex flex-col">
-                  <CardHeader className="flex items-center gap-4 pb-4">
+                <Card key={index} className="flex flex-col feature-card transition-all duration-300 fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+                  <CardHeader className="flex flex-row items-center gap-4 pb-4">
                     <div className="p-3 bg-primary/10 rounded-full">
                         {feature.icon}
                     </div>
@@ -102,11 +131,98 @@ export function LandingPage() {
             </div>
           </div>
         </section>
+
+        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+          <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
+            <div className="space-y-3 fade-in">
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">How It Works</h2>
+              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Simple steps to connect farmers with vital information.
+              </p>
+            </div>
+            <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+              <div className="flex flex-col items-center space-y-4 fade-in delay-200">
+                <div className="p-4 bg-primary rounded-full text-primary-foreground">
+                  <Smartphone className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold">1. Register Farmer</h3>
+                <p className="text-sm text-muted-foreground">Easily register a farmer with their phone number, location, and primary crops via the dashboard.</p>
+              </div>
+              <div className="flex flex-col items-center space-y-4 fade-in delay-400">
+                <div className="p-4 bg-primary rounded-full text-primary-foreground">
+                  <Wheat className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold">2. Generate Insight</h3>
+                <p className="text-sm text-muted-foreground">Use AI tools to get weather forecasts, generate pest alerts, or diagnose crop diseases from a photo.</p>
+              </div>
+              <div className="flex flex-col items-center space-y-4 fade-in delay-600">
+                <div className="p-4 bg-primary rounded-full text-primary-foreground">
+                  <CheckCircle className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold">3. Send SMS</h3>
+                <p className="text-sm text-muted-foreground">Instantly send the generated insight as a translated SMS, accessible on any mobile phone.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="text-center mb-12 space-y-2 fade-in">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Trusted by Farmers</h2>
+              <p className="max-w-2xl mx-auto text-muted-foreground md:text-xl/relaxed">
+                Hear what farmers are saying about AgriAssist SMS.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="fade-in delay-200">
+                <CardContent className="p-6">
+                  <p className="text-muted-foreground">"The weather alerts are incredibly accurate and have helped me plan my irrigation schedule perfectly. I've saved water and my crops are healthier."</p>
+                  <div className="mt-4 flex items-center gap-4">
+                    <Image src="https://picsum.photos/seed/person1/40/40" width={40} height={40} alt="Avatar" className="rounded-full" data-ai-hint="person farmer" />
+                    <div>
+                      <p className="font-semibold">Rajesh Kumar</p>
+                      <p className="text-sm text-muted-foreground">Wheat Farmer, Punjab</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="fade-in delay-400">
+                <CardContent className="p-6">
+                  <p className="text-muted-foreground">"I used the photo diagnosis feature when my tomato plants were sick. It correctly identified blight and suggested a treatment that saved my harvest."</p>
+                  <div className="mt-4 flex items-center gap-4">
+                    <Image src="https://picsum.photos/seed/person2/40/40" width={40} height={40} alt="Avatar" className="rounded-full" data-ai-hint="woman farmer" />
+                    <div>
+                      <p className="font-semibold">Anjali Patel</p>
+                      <p className="text-sm text-muted-foreground">Vegetable Farmer, Gujarat</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="fade-in delay-600">
+                <CardContent className="p-6">
+                  <p className="text-muted-foreground">"Getting daily market prices on my phone has been a game-changer. I know exactly when to sell my produce to get the best price. Highly recommended!"</p>
+                  <div className="mt-4 flex items-center gap-4">
+                    <Image src="https://picsum.photos/seed/person3/40/40" width={40} height={40} alt="Avatar" className="rounded-full" data-ai-hint="man farmer" />
+                    <div>
+                      <p className="font-semibold">Suresh Singh</p>
+                      <p className="text-sm text-muted-foreground">Corn Farmer, Bihar</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="py-6 px-4 md:px-6 border-t bg-card">
-        <div className="container mx-auto text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} AgriAssist SMS. All rights reserved.
+      <footer className="py-6 px-4 md:px-6 border-t bg-muted">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} AgriAssist SMS. All rights reserved.</p>
+          <div className="flex gap-4 mt-4 md:mt-0">
+            <Link href="#" className="hover:text-primary">Privacy Policy</Link>
+            <Link href="#" className="hover:text-primary">Terms of Service</Link>
+          </div>
         </div>
       </footer>
     </div>
