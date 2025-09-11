@@ -1,7 +1,7 @@
 
 // Import the functions you need from the SDKs you need
 import { initializeApp, FirebaseApp } from "firebase/app";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { getFirestore, Firestore, initializeFirestore, persistentLocalCache } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,7 +20,10 @@ let db: Firestore | null = null;
 // Initialize Firebase
 try {
   app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
+  // Initialize Firestore with offline persistence
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({})
+  });
 } catch (error) {
   console.error("Error initializing Firebase:", error);
 }
