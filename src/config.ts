@@ -19,5 +19,3 @@ export const elevenLabsConfig = {
     apiKey: process.env.ELEVENLABS_API_KEY,
     voiceId: '21m00Tcm4TlvDq8ikWAM', // Default voice ID, can be changed
 };
-
-    
