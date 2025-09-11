@@ -16,8 +16,11 @@ export const ai = genkit({
       apiKey: geminiApiKey,
       generate: {
         retry: {
-          // Retry on 503 Service Unavailable errors
-          on: (err: any) => err.message.includes('503'),
+          // Retry on 429 and 503 errors
+          on: (err: any) => {
+            const message = err.message || '';
+            return message.includes('429') || message.includes('503');
+          },
         },
       },
     }),
