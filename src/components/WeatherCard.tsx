@@ -227,7 +227,7 @@ export function WeatherCard() {
         toast({
           variant: "destructive",
           title: "Audio Error",
-          description: "Could not generate audio. Please check your Gemini API key and try again.",
+          description: "Could not generate audio. Please check your ElevenLabs API key and try again.",
         });
       }
     });
