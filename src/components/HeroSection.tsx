@@ -93,7 +93,7 @@ export function HeroSection() {
           Empowering Farmers with AI-Powered SMS Alerts
         </h1>
 
-        <p className="text-sm md:text-base mx-auto max-w-2xl text-center mt-6 max-md:px-2 text-white/90">
+        <p className="text-sm md:text-base mx-auto max-w-2xl text-center mt-6 max-md:px-2 text-muted-foreground">
           Bridge the information gap with real-time, actionable insights on weather, market prices, and crop health, delivered directly to any mobile phone.
         </p>
 
