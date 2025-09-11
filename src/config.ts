@@ -13,7 +13,9 @@ export const twilioConfig = {
 
 export const geminiApiKey = process.env.GEMINI_API_KEY;
 
-export const openWeatherApiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+// Consolidated OpenWeather API Key for both server and client-side access if needed.
+// Note: For security, it's better to use server-side actions for API calls.
+export const openWeatherApiKey = process.env.OPENWEATHER_API_KEY;
 
 export const newsApiKey = process.env.NEWS_API_KEY;
 
