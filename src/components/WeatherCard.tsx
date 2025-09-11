@@ -67,11 +67,28 @@ export function WeatherCard() {
             audio.pause();
             setAudio(null);
         }
-        const weatherData = await fetchWeatherData(loc);
+        
+        // Attempt to fetch weather data for the given location
+        let weatherData = await fetchWeatherData(loc);
+        
+        // If the initial location fails, and it seems to be a combined "village, district" string,
+        // try searching for just the district part as a fallback.
+        if (weatherData.error && loc.includes(',')) {
+            const district = loc.split(',')[1]?.trim();
+            if (district) {
+                weatherData = await fetchWeatherData(district);
+                if (!weatherData.error) {
+                    setLocation(district); // Update location state to the successful one
+                }
+            }
+        }
+        
+        // If there's still an error after trying fallbacks, throw it.
         if (weatherData.error) {
             throw new Error(weatherData.error);
         }
-        const summaryRes = await summarizeWeatherData({ location: loc, weatherData: JSON.stringify(weatherData) });
+
+        const summaryRes = await summarizeWeatherData({ location: weatherData.city || loc, weatherData: JSON.stringify(weatherData) });
         
         if (!summaryRes.summary) throw new Error("Empty summary returned.");
 
