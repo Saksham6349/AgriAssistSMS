@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf, Building, Globe } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
@@ -28,7 +28,8 @@ import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { useTranslation } from "@/hooks/useTranslation";
 import { db } from '@/lib/firebase';
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { Progress } from "./ui/progress";
 
 // This type is for the app's context (the active farmer)
 export type FarmerData = {
@@ -192,8 +193,8 @@ export function UserManagement() {
         language: data.language,
         createdAt: Timestamp.now(),
       };
-      await addDoc(collection(db, "farmerregs"), docData);
-      console.log("✅ Farmer registered successfully in Firestore");
+      const docRef = await addDoc(collection(db, "farmerregs"), docData);
+      console.log("✅ Farmer registered successfully in Firestore with ID: ", docRef.id);
     } catch (e) {
       console.error("❌ Error registering farmer:", e);
       throw e; // Re-throw to be caught by the caller
@@ -213,9 +214,10 @@ export function UserManagement() {
 
     startRegisterTransition(async () => {
         try {
+            // Save every new farmer to the `farmerregs` collection
             await registerFarmerInFirestore(formData);
             
-            // Also set as the active farmer in the app context
+            // Set this newly registered farmer as the "active" one for the UI
             setRegisteredFarmer(formData);
 
             toast({
@@ -234,12 +236,6 @@ export function UserManagement() {
 
   const handleReset = () => {
     setRegisteredFarmer(null);
-    setFilePreview(null);
-    setVerificationStatus('unverified');
-    setVerificationResult(null);
-    if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-    }
   };
 
   const isFormValid =
@@ -440,12 +436,25 @@ export function UserManagement() {
                         {verificationStatus === 'success' && <><BadgeCheck /> {t('userManagement.idVerified')}</>}
                         {verificationStatus === 'failed' && <><ShieldAlert /> {t('userManagement.verificationFailed')}</>}
                     </Button>
-                    {verificationStatus === 'failed' && verificationResult && (
-                        <Alert variant="destructive">
-                            <ShieldAlert className="h-4 w-4" />
-                            <AlertTitle>Verification Failed</AlertTitle>
-                            <AlertDescription>{verificationResult.reason}</AlertDescription>
-                        </Alert>
+                    {verificationResult && (
+                      <div className="space-y-2">
+                        {verificationStatus === 'failed' && (
+                          <Alert variant="destructive">
+                              <ShieldAlert className="h-4 w-4" />
+                              <AlertTitle>Verification Failed</AlertTitle>
+                              <AlertDescription>{verificationResult.reason}</AlertDescription>
+                          </Alert>
+                        )}
+                        {verificationStatus === 'success' && verificationResult.confidenceScore && (
+                           <div className="space-y-1">
+                               <div className="flex justify-between text-xs text-muted-foreground">
+                                   <span>Confidence</span>
+                                   <span>{(verificationResult.confidenceScore * 100).toFixed(0)}%</span>
+                               </div>
+                               <Progress value={verificationResult.confidenceScore * 100} className="h-2" />
+                           </div>
+                        )}
+                      </div>
                     )}
                   </div>
               )}
@@ -461,5 +470,3 @@ export function UserManagement() {
     </Card>
   );
 }
-
-    

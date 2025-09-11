@@ -2,6 +2,9 @@
 "use client";
 
 import { Leaf, Languages } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
+import { useTranslation } from '@/hooks/useTranslation';
+import { usePathname } from 'next/navigation';
 import {
   Select,
   SelectContent,
@@ -9,12 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAppContext } from '@/context/AppContext';
-import { useTranslation } from '@/hooks/useTranslation';
 
 export function Header() {
   const { language, setLanguage, availableLanguages } = useAppContext();
   const { t } = useTranslation();
+  const pathname = usePathname();
+
+  const isFarmerPortal = pathname.startsWith('/farmer');
 
   return (
     <header className="sticky top-0 z-50 py-4 px-6 bg-card border-b">
@@ -27,22 +31,22 @@ export function Header() {
             {t('header.title')}
           </h1>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Languages className="h-5 w-5 text-muted-foreground" />
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(availableLanguages).map(([code, name]) => (
-                <SelectItem key={code} value={code}>
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        
+        {isFarmerPortal && (
+          <div className="flex items-center gap-2">
+            <Languages className="h-5 w-5 text-muted-foreground" />
+            <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-fit border-0 bg-transparent text-muted-foreground shadow-none focus:ring-0">
+                    <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                {Object.entries(availableLanguages).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>{value}</SelectItem>
+                ))}
+                </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
     </header>
   );

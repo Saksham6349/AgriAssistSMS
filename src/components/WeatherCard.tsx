@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Sun, Loader2, Send, PlayCircle, StopCircle } from "lucide-react";
+import { MapPin, Sun, Loader2, Send, PlayCircle, StopCircle, AlertCircle } from "lucide-react";
 import { summarizeWeatherData } from "@/ai/flows/summarize-weather-data";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "./ui/skeleton";
@@ -99,6 +99,7 @@ export function WeatherCard() {
                 : "Failed to get weather summary. Please check your API key.";
         
         setResult({ summary: null, error: errorMessage });
+        
         toast({
           variant: "destructive",
           title: "API Error",
@@ -176,16 +177,27 @@ export function WeatherCard() {
     startAudioTransition(async () => {
       try {
         const res = await textToSpeech({ text: result.summary! });
+        if (res.error) {
+            toast({
+                variant: "destructive",
+                title: "Audio Error",
+                description: res.error,
+            });
+            return;
+        }
+        if (!res.audioDataUri) {
+          throw new Error("Audio generation returned no data.");
+        }
         const newAudio = new Audio(res.audioDataUri);
         setAudio(newAudio);
         newAudio.play();
         newAudio.addEventListener('ended', () => setAudio(null));
-      } catch (error) {
+      } catch (error: any) {
         console.error("Audio generation failed", error);
         toast({
           variant: "destructive",
           title: "Audio Error",
-          description: "Could not generate audio. Please check your Gemini API key and try again.",
+          description: error.message || "Could not generate audio. Please check your Gemini API key and try again.",
         });
       }
     });
