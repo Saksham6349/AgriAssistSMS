@@ -83,19 +83,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load active farmer from Firestore
-        if (db) {
-          const farmerDocRef = doc(db, 'activeFarmer', ACTIVE_FARMER_DOC_ID);
-          const farmerDocSnap = await getDoc(farmerDocRef);
-
-          if (farmerDocSnap.exists()) {
-            setRegisteredFarmerState(farmerDocSnap.data() as FarmerData);
-          } else {
-            setRegisteredFarmerState(null);
-          }
-        }
-
-        // Load language and history from localStorage
+        // Load language and history from localStorage, but not the farmer.
         const storedLanguage = localStorage.getItem('appLanguage');
         if (storedLanguage && translations[storedLanguage]) {
           setLanguage(storedLanguage);
@@ -108,7 +96,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({ ...sms, timestamp: new Date(sms.timestamp) })));
         }
       } catch (error) {
-        console.error("Failed to load state from Firestore/localStorage", error);
+        console.error("Failed to load state from localStorage", error);
       } finally {
         setIsLoaded(true);
       }
