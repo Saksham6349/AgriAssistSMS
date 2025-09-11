@@ -18,7 +18,8 @@ const TextToSpeechInputSchema = z.object({
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
 const TextToSpeechOutputSchema = z.object({
-  audioDataUri: z.string().describe("The generated audio as a data URI in MP3 format. Format: 'data:audio/mpeg;base64,<encoded_data>'."),
+  audioDataUri: z.string().optional().describe("The generated audio as a data URI in MP3 format. Format: 'data:audio/mpeg;base64,<encoded_data>'."),
+  error: z.string().optional().describe("An error message if audio generation failed."),
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
 
@@ -36,38 +37,42 @@ const textToSpeechFlow = ai.defineFlow(
     const { apiKey, voiceId } = elevenLabsConfig;
 
     if (!apiKey || !voiceId) {
-      throw new Error('ElevenLabs API key or Voice ID is not configured. Please check your config.ts and .env file.');
+      return { error: 'ElevenLabs API key or Voice ID is not configured. Please check your config.ts and .env file.' };
     }
 
     const ELEVENLABS_API_URL = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
 
-    const response = await fetch(ELEVENLABS_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'xi-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        model_id: "eleven_multilingual_v2",
-        text,
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.75,
+    try {
+      const response = await fetch(ELEVENLABS_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'xi-api-key': apiKey,
         },
-      }),
-    });
+        body: JSON.stringify({
+          model_id: "eleven_multilingual_v2",
+          text,
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+          },
+        }),
+      });
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error("ElevenLabs API Error:", errorBody);
-      throw new Error(`Failed to generate audio from ElevenLabs. Status: ${response.status}`);
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error("ElevenLabs API Error:", errorBody);
+        throw new Error(`Failed to generate audio from ElevenLabs. Status: ${response.status}`);
+      }
+
+      const audioBuffer = await response.arrayBuffer();
+      const audioBase64 = Buffer.from(audioBuffer).toString('base64');
+      
+      return {
+        audioDataUri: `data:audio/mpeg;base64,${audioBase64}`,
+      };
+    } catch (err: any) {
+      return { error: err.message || 'An unknown error occurred while generating audio.' };
     }
-
-    const audioBuffer = await response.arrayBuffer();
-    const audioBase64 = Buffer.from(audioBuffer).toString('base64');
-    
-    return {
-      audioDataUri: `data:audio/mpeg;base64,${audioBase64}`,
-    };
   }
 );

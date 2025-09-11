@@ -218,16 +218,22 @@ export function WeatherCard() {
     startAudioTransition(async () => {
       try {
         const res = await textToSpeech({ text: result.summary! });
+        if (res.error) {
+          throw new Error(res.error);
+        }
+        if (!res.audioDataUri) {
+          throw new Error("Audio generation returned no data.");
+        }
         const newAudio = new Audio(res.audioDataUri);
         setAudio(newAudio);
         newAudio.play();
         newAudio.addEventListener('ended', () => setAudio(null));
-      } catch (error) {
+      } catch (error: any) {
         console.error("Audio generation failed", error);
         toast({
           variant: "destructive",
           title: "Audio Error",
-          description: "Could not generate audio. Please check your ElevenLabs API key and try again.",
+          description: error.message || "Could not generate audio. Please check your ElevenLabs API key and try again.",
         });
       }
     });
