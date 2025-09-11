@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Leaf, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, CheckCircle, Smartphone, Wheat, User, Shield } from "lucide-react";
+import { ArrowRight, Leaf, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, Smartphone, Wheat, User, Shield } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 
@@ -55,62 +55,7 @@ export function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b border-border/50">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Leaf className="w-6 h-6 text-primary" />
-            <span className="text-lg font-bold">AgriAssist SMS</span>
-          </Link>
-          <nav className="hidden md:flex gap-6 text-sm font-medium">
-            <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
-            <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
-            <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="outline">
-                <Link href="/farmer"><User /> Farmer Portal</Link>
-            </Button>
-            <Button asChild>
-                <Link href="/dashboard"><Shield /> Admin Portal</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
-      
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-muted/20">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
-              <div className="flex flex-col justify-center space-y-4 fade-in">
-                <div className="space-y-2">
-                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Empowering Farmers with AI-Powered SMS Alerts
-                  </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Bridge the information gap with real-time, actionable insights on weather, market prices, and crop health, delivered directly to any mobile phone.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button asChild size="lg">
-                    <Link href="/dashboard">Admin Portal <Shield className="ml-2" /></Link>
-                  </Button>
-                   <Button asChild size="lg" variant="secondary">
-                    <Link href="/farmer">Farmer Portal <User className="ml-2" /></Link>
-                  </Button>
-                </div>
-              </div>
-              <Image 
-                src="https://picsum.photos/seed/farmer/600/400"
-                alt="Farmer using a phone in a field"
-                width={600}
-                height={400}
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last fade-in delay-200"
-                data-ai-hint="farmer phone"
-              />
-            </div>
-          </div>
-        </section>
-
         <section id="features" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
@@ -151,7 +96,7 @@ export function LandingPage() {
             <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
               <div className="flex flex-col items-center space-y-4 fade-in delay-200">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
-                  <Smartphone className="w-8 h-8" />
+                  <User className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-bold">1. Register Farmer</h3>
                 <p className="text-sm text-muted-foreground">Easily register a farmer with their phone number, location, and primary crops via the dashboard.</p>
@@ -165,7 +110,7 @@ export function LandingPage() {
               </div>
               <div className="flex flex-col items-center space-y-4 fade-in delay-600">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
-                  <CheckCircle className="w-8 h-8" />
+                  <Smartphone className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-bold">3. Send SMS</h3>
                 <p className="text-sm text-muted-foreground">Instantly send the generated insight as a translated SMS, accessible on any mobile phone.</p>

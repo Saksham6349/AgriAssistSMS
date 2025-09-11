@@ -1,8 +1,8 @@
-import { LandingPage } from "@/components/LandingPage";
+import { HeroSection } from "@/components/HeroSection";
 import './landing.css';
 
 export default function Home() {
   return (
-    <LandingPage />
+    <HeroSection />
   );
 }
