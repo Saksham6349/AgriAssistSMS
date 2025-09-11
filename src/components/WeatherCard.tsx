@@ -29,32 +29,12 @@ import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
+import { fetchWeatherData } from "@/app/actions/weather";
 
 type ServerActionResult = {
   summary: string | null;
   error: string | null;
 };
-
-// Mock function to simulate fetching weather data.
-async function fetchWeatherData(location: string) {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  const today = new Date();
-  const getDayOfWeek = (date: Date) => {
-    return date.toLocaleDateString('en-US', { weekday: 'long' });
-  };
-  const forecast = Array.from({ length: 5 }).map((_, i) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const day = getDayOfWeek(date);
-    const baseTemp = 35; 
-    const temp_c = baseTemp - i + Math.floor(Math.random() * 4) - 2;
-    const conditions = ["Clear skies", "Sunny with scattered clouds", "Hazy sunshine", "Hot and humid"];
-    const condition = conditions[Math.floor(Math.random() * conditions.length)];
-    const precipitation_mm = Math.random() < 0.1 ? Math.floor(Math.random() * 5) : 0;
-    return { day, temp_c, condition, precipitation_mm };
-  });
-  return JSON.stringify({ location, forecast }, null, 2);
-}
 
 export function WeatherCard() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
@@ -88,7 +68,10 @@ export function WeatherCard() {
             setAudio(null);
         }
         const weatherData = await fetchWeatherData(loc);
-        const summaryRes = await summarizeWeatherData({ location: loc, weatherData });
+        if (weatherData.error) {
+            throw new Error(weatherData.error);
+        }
+        const summaryRes = await summarizeWeatherData({ location: loc, weatherData: JSON.stringify(weatherData) });
         
         if (!summaryRes.summary) throw new Error("Empty summary returned.");
 
@@ -107,17 +90,19 @@ export function WeatherCard() {
             }
         }
 
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
-        const errorMessage = error instanceof Error && error.message.includes("Translation")
-          ? "Failed to translate weather summary."
-          : "Failed to get weather summary.";
+        const errorMessage = error.message.includes("not found") 
+            ? `Could not find weather for "${loc}". Please check the spelling.`
+            : error.message.includes("Translation")
+                ? "Failed to translate weather summary."
+                : "Failed to get weather summary. Please check your API key.";
         
         setResult({ summary: null, error: errorMessage });
         toast({
           variant: "destructive",
           title: "API Error",
-          description: `${errorMessage} Please try again later.`,
+          description: `${errorMessage}`,
         });
       }
     });
@@ -267,6 +252,11 @@ export function WeatherCard() {
                     <Skeleton className="h-4 w-5/6" />
                 </div>
             )}
+             {result?.error && !isForecastPending && (
+                <div className="text-center text-destructive py-4">
+                    <p>{result.error}</p>
+                </div>
+            )}
             {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
                 <div className="flex justify-between items-start">
@@ -303,5 +293,3 @@ export function WeatherCard() {
     </Card>
   );
 }
-
-    
