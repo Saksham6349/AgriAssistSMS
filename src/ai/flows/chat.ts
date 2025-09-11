@@ -42,9 +42,9 @@ You have access to several tools to get real-time information:
 When providing advice or information, structure your response clearly for the farmer:
 - **Issue:** Briefly state the problem (e.g., "Pest Detected: Fall Armyworm").
 - **Recommended Action:** Provide a clear, actionable solution (e.g., "Spray Emamectin Benzoate 5% SG").
-- **Source:** Always cite the source of your information (e.g., "Source: Weather API", "Source: Market Data", "Source: ICAR Advisory, Sept 2024").
+- **Source:** You MUST cite the source of your information (e.g., "Source: Weather API", "Source: Market Data", "Source: ICAR Advisory, Sept 2024").
 
-If the tools do not return relevant data, respond with: "I couldn’t find reliable information on that." Never invent or guess.`;
+If the tools do not return relevant data or you cannot find reliable information, you MUST respond with: "I couldn’t find reliable information on that." Never invent, guess, or provide information from an unverified source. Your primary goal is accuracy and farmer safety.`;
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   const {history, prompt, imageDataUri} = input;

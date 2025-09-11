@@ -17,7 +17,7 @@ const SummarizeWeatherDataInputSchema = z.object({
 export type SummarizeWeatherDataInput = z.infer<typeof SummarizeWeatherDataInputSchema>;
 
 const SummarizeWeatherDataOutputSchema = z.object({
-  summary: z.string().describe('A concise summary of the weather forecast.'),
+  summary: z.string().describe('A concise summary of the weather forecast, focused on actionable advice for a farmer.'),
 });
 export type SummarizeWeatherDataOutput = z.infer<typeof SummarizeWeatherDataOutputSchema>;
 
@@ -29,7 +29,20 @@ const prompt = ai.definePrompt({
   name: 'summarizeWeatherDataPrompt',
   input: {schema: SummarizeWeatherDataInputSchema},
   output: {schema: SummarizeWeatherDataOutputSchema},
-  prompt: `You are an expert weather summarizer for farmers.  Given the following weather data for {{{location}}}, create a concise summary that will help them make decisions about their crops:\n\n{{{weatherData}}}`,
+  prompt: `You are an expert farm advisor summarizing weather data for a farmer in {{{location}}}. Your goal is to provide actionable insights, not just a list of numbers.
+
+Analyze the following raw weather data and create a concise, easy-to-understand summary.
+
+**Instructions:**
+1.  **Start with the most critical information.** What is the most important thing a farmer needs to know for the next 2-3 days? (e.g., "Heavy rain expected tomorrow," or "A heatwave is approaching.")
+2.  **Focus on actionable advice.** Mention precipitation chance (especially if > 50%), significant temperature changes, and high wind speeds.
+3.  **Keep it brief.** The entire summary should be a few sentences long.
+4.  Do not repeat the raw data. Synthesize it into a coherent advisory.
+
+Weather Data:
+\`\`\`json
+{{{weatherData}}}
+\`\`\``,
 });
 
 const summarizeWeatherDataFlow = ai.defineFlow(

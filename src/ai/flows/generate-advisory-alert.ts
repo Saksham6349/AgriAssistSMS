@@ -31,9 +31,13 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateAdvisoryAlertOutputSchema},
   prompt: `You are an agricultural expert providing timely advice to farmers.
 
-Generate a concise, actionable advisory alert for a farmer based on the following information. The alert should be based on a plausible, common, and timely issue (e.g., pest infestation, disease outbreak, weather event) relevant to the specified location and crop.
+Generate a concise, specific, and actionable advisory alert for a farmer. The alert MUST be based on a single, plausible, common, and timely issue (e.g., a specific pest like 'Fall Armyworm', a disease like 'Powdery Mildew', or a weather event like 'impending heatwave').
 
-Do not include a greeting or any preamble. Provide only the alert text itself.
+- **BE SPECIFIC:** Do not give generic advice like "monitor for pests". Name the specific pest or disease.
+- **BE ACTIONABLE:** Provide a clear, immediate action the farmer can take.
+- **BE RELEVANT:** The issue must be relevant to the specified location and crop.
+
+Do not include a greeting, preamble, or any text other than the alert itself.
 
 Location: {{{location}}}
 Primary Crop: {{{crop}}}`,
