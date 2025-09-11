@@ -24,6 +24,9 @@ const VerifyIdOutputSchema = z.object({
   isIdCard: z.boolean().describe('A boolean indicating if the image appears to be a valid government-issued ID card.'),
   reason: z.string().describe('A brief reason for the verification decision. E.g., "Verified as a valid ID card." or "The image does not appear to be a government ID."'),
   extractedName: z.string().optional().describe('The name of the person extracted from the ID card, if visible.'),
+  idType: z.enum(["Aadhar", "PAN", "Ration Card", "Gas Connection", "Other", "Unknown"]).optional().describe("The specific type of ID card identified."),
+  idNumber: z.string().optional().describe("The ID number extracted from the card, if visible."),
+  confidenceScore: z.number().optional().describe("A confidence score from 0.0 to 1.0 indicating the likelihood that the document is a valid, authentic ID.")
 });
 export type VerifyIdOutput = z.infer<typeof VerifyIdOutputSchema>;
 
@@ -35,12 +38,26 @@ const prompt = ai.definePrompt({
   name: 'verifyIdPrompt',
   input: {schema: VerifyIdInputSchema},
   output: {schema: VerifyIdOutputSchema},
-  prompt: `You are an AI assistant designed to verify specific government-issued identification documents from India.
+  prompt: `You are an AI assistant performing a strict verification of Indian government-issued identification documents. Your task is to analyze a document and determine its authenticity with a high degree of certainty.
 
-Analyze the provided document, which could be an image or a PDF. Determine if it is a legitimate Aadhar card, PAN card, ration card, or gas connection document.
+You must only accept the following document types:
+- Aadhar Card
+- PAN Card
+- Ration Card
+- Gas Connection Document
 
-- If it is one of the accepted valid ID types and is legible, set 'isIdCard' to true and provide a positive reason (e.g., "Verified as a valid Aadhar card."). Attempt to extract the person's full name from the document.
-- If it is not one of the accepted ID types, or if it is illegible, set 'isIdCard' to false and explain why (e.g., "The document is not an Aadhar, PAN, Ration, or gas connection card," "Appears to be a credit card," "Document is too blurry to read.").
+**Verification Steps:**
+1.  **Identify Document Type:** First, determine if the document is one of the accepted types.
+2.  **Check for Authenticity Markers:** Carefully examine the document for signs of authenticity. This includes:
+    - Government of India emblems or logos (e.g., Ashoka Lion Capital).
+    - Holograms or ghost images.
+    - Guilloché patterns (fine, intricate lines).
+    - Legible, type-set text (not handwritten, except for signatures).
+    - Expected data fields (e.g., Name, Father's Name, Date of Birth, ID Number).
+3.  **Assess Image Quality:** The image must be clear and legible. Reject any document that is too blurry, has significant glare, is poorly cropped, or appears digitally altered.
+4.  **Make a Decision:**
+    - If the document is an accepted type, is clearly legible, and shows signs of authenticity, set 'isIdCard' to true. Set a high 'confidenceScore' (e.g., > 0.8). Extract the full name, ID type, and ID number.
+    - If the document is not an accepted type (e.g., a credit card, driver's license from another country), or if it is illegible, appears fake, or is digitally manipulated, set 'isIdCard' to false. Provide a clear 'reason' for rejection and set a low 'confidenceScore' (e.g., < 0.3).
 
 Your final output must be in the specified JSON format.
 
@@ -54,9 +71,7 @@ const verifyIdFlow = ai.defineFlow(
     outputSchema: VerifyIdOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt(input, { model: 'googleai/gemini-2.5-pro' });
     return output!;
   }
 );
-
-    

@@ -28,6 +28,7 @@ import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
+import { Progress } from "./ui/progress";
 
 export type FarmerData = {
   name: string;
@@ -399,12 +400,25 @@ export function UserManagement() {
                         {verificationStatus === 'success' && <><BadgeCheck /> {t('userManagement.idVerified')}</>}
                         {verificationStatus === 'failed' && <><ShieldAlert /> {t('userManagement.verificationFailed')}</>}
                     </Button>
-                    {verificationStatus === 'failed' && verificationResult && (
-                        <Alert variant="destructive">
-                            <ShieldAlert className="h-4 w-4" />
-                            <AlertTitle>Verification Failed</AlertTitle>
-                            <AlertDescription>{verificationResult.reason}</AlertDescription>
-                        </Alert>
+                    {verificationResult && (
+                      <div className="space-y-2">
+                        {verificationStatus === 'failed' && (
+                          <Alert variant="destructive">
+                              <ShieldAlert className="h-4 w-4" />
+                              <AlertTitle>Verification Failed</AlertTitle>
+                              <AlertDescription>{verificationResult.reason}</AlertDescription>
+                          </Alert>
+                        )}
+                        {verificationStatus === 'success' && verificationResult.confidenceScore && (
+                           <div className="space-y-1">
+                               <div className="flex justify-between text-xs text-muted-foreground">
+                                   <span>Confidence</span>
+                                   <span>{(verificationResult.confidenceScore * 100).toFixed(0)}%</span>
+                               </div>
+                               <Progress value={verificationResult.confidenceScore * 100} className="h-2" />
+                           </div>
+                        )}
+                      </div>
                     )}
                   </div>
               )}
