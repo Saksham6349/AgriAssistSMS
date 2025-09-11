@@ -17,24 +17,37 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let db: Firestore;
 
-// Initialize Firebase
+// Initialize Firebase App
 try {
-  // This prevents re-initializing the app on hot reloads
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApp();
-  }
-
-  // Initialize Firestore with offline persistence.
-  db = initializeFirestore(app, {
-    localCache: persistentLocalCache({})
-  });
-
+  app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 } catch (error) {
-  console.error("Error initializing Firebase:", error);
-  // Set db to null if initialization fails to prevent the app from crashing.
-  db = null as any; 
+  console.error("Firebase initialization error", error);
+}
+
+// Initialize Firestore safely
+const getDb = () => {
+  if (!db) {
+    try {
+      db = initializeFirestore(app, {
+        localCache: persistentLocalCache({})
+      });
+    } catch (error) {
+      console.error("Firestore initialization error", error);
+      // Fallback to in-memory persistence if indexedDB fails
+      try {
+        db = getFirestore(app);
+      } catch (e) {
+        console.error("Fallback Firestore initialization failed", e);
+        db = null as any;
+      }
+    }
+  }
+  return db;
+};
+
+// Check for client side before initializing Firestore
+if (typeof window !== 'undefined') {
+  db = getDb();
 }
 
 export { app, db };
