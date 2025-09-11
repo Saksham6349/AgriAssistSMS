@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Leaf, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, CheckCircle, Smartphone, Wheat } from "lucide-react";
+import { ArrowRight, Leaf, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, CheckCircle, Smartphone, Wheat, User, Shield } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 
@@ -66,9 +66,14 @@ export function LandingPage() {
             <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
             <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
           </nav>
-          <Button asChild>
-            <Link href="/dashboard">Get Started</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+                <Link href="/farmer"><User /> Farmer Portal</Link>
+            </Button>
+            <Button asChild>
+                <Link href="/dashboard"><Shield /> Admin Portal</Link>
+            </Button>
+          </div>
         </div>
       </header>
       
@@ -87,7 +92,10 @@ export function LandingPage() {
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg">
-                    <Link href="/dashboard">Go to Dashboard <ArrowRight className="ml-2" /></Link>
+                    <Link href="/dashboard">Admin Portal <Shield className="ml-2" /></Link>
+                  </Button>
+                   <Button asChild size="lg" variant="secondary">
+                    <Link href="/farmer">Farmer Portal <User className="ml-2" /></Link>
                   </Button>
                 </div>
               </div>
