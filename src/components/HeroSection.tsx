@@ -89,7 +89,7 @@ export function HeroSection() {
           </button>
         </nav>
 
-        <h1 className="text-4xl md:text-7xl font-medium max-w-[850px] text-center mx-auto mt-32 md:mt-32 text-white">
+        <h1 className="text-4xl md:text-7xl font-medium max-w-[850px] text-center mx-auto mt-32 md:mt-32 text-black">
           Empowering Farmers with AI-Powered SMS Alerts
         </h1>
 
