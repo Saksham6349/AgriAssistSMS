@@ -14,19 +14,16 @@ const firebaseConfig = {
   measurementId: "G-W7PEKQ18V0"
 };
 
-// IMPORTANT: Replace this with the actual ID of your new "Native Mode" database if it's different.
-const DATABASE_ID = 'agri-assist-7aca4'; 
-
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
 
 // Initialize Firebase
 try {
   app = initializeApp(firebaseConfig);
-  // Initialize Firestore with offline persistence and the specific database ID
+  // Initialize Firestore with offline persistence. This will connect to the '(default)' database.
   db = initializeFirestore(app, {
     localCache: persistentLocalCache({})
-  }, DATABASE_ID);
+  });
 } catch (error) {
   console.error("Error initializing Firebase:", error);
 }
