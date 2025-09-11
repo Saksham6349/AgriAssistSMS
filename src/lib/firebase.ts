@@ -5,13 +5,13 @@ import { getFirestore, Firestore, initializeFirestore, persistentLocalCache } fr
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBSr_Ak6hH3aoCHhzMCJJMUwVbT2MSZ6N0",
-  authDomain: "agri-assist-7aca4.firebaseapp.com",
-  projectId: "agri-assist-7aca4",
-  storageBucket: "agri-assist-7aca4.appspot.com",
-  messagingSenderId: "384682277906",
-  appId: "1:384682277906:web:8e6eaf5448fab73841eccb",
-  measurementId: "G-W7PEKQ18V0"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 let app: FirebaseApp;
