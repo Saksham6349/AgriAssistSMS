@@ -38,7 +38,7 @@ export function HeroSection() {
     <>
       <section 
         className="w-full bg-no-repeat bg-cover bg-center text-sm pb-44" 
-        style={{backgroundImage: "url('https://picsum.photos/seed/farm/1920/1080')"}}
+        style={{backgroundImage: "url('https://picsum.photos/seed/green-farm/1920/1080')"}}
         data-ai-hint="farm landscape"
       >
         <nav className="flex items-center justify-between p-4 md:px-16 lg:px-24 xl:px-32 md:py-6 w-full text-foreground">

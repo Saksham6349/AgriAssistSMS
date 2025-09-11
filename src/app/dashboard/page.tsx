@@ -8,7 +8,7 @@ export default function DashboardPage() {
   return (
     <div 
       className="w-full bg-no-repeat bg-cover bg-center min-h-[calc(100vh-4rem)] py-12 md:py-24 px-4" 
-      style={{backgroundImage: "url('https://picsum.photos/seed/dashboard-bg/1920/1080')"}}
+      style={{backgroundImage: "url('https://picsum.photos/seed/green-farm/1920/1080')"}}
       data-ai-hint="farm landscape"
     >
       <div className="container mx-auto">
