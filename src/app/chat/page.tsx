@@ -1,9 +1,18 @@
+
 import { ChatAssistant } from "@/components/ChatAssistant";
 
 export default function ChatPage() {
     return (
-        <div className="container mx-auto p-4 md:p-8">
-            <ChatAssistant />
+        <div 
+            className="w-full bg-no-repeat bg-cover bg-center min-h-[calc(100vh-4rem)] py-12 md:py-24 px-4" 
+            style={{backgroundImage: "url('https://picsum.photos/seed/chat-bg/1920/1080')"}}
+            data-ai-hint="sunrise farm"
+        >
+            <div className="container mx-auto">
+                <div className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-2xl">
+                    <ChatAssistant />
+                </div>
+            </div>
         </div>
     );
 }
