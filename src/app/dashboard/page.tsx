@@ -6,7 +6,13 @@ import { useTranslation } from '@/hooks/useTranslation';
 export default function DashboardPage() {
   const { t } = useTranslation();
   return (
-        <div className="container mx-auto p-4 md:p-8">
+    <div 
+      className="w-full bg-no-repeat bg-cover bg-center min-h-[calc(100vh-4rem)] py-12 md:py-24 px-4" 
+      style={{backgroundImage: "url('https://picsum.photos/seed/dashboard-bg/1920/1080')"}}
+      data-ai-hint="farm landscape"
+    >
+      <div className="container mx-auto">
+        <div className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-2xl">
             <div className="text-left mb-8">
               <h2 className="text-2xl md:text-3xl font-bold mb-1">
                 {t('dashboard.title')}
@@ -21,5 +27,7 @@ export default function DashboardPage() {
                 </div>
             </div>
         </div>
+      </div>
+    </div>
   );
 }
