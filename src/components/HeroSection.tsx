@@ -37,9 +37,7 @@ export function HeroSection() {
   return (
     <>
       <section 
-        className="w-full bg-no-repeat bg-cover bg-center text-sm pb-44" 
-        style={{backgroundImage: "url('https://picsum.photos/seed/tea-plantation/1920/1080')"}}
-        data-ai-hint="greenery landscape"
+        className="w-full text-sm pb-44 bg-card/10 backdrop-blur-sm"
       >
         <nav className="flex items-center justify-between p-4 md:px-16 lg:px-24 xl:px-32 md:py-6 w-full text-foreground">
           <Link href="/" aria-label="AgriAssist SMS home" className="flex items-center gap-2">

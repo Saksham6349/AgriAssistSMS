@@ -53,9 +53,9 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-transparent text-foreground">
       <main className="flex-1">
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
               <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Key Features</div>
@@ -68,7 +68,7 @@ export function LandingPage() {
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {features.map((feature, index) => (
-                <Card key={index} className="flex flex-col feature-card transition-all duration-300 fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+                <Card key={index} className="flex flex-col feature-card transition-all duration-300 fade-in bg-card/80" style={{ animationDelay: `${index * 150}ms` }}>
                   <CardHeader className="flex flex-row items-center gap-4 pb-4">
                     <div className="p-3 bg-primary/10 rounded-full">
                         {feature.icon}
@@ -84,7 +84,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
+        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-muted/20 backdrop-blur-sm">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
             <div className="space-y-3 fade-in">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">How It Works</h2>
@@ -118,7 +118,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
+        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Trusted by Farmers</h2>
@@ -127,7 +127,7 @@ export function LandingPage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="fade-in delay-200">
+              <Card className="fade-in delay-200 bg-card/80">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground">"The weather alerts are incredibly accurate and have helped me plan my irrigation schedule perfectly. I've saved water and my crops are healthier."</p>
                   <div className="mt-4 flex items-center gap-4">
@@ -139,7 +139,7 @@ export function LandingPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="fade-in delay-400">
+              <Card className="fade-in delay-400 bg-card/80">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground">"I used the photo diagnosis feature when my tomato plants were sick. It correctly identified blight and suggested a treatment that saved my harvest."</p>
                   <div className="mt-4 flex items-center gap-4">
@@ -151,7 +151,7 @@ export function LandingPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="fade-in delay-600">
+              <Card className="fade-in delay-600 bg-card/80">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground">"Getting daily market prices on my phone has been a game-changer. I know exactly when to sell my produce to get the best price. Highly recommended!"</p>
                   <div className="mt-4 flex items-center gap-4">
@@ -168,7 +168,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="py-6 px-4 md:px-6 border-t bg-muted">
+      <footer className="py-6 px-4 md:px-6 border-t bg-muted/40 backdrop-blur-sm">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} AgriAssist SMS. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
