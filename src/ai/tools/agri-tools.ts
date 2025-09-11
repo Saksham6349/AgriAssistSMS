@@ -5,12 +5,13 @@
  *
  * - getWeatherSummary - A tool to get a weather summary for a location.
  * - getMarketPrices - A tool to get market prices for specified crops.
+ * - getAgricultureNews - A tool to fetch agriculture-related news.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { summarizeWeatherData } from '@/ai/flows/summarize-weather-data';
-import { openWeatherApiKey } from '@/config';
+import { openWeatherApiKey, newsApiKey } from '@/config';
 
 // More realistic mock data with min, modal, and max prices per location.
 const mockMarketData = {
@@ -124,4 +125,43 @@ export const getMarketPrices = ai.defineTool(
     const priceInfo = cropData[locationKey];
     return `The price for ${input.crop} in ${locationKey} is: Min: ₹${priceInfo.min}, Modal: ₹${priceInfo.modal}, Max: ₹${priceInfo.max} per quintal.`;
   }
+);
+
+export const getAgricultureNews = ai.defineTool(
+    {
+        name: 'getAgricultureNews',
+        description: 'Fetches recent agriculture-related news headlines for a given country.',
+        inputSchema: z.object({
+            country: z.string().describe('The 2-letter ISO 3166-1 code of the country to get news for (e.g., us, in).'),
+        }),
+        outputSchema: z.string(),
+    },
+    async ({ country }) => {
+        if (!newsApiKey) {
+            return 'News API key is not configured. I cannot fetch news articles.';
+        }
+        
+        const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=science&q=agriculture&pageSize=5&apiKey=${newsApiKey}`;
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                const errorData = await response.json();
+                return `Failed to fetch news. Status: ${response.status}. Message: ${errorData.message}`;
+            }
+            
+            const data = await response.json();
+            
+            if (data.articles.length === 0) {
+                return 'No recent agriculture-related news found.';
+            }
+            
+            const headlines = data.articles.map((article: any) => `- ${article.title}`).join('\n');
+            return `Here are the latest agriculture headlines:\n${headlines}`;
+
+        } catch (error: any) {
+            console.error('Failed to fetch news from NewsAPI:', error);
+            return `An error occurred while fetching news: ${error.message}`;
+        }
+    }
 );

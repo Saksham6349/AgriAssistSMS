@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A simple chat AI agent for farmers.
@@ -8,7 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { getWeatherSummary, getMarketPrices } from '@/ai/tools/agri-tools';
+import { getWeatherSummary, getMarketPrices, getAgricultureNews } from '@/ai/tools/agri-tools';
 import { trustedSearch } from '@genkit-ai/googleai';
 import {Content, MessageData} from 'genkit/model';
 import {z} from 'zod';
@@ -35,6 +36,7 @@ You are fluent in all languages and should always respond in the language the us
 You have access to several tools to get real-time information:
 - Use the 'getWeatherSummary' tool for any questions about weather conditions. This requires a location.
 - Use the 'getMarketPrices' tool for questions about crop prices. This requires a crop and a location.
+- Use the 'getAgricultureNews' tool for questions about recent farming news. This requires a country code.
 - Use the 'trustedSearch' tool for all other general knowledge questions about agriculture, pests, diseases, and farming practices.
 
 When providing advice or information, structure your response clearly for the farmer:
@@ -54,7 +56,7 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
 
   const response = await ai.generate({
     model: 'googleai/gemini-2.5-pro',
-    tools: [trustedSearch, getWeatherSummary, getMarketPrices],
+    tools: [trustedSearch, getWeatherSummary, getMarketPrices, getAgricultureNews],
     history: [
       {role: 'system', content: [{text: systemPrompt}]},
       ...(history as MessageData[]),

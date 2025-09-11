@@ -15,6 +15,8 @@ export const geminiApiKey = process.env.GEMINI_API_KEY;
 
 export const openWeatherApiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 
+export const newsApiKey = process.env.NEWS_API_KEY;
+
 export const elevenLabsConfig = {
     apiKey: process.env.ELEVENLABS_API_KEY,
     voiceId: '21m00Tcm4TlvDq8ikWAM', // Default voice ID, can be changed
