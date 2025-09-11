@@ -16,7 +16,7 @@ export const ai = genkit({
       apiKey: geminiApiKey,
       generate: {
         retry: {
-          // Retry on 429 and 503 errors
+          // Retry on 429 (Too Many Requests) and 503 (Service Unavailable) errors
           on: (err: any) => {
             const message = err.message || '';
             return message.includes('429') || message.includes('503');
@@ -27,5 +27,3 @@ export const ai = genkit({
   ],
   model: 'googleai/gemini-2.5-pro',
 });
-
-    
