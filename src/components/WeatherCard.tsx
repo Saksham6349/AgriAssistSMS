@@ -219,7 +219,12 @@ export function WeatherCard() {
       try {
         const res = await textToSpeech({ text: result.summary! });
         if (res.error) {
-          throw new Error(res.error);
+            toast({
+                variant: "destructive",
+                title: "Audio Error",
+                description: res.error,
+            });
+            return;
         }
         if (!res.audioDataUri) {
           throw new Error("Audio generation returned no data.");
