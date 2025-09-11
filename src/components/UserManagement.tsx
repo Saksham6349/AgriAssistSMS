@@ -49,6 +49,8 @@ type FarmerRegistrationDoc = {
     village: string;
     district: string;
     crop: string;
+    secondaryCrop: string;
+    language: string;
     createdAt: Timestamp;
 };
 
@@ -186,6 +188,8 @@ export function UserManagement() {
         village: data.village,
         district: data.district,
         crop: data.crop,
+        secondaryCrop: data.secondaryCrop,
+        language: data.language,
         createdAt: Timestamp.now(),
       };
       await addDoc(collection(db, "farmerregs"), docData);
@@ -457,3 +461,5 @@ export function UserManagement() {
     </Card>
   );
 }
+
+    
