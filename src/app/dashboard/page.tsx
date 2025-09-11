@@ -1,4 +1,3 @@
-
 "use client";
 
 import { UserManagement } from '@/components/UserManagement';
