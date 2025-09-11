@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Leaf, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, Smartphone, Wheat, User, Shield } from "lucide-react";
+import { ArrowRight, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, Smartphone, Wheat, User } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 
