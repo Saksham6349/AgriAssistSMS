@@ -125,10 +125,11 @@ export function WeatherCard() {
   
   useEffect(() => {
     if (registeredFarmer) {
-      setLocation(registeredFarmer.location);
+      const fullLocation = `${registeredFarmer.village}, ${registeredFarmer.district}`;
+      setLocation(fullLocation);
       setLanguage(registeredFarmer.language);
-      if (registeredFarmer.location) {
-        getForecastForLocation(registeredFarmer.location, registeredFarmer.language);
+      if (registeredFarmer.village && registeredFarmer.district) {
+        getForecastForLocation(fullLocation, registeredFarmer.language);
       }
     } else {
       setLocation("");
@@ -302,3 +303,5 @@ export function WeatherCard() {
     </Card>
   );
 }
+
+    

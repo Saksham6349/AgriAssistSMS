@@ -20,32 +20,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf, Building, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
-import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
+import { db } from '@/lib/firebase';
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
+// This type is for the app's context (the active farmer)
 export type FarmerData = {
   name: string;
   phone: string;
-  location: string;
+  village: string;
+  district: string;
   crop: string;
   secondaryCrop: string;
   language: string;
   idProof?: string;
 };
 
+// This type is for the Firestore document
+type FarmerRegistrationDoc = {
+    name: string;
+    phone: string;
+    village: string;
+    district: string;
+    crop: string;
+    createdAt: Timestamp;
+};
+
 const initialFormData: FarmerData = {
     name: '',
     phone: '',
-    location: '',
+    village: '',
+    district: '',
     crop: '',
     secondaryCrop: '',
-    language: '',
+    language: 'English', // Default language
     idProof: '',
 };
 
@@ -58,6 +72,7 @@ export function UserManagement() {
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
   const [filePreview, setFilePreview] = useState<FilePreview | null>(null);
   const [isVerifyPending, startVerifyTransition] = useTransition();
+  const [isRegisterPending, startRegisterTransition] = useTransition();
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('unverified');
   const [verificationResult, setVerificationResult] = useState<VerifyIdOutput | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +86,6 @@ export function UserManagement() {
                   if (registeredFarmer.idProof.startsWith('data:image')) {
                       setFilePreview({ url: registeredFarmer.idProof, type: 'image' });
                   } else if (registeredFarmer.idProof.startsWith('data:application/pdf')) {
-                      // We can't get the name from the data URI, so just show a generic name.
                       setFilePreview({ name: 'id_proof.pdf', type: 'pdf' });
                   }
                   setVerificationStatus('success');
@@ -160,6 +174,28 @@ export function UserManagement() {
     });
   };
 
+  async function registerFarmerInFirestore(data: FarmerData) {
+    if (!db) {
+      console.error("Firestore is not initialized. Check your Firebase config.");
+      throw new Error("Firestore is not connected.");
+    }
+    try {
+      const docData: FarmerRegistrationDoc = {
+        name: data.name,
+        phone: data.phone,
+        village: data.village,
+        district: data.district,
+        crop: data.crop,
+        createdAt: Timestamp.now(),
+      };
+      await addDoc(collection(db, "farmerregs"), docData);
+      console.log("✅ Farmer registered successfully in Firestore");
+    } catch (e) {
+      console.error("❌ Error registering farmer:", e);
+      throw e; // Re-throw to be caught by the caller
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (verificationStatus !== 'success') {
@@ -170,11 +206,26 @@ export function UserManagement() {
       });
       return;
     }
-    setRegisteredFarmer(formData);
-    toast({
-        title: "Farmer Registered!",
-        description: `${formData.name} is now ready to receive alerts.`,
-    })
+
+    startRegisterTransition(async () => {
+        try {
+            await registerFarmerInFirestore(formData);
+            
+            // Also set as the active farmer in the app context
+            setRegisteredFarmer(formData);
+
+            toast({
+                title: "Farmer Registered!",
+                description: `${formData.name} is now ready to receive alerts.`,
+            });
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Registration Failed",
+                description: "Could not save farmer data to the database. Please check console for errors.",
+            });
+        }
+    });
   };
 
   const handleReset = () => {
@@ -215,7 +266,7 @@ export function UserManagement() {
           <div className="flex flex-col justify-center h-full space-y-4 bg-muted/50 p-6 rounded-lg">
              <div className="space-y-2">
                 <h3 className="text-lg font-semibold">{registeredFarmer.name}</h3>
-                <p className="text-sm text-muted-foreground">{registeredFarmer.location} | {registeredFarmer.phone}</p>
+                <p className="text-sm text-muted-foreground">{registeredFarmer.village}, {registeredFarmer.district} | {registeredFarmer.phone}</p>
              </div>
               {registeredFarmer.idProof && filePreview?.type === 'image' && (
                 <div>
@@ -253,10 +304,17 @@ export function UserManagement() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="location" className="text-sm font-medium">{t('userManagement.location')}</label>
+                <label htmlFor="village" className="text-sm font-medium">Village</label>
                 <div className="relative flex items-center">
                     <MapPin className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="location" name="location" placeholder={t('userManagement.locationPlaceholder')} value={formData.location} onChange={handleChange} required className="pl-10" />
+                    <Input id="village" name="village" placeholder="e.g., Rampur" value={formData.village} onChange={handleChange} required className="pl-10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="district" className="text-sm font-medium">District</label>
+                <div className="relative flex items-center">
+                    <Globe className="absolute left-3 w-5 h-5 text-muted-foreground" />
+                    <Input id="district" name="district" placeholder="e.g., Sitapur" value={formData.district} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
@@ -284,36 +342,6 @@ export function UserManagement() {
                 <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')}>
                   <SelectTrigger id="crop-select">
                     <SelectValue placeholder={t('userManagement.selectCrop')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Apples">Apples</SelectItem>
-                    <SelectItem value="Bananas">Bananas</SelectItem>
-                    <SelectItem value="Barley">Barley</SelectItem>
-                    <SelectItem value="Chickpeas">Chickpeas</SelectItem>
-                    <SelectItem value="Coffee">Coffee</SelectItem>
-                    <SelectItem value="Corn">Corn</SelectItem>
-                    <SelectItem value="Cotton">Cotton</SelectItem>
-                    <SelectItem value="Grapes">Grapes</SelectItem>
-                    <SelectItem value="Jute">Jute</SelectItem>
-                    <SelectItem value="Lentils">Lentils</SelectItem>
-                    <SelectItem value="Mangoes">Mangoes</SelectItem>
-                    <SelectItem value="Millet">Millet</SelectItem>
-                    <SelectItem value="Onions">Onions</SelectItem>
-                    <SelectItem value="Potatoes">Potatoes</SelectItem>
-                    <SelectItem value="Rice">Rice</SelectItem>
-                    <SelectItem value="Soybeans">Soybeans</SelectItem>
-                    <SelectItem value="Sugarcane">Sugarcane</SelectItem>
-                    <SelectItem value="Tea">Tea</SelectItem>
-                    <SelectItem value="Tomatoes">Tomatoes</SelectItem>
-                    <SelectItem value="Wheat">Wheat</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="secondary-crop-select" className="text-sm font-medium">{t('userManagement.secondaryCropLabel')}</label>
-                <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
-                  <SelectTrigger id="secondary-crop-select">
-                    <SelectValue placeholder={t('userManagement.selectSecondaryCrop')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Apples">Apples</SelectItem>
@@ -410,8 +438,9 @@ export function UserManagement() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={verificationStatus !== 'success' || isVerifyPending}>
-              <UserPlus /> {t('userManagement.registerFarmer')}
+            <Button type="submit" className="w-full" disabled={verificationStatus !== 'success' || isVerifyPending || isRegisterPending}>
+              {isRegisterPending ? <Loader2 className="animate-spin" /> : <UserPlus />}
+              {t('userManagement.registerFarmer')}
             </Button>
           </form>
         )}
@@ -419,3 +448,5 @@ export function UserManagement() {
     </Card>
   );
 }
+
+    

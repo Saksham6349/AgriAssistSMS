@@ -74,7 +74,7 @@ export function AdvisoryAlerts() {
     startGenerateTransition(async () => {
       try {
         const res = await generateAdvisoryAlert({
-          location: registeredFarmer.location,
+          location: `${registeredFarmer.village}, ${registeredFarmer.district}`,
           crop: registeredFarmer.crop,
         });
         if (res?.alert) {
@@ -218,7 +218,7 @@ export function AdvisoryAlerts() {
                 </>
               ) : (
                 <>
-                  <Lightbulb /> {t('advisory.generateAlert')} {registeredFarmer ? registeredFarmer.location : '...'}
+                  <Lightbulb /> {t('advisory.generateAlert')} {registeredFarmer ? `${registeredFarmer.village}, ${registeredFarmer.district}` : '...'}
                 </>
               )}
           </Button>
@@ -305,3 +305,5 @@ export function AdvisoryAlerts() {
     </Card>
   );
 }
+
+    

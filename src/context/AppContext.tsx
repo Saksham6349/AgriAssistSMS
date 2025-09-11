@@ -58,8 +58,8 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Using a fixed ID for the single farmer document
-const FARMER_DOC_ID = 'single-farmer-profile';
+// Using a fixed ID for the single "active" farmer document for the UI
+const ACTIVE_FARMER_DOC_ID = 'active-farmer-profile';
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [registeredFarmer, setRegisteredFarmerState] = useState<FarmerData | null>(null);
@@ -83,9 +83,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load farmer from Firestore only if db is initialized
+        // Load active farmer from Firestore
         if (db) {
-          const farmerDocRef = doc(db, 'farmers', FARMER_DOC_ID);
+          const farmerDocRef = doc(db, 'activeFarmer', ACTIVE_FARMER_DOC_ID);
           const farmerDocSnap = await getDoc(farmerDocRef);
 
           if (farmerDocSnap.exists()) {
@@ -95,7 +95,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           }
         }
 
-        // Load language and history from localStorage (as they are less critical)
+        // Load language and history from localStorage
         const storedLanguage = localStorage.getItem('appLanguage');
         if (storedLanguage && translations[storedLanguage]) {
           setLanguage(storedLanguage);
@@ -118,13 +118,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, [setLanguage]);
 
   const setRegisteredFarmer = async (farmer: FarmerData | null) => {
-    // Do nothing if db is not initialized
     if (!db) {
-        setRegisteredFarmerState(farmer); // Update local state only
+        console.warn("Firestore not available. Updating local state only.");
+        setRegisteredFarmerState(farmer);
         return;
     };
 
-    const farmerDocRef = doc(db, 'farmers', FARMER_DOC_ID);
+    const farmerDocRef = doc(db, 'activeFarmer', ACTIVE_FARMER_DOC_ID);
     try {
       if (farmer) {
         await setDoc(farmerDocRef, farmer);
@@ -134,7 +134,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         setRegisteredFarmerState(null);
       }
     } catch (error) {
-      console.error("Failed to save farmer to Firestore", error);
+      console.error("Failed to save active farmer to Firestore", error);
     }
   };
 
@@ -177,3 +177,5 @@ export const useAppContext = () => {
   }
   return context;
 };
+
+    
