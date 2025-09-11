@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import { getWeatherSummary, getMarketPrices, getAgricultureNews } from '@/ai/tools/agri-tools';
-import { trustedSearch } from '@genkit-ai/googleai';
+import { googleAI } from '@genkit-ai/googleai';
 import {Content, MessageData} from 'genkit/model';
 import {z} from 'zod';
 
@@ -56,7 +56,7 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
 
   const response = await ai.generate({
     model: 'googleai/gemini-2.5-flash',
-    tools: [trustedSearch, getWeatherSummary, getMarketPrices, getAgricultureNews],
+    tools: [googleAI.trustedSearch, getWeatherSummary, getMarketPrices, getAgricultureNews],
     history: [
       {role: 'system', content: [{text: systemPrompt}]},
       ...(history as MessageData[]),
