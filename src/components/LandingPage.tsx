@@ -53,16 +53,16 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-transparent text-foreground">
+    <div className="flex flex-col min-h-screen bg-transparent text-white">
       <main className="flex-1">
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
-              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Key Features</div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+              <div className="inline-block rounded-lg bg-black/20 px-3 py-1 text-sm">Key Features</div>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-white">
                 A Comprehensive Toolkit for Modern Agriculture
               </h2>
-              <p className="max-w-[900px] mx-auto text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              <p className="max-w-[900px] mx-auto text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 From weather predictions to pest detection, get everything you need to make informed decisions and boost your yield.
               </p>
             </div>
@@ -73,7 +73,7 @@ export function LandingPage() {
                     <div className="p-3 bg-primary/10 rounded-full">
                         {feature.icon}
                     </div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    <CardTitle className="text-lg text-card-foreground">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>
@@ -87,8 +87,8 @@ export function LandingPage() {
         <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-muted/20 backdrop-blur-sm">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
             <div className="space-y-3 fade-in">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">How It Works</h2>
-              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-white">How It Works</h2>
+              <p className="mx-auto max-w-[600px] text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Simple steps to connect farmers with vital information.
               </p>
             </div>
@@ -97,22 +97,22 @@ export function LandingPage() {
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
                   <User className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold">1. Register Farmer</h3>
-                <p className="text-sm text-muted-foreground">Easily register a farmer with their phone number, location, and primary crops via the dashboard.</p>
+                <h3 className="text-xl font-bold text-white">1. Register Farmer</h3>
+                <p className="text-sm text-white/80">Easily register a farmer with their phone number, location, and primary crops via the dashboard.</p>
               </div>
               <div className="flex flex-col items-center space-y-4 fade-in delay-400">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
                   <Wheat className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold">2. Generate Insight</h3>
-                <p className="text-sm text-muted-foreground">Use AI tools to get weather forecasts, generate pest alerts, or diagnose crop diseases from a photo.</p>
+                <h3 className="text-xl font-bold text-white">2. Generate Insight</h3>
+                <p className="text-sm text-white/80">Use AI tools to get weather forecasts, generate pest alerts, or diagnose crop diseases from a photo.</p>
               </div>
               <div className="flex flex-col items-center space-y-4 fade-in delay-600">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
                   <Smartphone className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold">3. Send SMS</h3>
-                <p className="text-sm text-muted-foreground">Instantly send the generated insight as a translated SMS, accessible on any mobile phone.</p>
+                <h3 className="text-xl font-bold text-white">3. Send SMS</h3>
+                <p className="text-sm text-white/80">Instantly send the generated insight as a translated SMS, accessible on any mobile phone.</p>
               </div>
             </div>
           </div>
@@ -121,8 +121,8 @@ export function LandingPage() {
         <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Trusted by Farmers</h2>
-              <p className="max-w-2xl mx-auto text-muted-foreground md:text-xl/relaxed">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-white">Trusted by Farmers</h2>
+              <p className="max-w-2xl mx-auto text-white/80 md:text-xl/relaxed">
                 Hear what farmers are saying about AgriAssist SMS.
               </p>
             </div>
@@ -133,7 +133,7 @@ export function LandingPage() {
                   <div className="mt-4 flex items-center gap-4">
                     <Image src="https://picsum.photos/seed/person1/40/40" width={40} height={40} alt="Avatar" className="rounded-full" data-ai-hint="person farmer" />
                     <div>
-                      <p className="font-semibold">Rajesh Kumar</p>
+                      <p className="font-semibold text-card-foreground">Rajesh Kumar</p>
                       <p className="text-sm text-muted-foreground">Wheat Farmer, Punjab</p>
                     </div>
                   </div>
@@ -145,7 +145,7 @@ export function LandingPage() {
                   <div className="mt-4 flex items-center gap-4">
                     <Image src="https://picsum.photos/seed/person2/40/40" width={40} height={40} alt="Avatar" className="rounded-full" data-ai-hint="woman farmer" />
                     <div>
-                      <p className="font-semibold">Anjali Patel</p>
+                      <p className="font-semibold text-card-foreground">Anjali Patel</p>
                       <p className="text-sm text-muted-foreground">Vegetable Farmer, Gujarat</p>
                     </div>
                   </div>
@@ -157,7 +157,7 @@ export function LandingPage() {
                   <div className="mt-4 flex items-center gap-4">
                     <Image src="https://picsum.photos/seed/person3/40/40" width={40} height={40} alt="Avatar" className="rounded-full" data-ai-hint="man farmer" />
                     <div>
-                      <p className="font-semibold">Suresh Singh</p>
+                      <p className="font-semibold text-card-foreground">Suresh Singh</p>
                       <p className="text-sm text-muted-foreground">Corn Farmer, Bihar</p>
                     </div>
                   </div>
@@ -168,12 +168,12 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="py-6 px-4 md:px-6 border-t bg-muted/40 backdrop-blur-sm">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground">
+      <footer className="py-6 px-4 md:px-6 border-t border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between text-sm text-white/70">
           <p>© {new Date().getFullYear()} AgriAssist SMS. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
-            <Link href="#" className="hover:text-primary">Privacy Policy</Link>
-            <Link href="#" className="hover:text-primary">Terms of Service</Link>
+            <Link href="#" className="hover:text-white">Privacy Policy</Link>
+            <Link href="#" className="hover:text-white">Terms of Service</Link>
           </div>
         </div>
       </footer>
