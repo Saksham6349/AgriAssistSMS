@@ -55,9 +55,10 @@ You must only accept the following document types:
     - Legible, type-set text (not handwritten, except for signatures).
     - Expected data fields (e.g., Name, Father's Name, Date of Birth, ID Number).
 3.  **Assess Image Quality:** The image must be clear and legible. Reject any document that is too blurry, has significant glare, is poorly cropped, or appears digitally altered.
-4.  **Make a Decision:**
-    - If the document is an accepted type, is clearly legible, and shows signs of authenticity, set 'isIdCard' to true. Set a high 'confidenceScore' (e.g., > 0.8). Extract the full name, ID type, and ID number.
-    - If the document is not an accepted type (e.g., a credit card, driver's license from another country), or if it is illegible, appears fake, or is digitally manipulated, set 'isIdCard' to false. Provide a clear 'reason' for rejection and set a low 'confidenceScore' (e.g., < 0.3).
+4.  **Detect Forgery:** Scrutinize for signs of forgery. Look for inconsistent fonts, pixelation around text or the photo, mismatched text alignment, or incorrect placement/appearance of security features like holograms.
+5.  **Make a Decision:**
+    - If the document is an accepted type, is clearly legible, and shows strong signs of authenticity, set 'isIdCard' to true. Set a high 'confidenceScore' (e.g., > 0.8). Extract the full name, ID type, and ID number.
+    - If the document is not an accepted type (e.g., a credit card, driver's license from another country), or if it is illegible, appears fake, or is digitally manipulated, set 'isIdCard' to false. Provide a clear 'reason' for rejection and set a low 'confidenceScore' (e.g., < 0.4).
 
 Your final output must be in the specified JSON format.
 
