@@ -1,0 +1,109 @@
+// src/context/FarmerAppContext.tsx
+"use client";
+
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import bn from '@/translations/bn.json';
+import te from '@/translations/te.json';
+import mr from '@/translations/mr.json';
+import ta from '@/translations/ta.json';
+import ur from '@/translations/ur.json';
+import gu from '@/translations/gu.json';
+import kn from '@/translations/kn.json';
+import pa from '@/translations/pa.json';
+import { useAppContext } from './AppContext';
+
+const translations: { [key: string]: any } = {
+  English: en,
+  Hindi: hi,
+  Bengali: bn,
+  Telugu: te,
+  Marathi: mr,
+  Tamil: ta,
+  Urdu: ur,
+  Gujarati: gu,
+  Kannada: kn,
+  Punjabi: pa,
+};
+
+const availableLanguages = {
+  English: "English",
+  Hindi: "हिन्दी",
+  Bengali: "বাংলা",
+  Telugu: "తెలుగు",
+  Marathi: "मराठी",
+  Tamil: "தமிழ்",
+  Urdu: "اردو",
+  Gujarati: "ગુજરાતી",
+  Kannada: "ಕನ್ನಡ",
+  Punjabi: "ਪੰਜਾਬੀ",
+};
+
+interface FarmerAppContextType {
+  language: string;
+  setLanguage: (language: string) => void;
+  translations: any;
+  availableLanguages: { [key: string]: string };
+}
+
+const FarmerAppContext = createContext<FarmerAppContextType | undefined>(undefined);
+
+export const FarmerAppProvider = ({ children }: { children: ReactNode }) => {
+  const { registeredFarmer } = useAppContext();
+  const [language, setLanguageState] = useState<string>('English');
+  const [currentTranslations, setCurrentTranslations] = useState(translations.English);
+
+  const setLanguage = useCallback((lang: string) => {
+    if (translations[lang]) {
+      setLanguageState(lang);
+      setCurrentTranslations(translations[lang]);
+      try {
+        localStorage.setItem('farmerAppLanguage', lang);
+      } catch (error) {
+        console.error("Failed to save language to localStorage", error);
+      }
+    }
+  }, []);
+  
+  // Set language from registered farmer's preference when it changes
+  useEffect(() => {
+    if (registeredFarmer?.language && translations[registeredFarmer.language]) {
+        setLanguage(registeredFarmer.language);
+    }
+  }, [registeredFarmer, setLanguage]);
+
+  // Load saved language on initial mount
+  useEffect(() => {
+    try {
+      const storedLanguage = localStorage.getItem('farmerAppLanguage');
+      if (storedLanguage && translations[storedLanguage]) {
+        setLanguage(storedLanguage);
+      }
+    } catch (error) {
+      console.error("Failed to load language from localStorage", error);
+    }
+  }, [setLanguage]);
+
+  const value = {
+    language,
+    setLanguage,
+    translations: currentTranslations,
+    availableLanguages
+  };
+
+  return (
+    <FarmerAppContext.Provider value={value}>
+      {children}
+    </FarmerAppContext.Provider>
+  );
+};
+
+export const useFarmerAppContext = () => {
+  const context = useContext(FarmerAppContext);
+  if (context === undefined) {
+    throw new Error('useFarmerAppContext must be used within a FarmerAppProvider');
+  }
+  return context;
+};
