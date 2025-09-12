@@ -28,6 +28,7 @@ import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { db } from '@/lib/firebase';
 import { collection, addDoc, Timestamp, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { Progress } from "./ui/progress";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // This type is for the app's context (the active farmer)
 export type FarmerData = {
@@ -77,6 +78,7 @@ export function UserManagement() {
   const [verificationResult, setVerificationResult] = useState<VerifyIdOutput | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
       if (isLoaded) {
@@ -260,9 +262,9 @@ export function UserManagement() {
                 {registeredFarmer ? <UserCheck className="w-6 h-6 text-primary" /> : <UserPlus className="w-6 h-6 text-primary" />}
             </div>
             <div>
-                <CardTitle>{registeredFarmer ? "Current Farmer" : "Farmer Registration"}</CardTitle>
+                <CardTitle>{registeredFarmer ? t('userManagement.currentFarmer') : t('userManagement.registration')}</CardTitle>
                 <CardDescription>
-                {registeredFarmer ? "Ready to receive SMS alerts." : "Register farmer to send alerts."}
+                {registeredFarmer ? t('userManagement.ready') : t('userManagement.registerPrompt')}
                 </CardDescription>
             </div>
         </div>
@@ -276,7 +278,7 @@ export function UserManagement() {
              </div>
               {registeredFarmer.idProof && filePreview?.type === 'image' && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Government ID:</p>
+                  <p className="text-sm font-medium mb-2">{t('userManagement.idProof')}</p>
                   <div className="relative w-fit">
                     <Image src={(filePreview as {url: string}).url} alt="ID Proof" width={200} height={120} className="rounded-md object-cover border" />
                     <BadgeCheck className="absolute -top-2 -right-2 h-7 w-7 text-white bg-green-600 rounded-full p-1" />
@@ -284,50 +286,50 @@ export function UserManagement() {
                 </div>
               )}
              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">Primary Crop: {registeredFarmer.crop}</Badge>
-                {registeredFarmer.secondaryCrop && <Badge variant="secondary">Secondary: {registeredFarmer.secondaryCrop}</Badge>}
-                <Badge variant="secondary">Language: {registeredFarmer.language}</Badge>
+                <Badge variant="secondary">{t('userManagement.primaryCrop')} {registeredFarmer.crop}</Badge>
+                {registeredFarmer.secondaryCrop && <Badge variant="secondary">{t('userManagement.secondaryCrop')} {registeredFarmer.secondaryCrop}</Badge>}
+                <Badge variant="secondary">{t('userManagement.language')} {registeredFarmer.language}</Badge>
              </div>
              <Button onClick={handleReset} className="w-full mt-4 !-mb-2" variant="outline">
-                <FilePenLine /> Register Another Farmer
+                <FilePenLine /> {t('userManagement.registerAnother')}
             </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">Farmer Name</label>
+                <label htmlFor="name" className="text-sm font-medium">{t('userManagement.farmerName')}</label>
                 <div className="relative flex items-center">
                     <User className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="name" name="name" placeholder="e.g., John Doe" value={formData.name} onChange={handleChange} required className="pl-10" />
+                    <Input id="name" name="name" placeholder={t('userManagement.farmerNamePlaceholder')} value={formData.name} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="phone" className="text-sm font-medium">Phone Number</label>
+                <label htmlFor="phone" className="text-sm font-medium">{t('userManagement.phone')}</label>
                 <div className="relative flex items-center">
                     <Phone className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="phone" name="phone" type="tel" placeholder="e.g., +1234567890" value={formData.phone} onChange={handleChange} required className="pl-10" />
+                    <Input id="phone" name="phone" type="tel" placeholder={t('userManagement.phonePlaceholder')} value={formData.phone} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="village" className="text-sm font-medium">Village</label>
+                <label htmlFor="village" className="text-sm font-medium">{t('userManagement.location')}</label>
                 <div className="relative flex items-center">
                     <MapPin className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="village" name="village" placeholder="e.g., Rampur" value={formData.village} onChange={handleChange} required className="pl-10" />
+                    <Input id="village" name="village" placeholder={t('userManagement.locationPlaceholder')} value={formData.village} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="district" className="text-sm font-medium">District</label>
+                <label htmlFor="district" className="text-sm font-medium">{t('userManagement.district')}</label>
                 <div className="relative flex items-center">
                     <Globe className="absolute left-3 w-5 h-5 text-muted-foreground" />
                     <Input id="district" name="district" placeholder="e.g., Sitapur" value={formData.district} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="language-select" className="text-sm font-medium">Preferred Language</label>
+                <label htmlFor="language-select" className="text-sm font-medium">{t('userManagement.preferredLanguage')}</label>
                 <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
                   <SelectTrigger id="language-select">
-                    <SelectValue placeholder="Select language" />
+                    <SelectValue placeholder={t('userManagement.selectLanguage')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="English">English</SelectItem>
@@ -344,10 +346,10 @@ export function UserManagement() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label htmlFor="crop-select" className="text-sm font-medium">Primary Crop</label>
+                <label htmlFor="crop-select" className="text-sm font-medium">{t('userManagement.primaryCropLabel')}</label>
                 <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')} required>
                   <SelectTrigger id="crop-select">
-                    <SelectValue placeholder="Select crop" />
+                    <SelectValue placeholder={t('userManagement.selectCrop')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Apples">Apples</SelectItem>
@@ -376,7 +378,7 @@ export function UserManagement() {
             </div>
             
             <div className="space-y-2 pt-2 border-t">
-              <label htmlFor="id-proof-upload" className="text-sm font-medium">Government ID Proof</label>
+              <label htmlFor="id-proof-upload" className="text-sm font-medium">{t('userManagement.govIdProof')}</label>
               <div
                 className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent/20 hover:border-primary transition-colors"
                 onClick={() => fileInputRef.current?.click()}
@@ -417,9 +419,9 @@ export function UserManagement() {
                   ) : (
                     <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Upload className="w-8 h-8" />
-                        <p className="font-semibold">Click to upload ID</p>
-                        <p className="text-xs">Aadhar, PAN, Ration Card, or Gas Connection</p>
-                        <p className="text-xs">PNG, JPG, PDF (max 4MB)</p>
+                        <p className="font-semibold">{t('userManagement.uploadId')}</p>
+                        <p className="text-xs">{t('userManagement.idTypes')}</p>
+                        <p className="text-xs">{t('userManagement.fileTypes')}</p>
                     </div>
                   )}
               </div>
@@ -427,11 +429,11 @@ export function UserManagement() {
               {filePreview && (
                   <div className="space-y-2">
                     <Button type="button" onClick={handleVerify} disabled={isVerifyPending || verificationStatus === 'success'} className="w-full">
-                        {isVerifyPending && <><Loader2 className="animate-spin" /> Verifying...</>}
-                        {verificationStatus === 'unverified' && <><ShieldCheck /> Verify ID</>}
-                        {verificationStatus === 'pending' && <><Loader2 className="animate-spin" /> Verifying...</>}
-                        {verificationStatus === 'success' && <><BadgeCheck /> ID Verified</>}
-                        {verificationStatus === 'failed' && <><ShieldAlert /> Verification Failed</>}
+                        {isVerifyPending && <><Loader2 className="animate-spin" /> {t('userManagement.verifying')}</>}
+                        {verificationStatus === 'unverified' && <><ShieldCheck /> {t('userManagement.verifyId')}</>}
+                        {verificationStatus === 'pending' && <><Loader2 className="animate-spin" /> {t('userManagement.verifying')}</>}
+                        {verificationStatus === 'success' && <><BadgeCheck /> {t('userManagement.idVerified')}</>}
+                        {verificationStatus === 'failed' && <><ShieldAlert /> {t('userManagement.verificationFailed')}</>}
                     </Button>
                     {verificationResult && (
                       <div className="space-y-2">
@@ -459,7 +461,7 @@ export function UserManagement() {
 
             <Button type="submit" className="w-full" disabled={!isFormValid || isRegisterPending}>
               {isRegisterPending ? <Loader2 className="animate-spin" /> : <UserPlus />}
-              Register Farmer
+              {t('userManagement.registerFarmer')}
             </Button>
           </form>
         )}
