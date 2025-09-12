@@ -32,9 +32,6 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Using a fixed ID for the single "active" farmer document for the UI
-const ACTIVE_FARMER_DOC_ID = 'active-farmer-profile';
-
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [registeredFarmer, setRegisteredFarmerState] = useState<FarmerData | null>(null);
   const [smsHistory, setSmsHistory] = useState<SmsMessage[]>([]);
@@ -47,62 +44,20 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const storedHistory = localStorage.getItem('smsHistory');
-        if (storedHistory) {
-          setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({ ...sms, timestamp: new Date(sms.timestamp) })));
-        }
-
-        if (db) {
-            const farmerDocRef = doc(db, 'activeFarmer', ACTIVE_FARMER_DOC_ID);
-            const docSnap = await getDoc(farmerDocRef);
-            if (docSnap.exists()) {
-                setRegisteredFarmerState(docSnap.data() as FarmerData);
-            }
-        }
-      } catch (error) {
-        console.error("Failed to load state from localStorage or Firestore", error);
-      } finally {
-        setIsLoaded(true);
-      }
-    };
-    
-    loadData();
+    // We are no longer loading data from persistence layer on refresh.
+    // The app will start fresh every time.
+    setIsLoaded(true);
   }, []);
 
-  const setRegisteredFarmer = async (farmer: FarmerData | null) => {
-    if (!db) {
-        console.warn("Firestore not available. Updating local state only.");
-        setRegisteredFarmerState(farmer);
-        return;
-    };
-
-    const farmerDocRef = doc(db, 'activeFarmer', ACTIVE_FARMER_DOC_ID);
-    try {
-      if (farmer) {
-        await setDoc(farmerDocRef, farmer);
-        setRegisteredFarmerState(farmer);
-      } else {
-        await deleteDoc(farmerDocRef);
-        setRegisteredFarmerState(null);
-      }
-    } catch (error) {
-      console.error("Failed to save active farmer to Firestore", error);
-    }
+  const setRegisteredFarmer = (farmer: FarmerData | null) => {
+    // This now only updates the state in memory for the current session.
+    setRegisteredFarmerState(farmer);
   };
 
   const addSmsToHistory = (message: Omit<SmsMessage, 'timestamp'>) => {
     const newSms: SmsMessage = { ...message, timestamp: new Date() };
-    setSmsHistory(prev => {
-      const newHistory = [newSms, ...prev];
-      try {
-        localStorage.setItem('smsHistory', JSON.stringify(newHistory));
-      } catch (error) {
-        console.error("Failed to save SMS history to localStorage", error);
-      }
-      return newHistory;
-    });
+    // This now only updates the state in memory for the current session.
+    setSmsHistory(prev => [newSms, ...prev]);
   };
 
   const value = {
