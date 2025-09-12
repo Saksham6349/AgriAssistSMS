@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -6,21 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot, TrendingUp, LifeBuoy } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useTranslation } from '@/hooks/useTranslation';
 
 export function Sidebar() {
     const pathname = usePathname();
-    const { t } = useTranslation();
 
     const navItems = [
-        { href: '/dashboard', label: t('sidebar.dashboard'), icon: LayoutDashboard },
-        { href: '/weather', label: t('sidebar.weather'), icon: Sun },
-        { href: '/advisory', label: t('sidebar.advisory'), icon: MessageSquareWarning },
-        { href: '/diagnosis', label: t('sidebar.diagnosis'), icon: Stethoscope },
-        { href: '/market-prices', label: t('sidebar.market'), icon: TrendingUp },
-        { href: '/chat', label: t('sidebar.chat'), icon: Bot },
-        { href: '/history', label: t('sidebar.history'), icon: History },
-        { href: '/help', label: t('sidebar.help'), icon: LifeBuoy },
+        { href: '/dashboard', label: "Dashboard", icon: LayoutDashboard },
+        { href: '/weather', label: "Weather Forecast", icon: Sun },
+        { href: '/advisory', label: "Advisory Alerts", icon: MessageSquareWarning },
+        { href: '/diagnosis', label: "Crop Diagnosis", icon: Stethoscope },
+        { href: '/market-prices', label: "Market Prices", icon: TrendingUp },
+        { href: '/chat', label: "Chat Assistant", icon: Bot },
+        { href: '/history', label: "SMS History", icon: History },
+        { href: '/help', label: "Help Center", icon: LifeBuoy },
     ];
 
     return (

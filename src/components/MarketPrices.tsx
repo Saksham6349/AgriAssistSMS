@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, FC, useTransition } from "react";
@@ -26,47 +25,46 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { sendSms } from "@/ai/flows/send-sms";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { useTranslation } from "@/hooks/useTranslation";
 
 type CropData = {
   cropKey: string;
+  name: string;
   price: number;
   change: number;
   icon: FC<React.ComponentProps<"svg">>;
 };
 
 const mockMarketData: CropData[] = [
-  { cropKey: "wheat", price: 2275, change: 1.5, icon: Leaf },
-  { cropKey: "rice", price: 3100, change: -0.8, icon: Leaf },
-  { cropKey: "corn", price: 2150, change: 2.1, icon: Leaf },
-  { cropKey: "soybeans", price: 4800, change: 0.5, icon: Leaf },
-  { cropKey: "cotton", price: 7200, change: -1.2, icon: Leaf },
-  { cropKey: "sugarcane", price: 350, change: 3.0, icon: Leaf },
-  { cropKey: "potatoes", price: 1800, change: 1.8, icon: Carrot },
-  { cropKey: "onions", price: 2500, change: -2.5, icon: Carrot },
-  { cropKey: "tomatoes", price: 2000, change: 4.2, icon: Carrot },
-  { cropKey: "apples", price: 8500, change: 0.9, icon: Apple },
-  { cropKey: "bananas", price: 1500, change: 1.1, icon: Apple },
-  { cropKey: "barley", price: 1900, change: -0.5, icon: Leaf },
-  { cropKey: "chickpeas", price: 5200, change: 2.3, icon: Leaf },
-  { cropKey: "coffee", price: 10500, change: -1.8, icon: Leaf },
-  { cropKey: "grapes", price: 6000, change: 3.5, icon: Apple },
-  { cropKey: "jute", price: 4500, change: 0.2, icon: Leaf },
-  { cropKey: "lentils", price: 6800, change: -0.9, icon: Leaf },
-  { cropKey: "mangoes", price: 7500, change: 5.0, icon: Apple },
-  { cropKey: "millet", price: 2800, change: 1.2, icon: Leaf },
-  { cropKey: "tea", price: 12000, change: -2.1, icon: Leaf },
+  { cropKey: "wheat", name: "Wheat", price: 2275, change: 1.5, icon: Leaf },
+  { cropKey: "rice", name: "Rice", price: 3100, change: -0.8, icon: Leaf },
+  { cropKey: "corn", name: "Corn", price: 2150, change: 2.1, icon: Leaf },
+  { cropKey: "soybeans", name: "Soybeans", price: 4800, change: 0.5, icon: Leaf },
+  { cropKey: "cotton", name: "Cotton", price: 7200, change: -1.2, icon: Leaf },
+  { cropKey: "sugarcane", name: "Sugarcane", price: 350, change: 3.0, icon: Leaf },
+  { cropKey: "potatoes", name: "Potatoes", price: 1800, change: 1.8, icon: Carrot },
+  { cropKey: "onions", name: "Onions", price: 2500, change: -2.5, icon: Carrot },
+  { cropKey: "tomatoes", name: "Tomatoes", price: 2000, change: 4.2, icon: Carrot },
+  { cropKey: "apples", name: "Apples", price: 8500, change: 0.9, icon: Apple },
+  { cropKey: "bananas", name: "Bananas", price: 1500, change: 1.1, icon: Apple },
+  { cropKey: "barley", name: "Barley", price: 1900, change: -0.5, icon: Leaf },
+  { cropKey: "chickpeas", name: "Chickpeas", price: 5200, change: 2.3, icon: Leaf },
+  { cropKey: "coffee", name: "Coffee", price: 10500, change: -1.8, icon: Leaf },
+  { cropKey: "grapes", name: "Grapes", price: 6000, change: 3.5, icon: Apple },
+  { cropKey: "jute", name: "Jute", price: 4500, change: 0.2, icon: Leaf },
+  { cropKey: "lentils", name: "Lentils", price: 6800, change: -0.9, icon: Leaf },
+  { cropKey: "mangoes", name: "Mangoes", price: 7500, change: 5.0, icon: Apple },
+  { cropKey: "millet", name: "Millet", price: 2800, change: 1.2, icon: Leaf },
+  { cropKey: "tea", name: "Tea", price: 12000, change: -2.1, icon: Leaf },
 ];
 
-type SortKey = "cropKey" | "price" | "change" | null;
+type SortKey = "name" | "price" | "change" | null;
 type SortDirection = "asc" | "desc";
 
 export function MarketPrices() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
-  const { t } = useTranslation();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>("cropKey");
+  const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const { toast } = useToast();
 
@@ -74,8 +72,8 @@ export function MarketPrices() {
     if (!sortKey) return mockMarketData;
     
     const sorted = [...mockMarketData].sort((a, b) => {
-      const aValue = sortKey === 'cropKey' ? t(`market.crops.${a.cropKey}`) : a[sortKey];
-      const bValue = sortKey === 'cropKey' ? t(`market.crops.${b.cropKey}`) : b[sortKey];
+      const aValue = a[sortKey];
+      const bValue = b[sortKey];
 
       if (aValue < bValue) return -1;
       if (aValue > bValue) return 1;
@@ -83,7 +81,7 @@ export function MarketPrices() {
     });
 
     return sortDirection === "asc" ? sorted : sorted.reverse();
-  }, [sortKey, sortDirection, t]);
+  }, [sortKey, sortDirection]);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -114,16 +112,16 @@ export function MarketPrices() {
       return;
     }
 
-    const primaryCropData = mockMarketData.find(c => c.cropKey.toLowerCase() === registeredFarmer.crop.toLowerCase());
-    const secondaryCropData = mockMarketData.find(c => c.cropKey.toLowerCase() === registeredFarmer.secondaryCrop.toLowerCase());
+    const primaryCropData = mockMarketData.find(c => c.name.toLowerCase() === registeredFarmer.crop.toLowerCase());
+    const secondaryCropData = mockMarketData.find(c => c.name.toLowerCase() === registeredFarmer.secondaryCrop.toLowerCase());
     
-    let message = `${t('market.smsTitle')}: `;
+    let message = `Market Prices (INR/quintal): `;
     if (primaryCropData) {
-      const cropName = t(`market.crops.${primaryCropData.cropKey}`);
+      const cropName = primaryCropData.name;
       message += `${cropName} @ ${primaryCropData.price}. `;
     }
     if (secondaryCropData) {
-      const cropName = t(`market.crops.${secondaryCropData.cropKey}`);
+      const cropName = secondaryCropData.name;
       message += `${cropName} @ ${secondaryCropData.price}.`;
     }
 
@@ -173,9 +171,9 @@ export function MarketPrices() {
             <TrendingUp className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>{t('market.title')}</CardTitle>
+            <CardTitle>Market Prices</CardTitle>
             <CardDescription>
-              {t('market.description')}
+              Live mandi rates for key crops in your area. Prices per quintal.
             </CardDescription>
           </div>
         </div>
@@ -185,18 +183,18 @@ export function MarketPrices() {
           <TableHeader>
             <TableRow>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('cropKey')} className="px-0 hover:bg-transparent">
-                  {t('market.crop')} {getSortIcon('cropKey')}
+                <Button variant="ghost" onClick={() => handleSort('name')} className="px-0 hover:bg-transparent">
+                  Crop {getSortIcon('name')}
                 </Button>
               </TableHead>
               <TableHead className="text-right">
                 <Button variant="ghost" onClick={() => handleSort('price')} className="px-0 hover:bg-transparent">
-                  {t('market.price')} {getSortIcon('price')}
+                  Price (INR) {getSortIcon('price')}
                 </Button>
               </TableHead>
               <TableHead className="text-right">
                 <Button variant="ghost" onClick={() => handleSort('change')} className="px-0 hover:bg-transparent">
-                  {t('market.change')} {getSortIcon('change')}
+                  Change {getSortIcon('change')}
                 </Button>
               </TableHead>
             </TableRow>
@@ -207,7 +205,7 @@ export function MarketPrices() {
                 <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
                         <item.icon className="w-5 h-5 text-muted-foreground" />
-                        <span>{t(`market.crops.${item.cropKey}`)}</span>
+                        <span>{item.name}</span>
                     </div>
                 </TableCell>
                 <TableCell className="text-right font-mono">{item.price.toLocaleString('en-IN')}</TableCell>
@@ -238,7 +236,7 @@ export function MarketPrices() {
       </CardContent>
       <CardFooter>
         <Button onClick={handleSendSms} disabled={!registeredFarmer || isSmsPending} className="w-full" variant="secondary" size="sm">
-            {isSmsPending ? <><Loader2 className="animate-spin" /> {t('market.sending')}</> : <><Send /> {t('market.sendSms')}</>}
+            {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
         </Button>
       </CardFooter>
     </Card>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useTransition, useEffect, FormEvent } from "react";
@@ -27,7 +26,6 @@ import { translateAdvisoryAlerts } from "@/ai/flows/translate-advisory-alerts";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
-import { useTranslation } from "@/hooks/useTranslation";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
 import { fetchWeatherData } from "@/app/actions/weather";
 
@@ -38,7 +36,6 @@ type ServerActionResult = {
 
 export function WeatherCard() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
-  const { t } = useTranslation();
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [isAudioPending, startAudioTransition] = useTransition();
@@ -228,9 +225,9 @@ export function WeatherCard() {
             <Sun className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>{t('weather.title')}</CardTitle>
+            <CardTitle>Weather Forecast</CardTitle>
             <CardDescription>
-              {t('weather.description')}
+              Get AI-powered weather summaries for your location.
             </CardDescription>
           </div>
         </div>
@@ -243,7 +240,7 @@ export function WeatherCard() {
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder={t('weather.locationPlaceholder')}
+                  placeholder="Enter location..."
                   className="pl-10"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -268,7 +265,7 @@ export function WeatherCard() {
                       </SelectContent>
                   </Select>
                   <Button type="submit" disabled={isForecastPending} className="flex-grow">
-                      {isForecastPending ? <Loader2 className="animate-spin" /> : t('weather.getForecast')}
+                      {isForecastPending ? <Loader2 className="animate-spin" /> : "Get Forecast"}
                   </Button>
               </div>
             </div>
@@ -289,7 +286,7 @@ export function WeatherCard() {
             {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
                 <div className="flex justify-between items-start">
-                    <h4 className="font-semibold mb-2 text-foreground">{t('weather.summary')} ({language}):</h4>
+                    <h4 className="font-semibold mb-2 text-foreground">Weather Summary ({language}):</h4>
                     <Button variant="ghost" size="icon" onClick={handlePlayAudio} disabled={isAudioPending}>
                         {isAudioPending ? <Loader2 className="animate-spin" /> : (audio ? <StopCircle /> : <PlayCircle />)}
                     </Button>
@@ -308,14 +305,14 @@ export function WeatherCard() {
             )}
             {!result && !isForecastPending && !smsStatus && (
                 <div className="text-center text-muted-foreground py-4">
-                    <p>{t('weather.enterLocationPrompt')}</p>
+                    <p>Enter a location to see the weather summary.</p>
                 </div>
             )}
           </div>
         </CardContent>
         <CardFooter>
             <Button onClick={handleSendSms} disabled={!result?.summary || isForecastPending || isSmsPending} className="w-full" variant="secondary" size="sm">
-                {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> {t('weather.sendSms')}</>}
+                {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
             </Button>
         </CardFooter>
       </div>

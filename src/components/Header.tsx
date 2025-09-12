@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -52,7 +51,7 @@ export function Header() {
             <Leaf className="text-primary" size={24} />
           </div>
           <h1 className="text-xl font-bold text-foreground tracking-tight">
-            {t('header.title')}
+            AgriAssist SMS
           </h1>
         </div>
         
