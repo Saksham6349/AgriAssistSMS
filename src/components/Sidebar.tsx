@@ -12,19 +12,19 @@ export function Sidebar() {
     const { t } = useTranslation();
 
     const navItems = [
-        { href: '/dashboard', label: t('sidebar.dashboard'), icon: LayoutDashboard },
-        { href: '/weather', label: t('sidebar.weather'), icon: Sun },
-        { href: '/advisory', label: t('sidebar.advisory'), icon: MessageSquareWarning },
-        { href: '/diagnosis', label: t('sidebar.diagnosis'), icon: Stethoscope },
-        { href: '/market-prices', label: t('sidebar.market'), icon: TrendingUp },
-        { href: '/chat', label: t('sidebar.chat'), icon: Bot },
-        { href: '/history', label: t('sidebar.history'), icon: History },
-        { href: '/help', label: t('sidebar.help'), icon: LifeBuoy },
+        { href: '/dashboard', label: t('sidebar.dashboard', 'Dashboard'), icon: LayoutDashboard },
+        { href: '/weather', label: t('sidebar.weather', 'Weather Forecast'), icon: Sun },
+        { href: '/advisory', label: t('sidebar.advisory', 'Advisory Alerts'), icon: MessageSquareWarning },
+        { href: '/diagnosis', label: t('sidebar.diagnosis', 'Crop Diagnosis'), icon: Stethoscope },
+        { href: '/market-prices', label: t('sidebar.market', 'Market Prices'), icon: TrendingUp },
+        { href: '/chat', label: t('sidebar.chat', 'Chat Assistant'), icon: Bot },
+        { href: '/history', label: t('sidebar.history', 'SMS History'), icon: History },
+        { href: '/help', label: t('sidebar.help', 'Help Center'), icon: LifeBuoy },
     ];
 
-    // On farmer portal, filter out the admin-only Dashboard link
+    // On farmer portal, filter out admin-only links.
     const filteredNavItems = pathname.startsWith('/farmer') 
-        ? navItems.filter(item => item.href !== '/dashboard') 
+        ? navItems.filter(item => item.href !== '/dashboard' && item.href !== '/chat') 
         : navItems;
 
     return (
