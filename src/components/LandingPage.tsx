@@ -1,38 +1,36 @@
+
 "use client";
 
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, MessageSquareWarning, Sun, Stethoscope, TrendingUp, Bot, Languages, Speaker, Smartphone, Wheat, User } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
 import Image from "next/image";
 
 export function LandingPage() {
-  const { t } = useTranslation();
-
   const features = [
     {
       icon: <Sun className="w-8 h-8 text-primary" />,
-      title: t('sidebar.weather'),
+      title: "Weather Forecast",
       description: "Get AI-powered weather summaries for any location.",
     },
     {
       icon: <MessageSquareWarning className="w-8 h-8 text-primary" />,
-      title: t('sidebar.advisory'),
+      title: "Advisory Alerts",
       description: "Generate and send critical pest and advisory alerts to farmers.",
     },
     {
       icon: <Stethoscope className="w-8 h-8 text-primary" />,
-      title: t('sidebar.diagnosis'),
+      title: "Crop Diagnosis",
       description: "Identify crop diseases by simply uploading a photo of the plant.",
     },
     {
       icon: <TrendingUp className="w-8 h-8 text-primary" />,
-      title: t('sidebar.market'),
+      title: "Market Prices",
       description: "Access live mandi rates for key crops to make informed selling decisions.",
     },
     {
       icon: <Bot className="w-8 h-8 text-primary" />,
-      title: t('sidebar.chat'),
+      title: "Chat Assistant",
       description: "Ask the AI assistant anything about farming, crops, and weather.",
     },
     {
