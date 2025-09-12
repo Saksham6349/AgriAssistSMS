@@ -21,7 +21,7 @@ export default function DashboardPage() {
             </div>
             <div className="grid grid-cols-1">
                 <div className="lg:col-span-1">
-                    <UserManagement />
+                    <UserManagement isAdmin={true} />
                 </div>
             </div>
         </div>

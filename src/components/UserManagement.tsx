@@ -68,7 +68,7 @@ const initialFormData: FarmerData = {
 type VerificationStatus = 'unverified' | 'pending' | 'success' | 'failed';
 type FilePreview = { url: string; type: 'image' } | { name: string; type: 'pdf' };
 
-export function UserManagement() {
+export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
   const { registeredFarmer, setRegisteredFarmer, isLoaded } = useAppContext();
   const [formData, setFormData] = useState<FarmerData>(initialFormData);
   const [filePreview, setFilePreview] = useState<FilePreview | null>(null);
@@ -79,6 +79,9 @@ export function UserManagement() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t } = useTranslation();
+  
+  const T = (key: string, defaultText: string) => isAdmin ? defaultText : t(key);
+
 
   useEffect(() => {
       if (isLoaded) {
@@ -262,9 +265,9 @@ export function UserManagement() {
                 {registeredFarmer ? <UserCheck className="w-6 h-6 text-primary" /> : <UserPlus className="w-6 h-6 text-primary" />}
             </div>
             <div>
-                <CardTitle>{registeredFarmer ? t('userManagement.currentFarmer') : t('userManagement.registration')}</CardTitle>
+                <CardTitle>{registeredFarmer ? T('userManagement.currentFarmer', 'Current Farmer') : T('userManagement.registration', 'Farmer Registration')}</CardTitle>
                 <CardDescription>
-                {registeredFarmer ? t('userManagement.ready') : t('userManagement.registerPrompt')}
+                {registeredFarmer ? T('userManagement.ready', 'Ready to receive SMS alerts.') : T('userManagement.registerPrompt', 'Register farmer to send alerts.')}
                 </CardDescription>
             </div>
         </div>
@@ -278,7 +281,7 @@ export function UserManagement() {
              </div>
               {registeredFarmer.idProof && filePreview?.type === 'image' && (
                 <div>
-                  <p className="text-sm font-medium mb-2">{t('userManagement.idProof')}</p>
+                  <p className="text-sm font-medium mb-2">{T('userManagement.idProof', 'Government ID:')}</p>
                   <div className="relative w-fit">
                     <Image src={(filePreview as {url: string}).url} alt="ID Proof" width={200} height={120} className="rounded-md object-cover border" />
                     <BadgeCheck className="absolute -top-2 -right-2 h-7 w-7 text-white bg-green-600 rounded-full p-1" />
@@ -286,50 +289,50 @@ export function UserManagement() {
                 </div>
               )}
              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">{t('userManagement.primaryCrop')} {registeredFarmer.crop}</Badge>
-                {registeredFarmer.secondaryCrop && <Badge variant="secondary">{t('userManagement.secondaryCrop')} {registeredFarmer.secondaryCrop}</Badge>}
-                <Badge variant="secondary">{t('userManagement.language')} {registeredFarmer.language}</Badge>
+                <Badge variant="secondary">{T('userManagement.primaryCrop', 'Primary Crop:')} {registeredFarmer.crop}</Badge>
+                {registeredFarmer.secondaryCrop && <Badge variant="secondary">{T('userManagement.secondaryCrop', 'Secondary:')} {registeredFarmer.secondaryCrop}</Badge>}
+                <Badge variant="secondary">{T('userManagement.language', 'Language:')} {registeredFarmer.language}</Badge>
              </div>
              <Button onClick={handleReset} className="w-full mt-4 !-mb-2" variant="outline">
-                <FilePenLine /> {t('userManagement.registerAnother')}
+                <FilePenLine /> {T('userManagement.registerAnother', 'Register Another Farmer')}
             </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">{t('userManagement.farmerName')}</label>
+                <label htmlFor="name" className="text-sm font-medium">{T('userManagement.farmerName', 'Farmer Name')}</label>
                 <div className="relative flex items-center">
                     <User className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="name" name="name" placeholder={t('userManagement.farmerNamePlaceholder')} value={formData.name} onChange={handleChange} required className="pl-10" />
+                    <Input id="name" name="name" placeholder={T('userManagement.farmerNamePlaceholder', 'e.g., John Doe')} value={formData.name} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="phone" className="text-sm font-medium">{t('userManagement.phone')}</label>
+                <label htmlFor="phone" className="text-sm font-medium">{T('userManagement.phone', 'Phone Number')}</label>
                 <div className="relative flex items-center">
                     <Phone className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="phone" name="phone" type="tel" placeholder={t('userManagement.phonePlaceholder')} value={formData.phone} onChange={handleChange} required className="pl-10" />
+                    <Input id="phone" name="phone" type="tel" placeholder={T('userManagement.phonePlaceholder', 'e.g., +1234567890')} value={formData.phone} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="village" className="text-sm font-medium">{t('userManagement.location')}</label>
+                <label htmlFor="village" className="text-sm font-medium">{T('userManagement.location', 'Location / Village')}</label>
                 <div className="relative flex items-center">
                     <MapPin className="absolute left-3 w-5 h-5 text-muted-foreground" />
-                    <Input id="village" name="village" placeholder={t('userManagement.locationPlaceholder')} value={formData.village} onChange={handleChange} required className="pl-10" />
+                    <Input id="village" name="village" placeholder={T('userManagement.locationPlaceholder', 'e.g., Springfield')} value={formData.village} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="district" className="text-sm font-medium">{t('userManagement.district')}</label>
+                <label htmlFor="district" className="text-sm font-medium">{T('userManagement.district', 'District')}</label>
                 <div className="relative flex items-center">
                     <Globe className="absolute left-3 w-5 h-5 text-muted-foreground" />
                     <Input id="district" name="district" placeholder="e.g., Sitapur" value={formData.district} onChange={handleChange} required className="pl-10" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="language-select" className="text-sm font-medium">{t('userManagement.preferredLanguage')}</label>
+                <label htmlFor="language-select" className="text-sm font-medium">{T('userManagement.preferredLanguage', 'Preferred Language')}</label>
                 <Select name="language" value={formData.language} onValueChange={handleSelectChange('language')}>
                   <SelectTrigger id="language-select">
-                    <SelectValue placeholder={t('userManagement.selectLanguage')} />
+                    <SelectValue placeholder={T('userManagement.selectLanguage', 'Select language')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="English">English</SelectItem>
@@ -346,10 +349,40 @@ export function UserManagement() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label htmlFor="crop-select" className="text-sm font-medium">{t('userManagement.primaryCropLabel')}</label>
+                <label htmlFor="crop-select" className="text-sm font-medium">{T('userManagement.primaryCropLabel', 'Primary Crop')}</label>
                 <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')} required>
                   <SelectTrigger id="crop-select">
-                    <SelectValue placeholder={t('userManagement.selectCrop')} />
+                    <SelectValue placeholder={T('userManagement.selectCrop', 'Select crop')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Apples">Apples</SelectItem>
+                    <SelectItem value="Bananas">Bananas</SelectItem>
+                    <SelectItem value="Barley">Barley</SelectItem>
+                    <SelectItem value="Chickpeas">Chickpeas</SelectItem>
+                    <SelectItem value="Coffee">Coffee</SelectItem>
+                    <SelectItem value="Corn">Corn</SelectItem>
+                    <SelectItem value="Cotton">Cotton</SelectItem>
+                    <SelectItem value="Grapes">Grapes</SelectItem>
+                    <SelectItem value="Jute">Jute</SelectItem>
+                    <SelectItem value="Lentils">Lentils</SelectItem>
+                    <SelectItem value="Mangoes">Mangoes</SelectItem>
+                    <SelectItem value="Millet">Millet</SelectItem>
+                    <SelectItem value="Onions">Onions</SelectItem>
+                    <SelectItem value="Potatoes">Potatoes</SelectItem>
+                    <SelectItem value="Rice">Rice</SelectItem>
+                    <SelectItem value="Soybeans">Soybeans</SelectItem>
+                    <SelectItem value="Sugarcane">Sugarcane</SelectItem>
+                    <SelectItem value="Tea">Tea</SelectItem>
+                    <SelectItem value="Tomatoes">Tomatoes</SelectItem>
+                    <SelectItem value="Wheat">Wheat</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+               <div className="space-y-2">
+                <label htmlFor="secondary-crop-select" className="text-sm font-medium">{T('userManagement.secondaryCropLabel', 'Secondary Crop (Optional)')}</label>
+                <Select name="secondaryCrop" value={formData.secondaryCrop} onValueChange={handleSelectChange('secondaryCrop')}>
+                  <SelectTrigger id="secondary-crop-select">
+                    <SelectValue placeholder={T('userManagement.selectSecondaryCrop', 'Select secondary crop')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Apples">Apples</SelectItem>
@@ -378,7 +411,7 @@ export function UserManagement() {
             </div>
             
             <div className="space-y-2 pt-2 border-t">
-              <label htmlFor="id-proof-upload" className="text-sm font-medium">{t('userManagement.govIdProof')}</label>
+              <label htmlFor="id-proof-upload" className="text-sm font-medium">{T('userManagement.govIdProof', 'Government ID Proof')}</label>
               <div
                 className="relative border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center cursor-pointer hover:bg-accent/20 hover:border-primary transition-colors"
                 onClick={() => fileInputRef.current?.click()}
@@ -419,9 +452,9 @@ export function UserManagement() {
                   ) : (
                     <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Upload className="w-8 h-8" />
-                        <p className="font-semibold">{t('userManagement.uploadId')}</p>
-                        <p className="text-xs">{t('userManagement.idTypes')}</p>
-                        <p className="text-xs">{t('userManagement.fileTypes')}</p>
+                        <p className="font-semibold">{T('userManagement.uploadId', 'Click to upload ID')}</p>
+                        <p className="text-xs">{T('userManagement.idTypes', 'Aadhar, PAN, Ration Card, or Gas Connection')}</p>
+                        <p className="text-xs">{T('userManagement.fileTypes', 'PNG, JPG, PDF (max 4MB)')}</p>
                     </div>
                   )}
               </div>
@@ -429,11 +462,11 @@ export function UserManagement() {
               {filePreview && (
                   <div className="space-y-2">
                     <Button type="button" onClick={handleVerify} disabled={isVerifyPending || verificationStatus === 'success'} className="w-full">
-                        {isVerifyPending && <><Loader2 className="animate-spin" /> {t('userManagement.verifying')}</>}
-                        {verificationStatus === 'unverified' && <><ShieldCheck /> {t('userManagement.verifyId')}</>}
-                        {verificationStatus === 'pending' && <><Loader2 className="animate-spin" /> {t('userManagement.verifying')}</>}
-                        {verificationStatus === 'success' && <><BadgeCheck /> {t('userManagement.idVerified')}</>}
-                        {verificationStatus === 'failed' && <><ShieldAlert /> {t('userManagement.verificationFailed')}</>}
+                        {isVerifyPending && <><Loader2 className="animate-spin" /> {T('userManagement.verifying', 'Verifying...')}</>}
+                        {verificationStatus === 'unverified' && <><ShieldCheck /> {T('userManagement.verifyId', 'Verify ID')}</>}
+                        {verificationStatus === 'pending' && <><Loader2 className="animate-spin" /> {T('userManagement.verifying', 'Verifying...')}</>}
+                        {verificationStatus === 'success' && <><BadgeCheck /> {T('userManagement.idVerified', 'ID Verified')}</>}
+                        {verificationStatus === 'failed' && <><ShieldAlert /> {T('userManagement.verificationFailed', 'Verification Failed')}</>}
                     </Button>
                     {verificationResult && (
                       <div className="space-y-2">
@@ -461,7 +494,7 @@ export function UserManagement() {
 
             <Button type="submit" className="w-full" disabled={!isFormValid || isRegisterPending}>
               {isRegisterPending ? <Loader2 className="animate-spin" /> : <UserPlus />}
-              {t('userManagement.registerFarmer')}
+              {T('userManagement.registerFarmer', 'Register Farmer')}
             </Button>
           </form>
         )}
