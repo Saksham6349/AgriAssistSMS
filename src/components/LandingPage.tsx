@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -57,7 +56,7 @@ export function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
               <div className="inline-block rounded-lg bg-black/20 px-3 py-1 text-sm">Key Features</div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-white">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-orange-500">
                 A Comprehensive Toolkit for Modern Agriculture
               </h2>
               <p className="max-w-[900px] mx-auto text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
@@ -85,7 +84,7 @@ export function LandingPage() {
         <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-muted/20 backdrop-blur-sm">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
             <div className="space-y-3 fade-in">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-white">How It Works</h2>
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-orange-500">How It Works</h2>
               <p className="mx-auto max-w-[600px] text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Simple steps to connect farmers with vital information.
               </p>
@@ -119,7 +118,7 @@ export function LandingPage() {
         <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-white">Trusted by Farmers</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-orange-500">Trusted by Farmers</h2>
               <p className="max-w-2xl mx-auto text-white/80 md:text-xl/relaxed">
                 Hear what farmers are saying about AgriAssist SMS.
               </p>
