@@ -60,11 +60,6 @@ export const FarmerAppProvider = ({ children }: { children: ReactNode }) => {
     if (translations[lang]) {
       setLanguageState(lang);
       setCurrentTranslations(translations[lang]);
-      try {
-        localStorage.setItem('farmerAppLanguage', lang);
-      } catch (error) {
-        console.error("Failed to save language to localStorage", error);
-      }
     }
   }, []);
   
@@ -72,20 +67,11 @@ export const FarmerAppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (registeredFarmer?.language && translations[registeredFarmer.language]) {
         setLanguage(registeredFarmer.language);
+    } else {
+        // Default to English if no farmer is registered or language is not set
+        setLanguage('English');
     }
   }, [registeredFarmer, setLanguage]);
-
-  // Load saved language on initial mount
-  useEffect(() => {
-    try {
-      const storedLanguage = localStorage.getItem('farmerAppLanguage');
-      if (storedLanguage && translations[storedLanguage]) {
-        setLanguage(storedLanguage);
-      }
-    } catch (error) {
-      console.error("Failed to load language from localStorage", error);
-    }
-  }, [setLanguage]);
 
   const value = {
     language,
