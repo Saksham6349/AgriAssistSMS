@@ -8,11 +8,12 @@ import { Sidebar } from '@/components/Sidebar';
 export function MainContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Don't render Header and Sidebar on the landing or role selection pages
-  if (pathname === '/' || pathname === '/role-selection') {
+  // Don't render the main Header and Sidebar on the landing, role selection, or farmer portal pages
+  if (pathname === '/' || pathname === '/role-selection' || pathname.startsWith('/farmer')) {
     return <>{children}</>;
   }
 
+  // This is the layout for the Admin Portal
   return (
     <>
       <Header />

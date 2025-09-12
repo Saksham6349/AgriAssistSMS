@@ -8,40 +8,14 @@ import { db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 import en from '@/translations/en.json';
-import hi from '@/translations/hi.json';
-import bn from '@/translations/bn.json';
-import te from '@/translations/te.json';
-import mr from '@/translations/mr.json';
-import ta from '@/translations/ta.json';
-import ur from '@/translations/ur.json';
-import gu from '@/translations/gu.json';
-import kn from '@/translations/kn.json';
-import pa from '@/translations/pa.json';
 
-const translations: { [key: string]: any } = {
+// Admin portal is always in English.
+const translations = {
   English: en,
-  Hindi: hi,
-  Bengali: bn,
-  Telugu: te,
-  Marathi: mr,
-  Tamil: ta,
-  Urdu: ur,
-  Gujarati: gu,
-  Kannada: kn,
-  Punjabi: pa,
 };
 
 const availableLanguages = {
   English: "English",
-  Hindi: "हिन्दी",
-  Bengali: "বাংলা",
-  Telugu: "తెలుగు",
-  Marathi: "मराठी",
-  Tamil: "தமிழ்",
-  Urdu: "اردو",
-  Gujarati: "ગુજરાતી",
-  Kannada: "ಕನ್ನಡ",
-  Punjabi: "ਪੰਜਾਬੀ",
 };
 
 interface AppContextType {
@@ -50,8 +24,8 @@ interface AppContextType {
   smsHistory: SmsMessage[];
   addSmsToHistory: (message: Omit<SmsMessage, 'timestamp'>) => void;
   isLoaded: boolean;
-  language: string;
-  setLanguage: (language: string) => void;
+  language: string; // Stays as 'English'
+  setLanguage: (language: string) => void; // No-op for admin
   translations: any;
   availableLanguages: { [key: string]: string };
 }
@@ -65,45 +39,37 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [registeredFarmer, setRegisteredFarmerState] = useState<FarmerData | null>(null);
   const [smsHistory, setSmsHistory] = useState<SmsMessage[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [language, setLanguageState] = useState<string>('English');
-  const [currentTranslations, setCurrentTranslations] = useState(translations.English);
+  
+  // Admin portal language is always English and cannot be changed.
+  const language = 'English';
+  const setLanguage = () => {}; // No-op function for the admin portal
+  const currentTranslations = translations.English;
 
-  const setLanguage = useCallback((lang: string) => {
-    if (translations[lang]) {
-      setLanguageState(lang);
-      setCurrentTranslations(translations[lang]);
-      try {
-        localStorage.setItem('appLanguage', lang);
-      } catch (error) {
-        console.error("Failed to save language to localStorage", error);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load language and history from localStorage, but not the farmer.
-        const storedLanguage = localStorage.getItem('appLanguage');
-        if (storedLanguage && translations[storedLanguage]) {
-          setLanguage(storedLanguage);
-        } else {
-          setLanguage('English');
-        }
-        
         const storedHistory = localStorage.getItem('smsHistory');
         if (storedHistory) {
           setSmsHistory(JSON.parse(storedHistory).map((sms: any) => ({ ...sms, timestamp: new Date(sms.timestamp) })));
         }
+
+        if (db) {
+            const farmerDocRef = doc(db, 'activeFarmer', ACTIVE_FARMER_DOC_ID);
+            const docSnap = await getDoc(farmerDocRef);
+            if (docSnap.exists()) {
+                setRegisteredFarmerState(docSnap.data() as FarmerData);
+            }
+        }
       } catch (error) {
-        console.error("Failed to load state from localStorage", error);
+        console.error("Failed to load state from localStorage or Firestore", error);
       } finally {
         setIsLoaded(true);
       }
     };
     
     loadData();
-  }, [setLanguage]);
+  }, []);
 
   const setRegisteredFarmer = async (farmer: FarmerData | null) => {
     if (!db) {
@@ -165,5 +131,3 @@ export const useAppContext = () => {
   }
   return context;
 };
-
-    

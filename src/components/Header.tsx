@@ -1,17 +1,9 @@
+
 "use client";
 
 import Link from 'next/link';
-import { Leaf, Languages, ArrowLeft } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { Leaf, ArrowLeft } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
-import { usePathname } from 'next/navigation';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from './ui/button';
 import {
   Tooltip,
@@ -22,11 +14,7 @@ import {
 
 
 export function Header() {
-  const { language, setLanguage, availableLanguages } = useAppContext();
   const { t } = useTranslation();
-  const pathname = usePathname();
-
-  const isFarmerPortal = pathname.startsWith('/farmer');
 
   return (
     <header className="sticky top-0 z-50 py-4 px-6 bg-card border-b">
@@ -51,25 +39,9 @@ export function Header() {
             <Leaf className="text-primary" size={24} />
           </div>
           <h1 className="text-xl font-bold text-foreground tracking-tight">
-            {t('header.title')}
+            AgriAssist SMS
           </h1>
         </div>
-        
-        {isFarmerPortal && (
-          <div className="flex items-center gap-2">
-            <Languages className="h-5 w-5 text-muted-foreground" />
-            <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-fit border-0 bg-transparent text-muted-foreground shadow-none focus:ring-0">
-                    <SelectValue placeholder="Language" />
-                </SelectTrigger>
-                <SelectContent>
-                {Object.entries(availableLanguages).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>{value}</SelectItem>
-                ))}
-                </SelectContent>
-            </Select>
-          </div>
-        )}
       </div>
     </header>
   );
