@@ -40,18 +40,17 @@ const prompt = ai.definePrompt({
   name: 'diagnoseCropHealthPrompt',
   input: {schema: DiagnoseCropHealthInputSchema},
   output: {schema: DiagnoseCropHealthOutputSchema},
-  prompt: `You are an expert botanist and plant pathologist specializing in diagnosing plant illnesses from images. Your primary goal is accuracy.
+  prompt: `You are an expert plant pathologist. Your task is to perform a rigorous, step-by-step diagnosis of a plant from an image. Your analysis MUST be based exclusively on the knowledge contained within the "New Plant Diseases Dataset" from Kaggle. Do not use any external knowledge.
 
-You MUST base your diagnosis on the knowledge contained within the "New Plant Diseases Dataset" from Kaggle. This dataset contains images of healthy and diseased crop leaves.
+**Verification Steps:**
+1.  **Assess Image Quality:** First, you MUST evaluate the image quality. If it is blurry, dark, poorly lit, or too distant for a high-confidence diagnosis, you MUST state this first in your diagnosis. For example: "Image quality is too poor for an accurate diagnosis."
+2.  **Identify the Plant:** If the image is clear, identify the plant. If the image does not appear to contain a plant, set 'isPlant' to false and stop.
+3.  **Perform Diagnosis:** Compare the visual evidence in the photo ONLY to the classes within the Kaggle dataset (e.g., "Tomato___Bacterial_spot", "Corn_(maize)___healthy").
+    - If the plant appears healthy according to the dataset, state this clearly and set 'isHealthy' to true.
+    - If signs of disease are present that match a dataset class, you MUST name the specific disease and suggest a standard, actionable treatment for a farmer.
+    - **Crucially:** If you are not at least 95% confident in a diagnosis, you MUST NOT guess. In such cases, state that a confident diagnosis cannot be made from the image and suggest taking a clearer picture from a different angle.
 
-1.  **Assess Image Quality:** First, evaluate the provided photo. If the image is blurry, dark, or too far away to make a confident assessment, state this in your diagnosis. For example: "Image quality is poor, which limits diagnostic accuracy."
-2.  **Identify the Plant:** If the image is clear enough, identify the plant's common and Latin names. If the image does not appear to contain a plant, set 'isPlant' to false and explain why.
-3.  **Perform Diagnosis:** Carefully examine the plant for any signs of disease, pests, or nutrient deficiencies, comparing it to the classes in the Kaggle dataset (e.g., "Tomato___Bacterial_spot", "Corn_(maize)___healthy", "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)").
-    - If the plant is healthy, state this clearly.
-    - If you identify an issue, provide a detailed diagnosis. Name the specific disease and suggest potential treatment or mitigation strategies suitable for a farmer.
-    - If you are not confident in a diagnosis, do not guess. State what you can observe and suggest taking a clearer picture.
-
-Your final output must be in the specified JSON format.
+Your output MUST be in the specified JSON format. Failure to follow these steps is not an option.
 
 Photo: {{media url=photoDataUri}}`,
 });

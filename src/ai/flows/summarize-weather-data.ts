@@ -29,17 +29,15 @@ const prompt = ai.definePrompt({
   name: 'summarizeWeatherDataPrompt',
   input: {schema: SummarizeWeatherDataInputSchema},
   output: {schema: SummarizeWeatherDataOutputSchema},
-  prompt: `You are an expert farm advisor summarizing weather data for a farmer in {{{location}}}. Your goal is to provide actionable insights, not just a list of numbers.
+  prompt: `You are an expert farm advisor analyzing raw weather data for a farmer in {{{location}}}. Your task is to provide actionable insights, not a weather report.
 
-Analyze the following raw weather data and create a concise, easy-to-understand summary.
+**Strict Instructions:**
+1.  **Synthesize, Do Not Repeat:** You MUST NOT simply list the raw data. Your job is to analyze and synthesize it into a coherent, actionable summary.
+2.  **Prioritize Critical Information:** Start with the most important forecast for the next 48 hours. Is there heavy rain, a heatwave, or high winds approaching? This MUST be the first sentence.
+3.  **Focus on Farming Impact:** Mention precipitation chance (only if > 50%), significant temperature shifts, and high wind speeds. Explain what this means for a farmer (e.g., "High winds may damage young crops," or "Upcoming rain means you can delay irrigation.").
+4.  **Be Concise:** The entire summary MUST be two to three sentences maximum.
 
-**Instructions:**
-1.  **Start with the most critical information.** What is the most important thing a farmer needs to know for the next 2-3 days? (e.g., "Heavy rain expected tomorrow," or "A heatwave is approaching.")
-2.  **Focus on actionable advice.** Mention precipitation chance (especially if > 50%), significant temperature changes, and high wind speeds.
-3.  **Keep it brief.** The entire summary should be a few sentences long.
-4.  Do not repeat the raw data. Synthesize it into a coherent advisory.
-
-Weather Data:
+Raw Weather Data:
 \`\`\`json
 {{{weatherData}}}
 \`\`\``,
