@@ -4,8 +4,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import type { FarmerData } from '@/components/UserManagement';
 import type { SmsMessage } from '@/components/SmsHistory';
-import { db } from '@/lib/firebase';
-import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 import en from '@/translations/en.json';
 
@@ -24,7 +22,7 @@ interface AppContextType {
   smsHistory: SmsMessage[];
   addSmsToHistory: (message: Omit<SmsMessage, 'timestamp'>) => void;
   isLoaded: boolean;
-  language: string; // Stays as 'English'
+  language: string; // Stays as 'English' for admin
   setLanguage: (language: string) => void; // No-op for admin
   translations: any;
   availableLanguages: { [key: string]: string };
