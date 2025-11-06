@@ -6,11 +6,18 @@ import { Sun, MessageSquareWarning, Stethoscope, History, LayoutDashboard, Bot, 
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/hooks/useTranslation';
+import React, { useState, useEffect } from 'react';
+import { Skeleton } from './ui/skeleton';
+
 
 export function Sidebar() {
     const pathname = usePathname();
     const { t } = useTranslation();
-    const isFarmerPortal = pathname.startsWith('/farmer');
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
     
     const navItems = [
         { href: '/dashboard', labelKey: 'sidebar.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
@@ -22,12 +29,13 @@ export function Sidebar() {
         { href: '/history', labelKey: 'sidebar.history', defaultLabel: 'SMS History', icon: History },
         { href: '/help', labelKey: 'sidebar.help', defaultLabel: 'Help Center', icon: LifeBuoy },
     ];
+    
+    const isFarmerPortal = pathname.startsWith('/farmer');
 
     const filteredNavItems = isFarmerPortal 
         ? navItems.filter(item => !item.adminOnly).map(item => ({...item, href: item.href === '/dashboard' ? '/farmer' : `/farmer${item.href}`}))
         : navItems.map(item => ({...item, href: item.href}));
     
-    // The farmer dashboard is at /farmer, not /farmer/dashboard.
     const finalNavItems = filteredNavItems.map(item => {
         if(isFarmerPortal && item.href === '/farmer/dashboard') {
             return {...item, href: '/farmer'};
@@ -35,6 +43,17 @@ export function Sidebar() {
         return item;
     });
 
+    if (!isMounted) {
+        return (
+            <aside className="w-64 border-r p-4 hidden md:block bg-card sticky top-16 h-[calc(100vh-4rem)]">
+                <div className="flex flex-col space-y-2">
+                    {[...Array(8)].map((_, i) => (
+                        <Skeleton key={i} className="h-10 w-full" />
+                    ))}
+                </div>
+            </aside>
+        );
+    }
 
     return (
         <aside className="w-64 border-r p-4 hidden md:block bg-card sticky top-16 h-[calc(100vh-4rem)]">
@@ -46,7 +65,6 @@ export function Sidebar() {
                     variant="ghost"
                     className={cn(
                         "w-full justify-start text-left transition-colors duration-200 ease-in-out h-auto",
-                        // For exact match on farmer root, and startsWith for others
                         (pathname === item.href) && "bg-primary/10 text-primary font-semibold"
                     )}
                 >
