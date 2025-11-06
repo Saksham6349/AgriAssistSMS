@@ -12,17 +12,15 @@ export function Sidebar() {
     const { t } = useTranslation();
     const isFarmerPortal = pathname.startsWith('/farmer');
     
-    const base = isFarmerPortal ? '/farmer' : '';
-
     const navItems = [
-        { href: '/dashboard', label: t('sidebar.dashboard', 'Dashboard'), icon: LayoutDashboard, adminOnly: true },
-        { href: '/weather', label: t('sidebar.weather', 'Weather Forecast'), icon: Sun },
-        { href: '/advisory', label: t('sidebar.advisory', 'Advisory Alerts'), icon: MessageSquareWarning },
-        { href: '/diagnosis', label: t('sidebar.diagnosis', 'Crop Diagnosis'), icon: Stethoscope },
-        { href: '/market-prices', label: t('sidebar.market', 'Market Prices'), icon: TrendingUp },
-        { href: '/chat', label: t('sidebar.chat', 'Chat Assistant'), icon: Bot, adminOnly: true },
-        { href: '/history', label: t('sidebar.history', 'SMS History'), icon: History },
-        { href: '/help', label: t('sidebar.help', 'Help Center'), icon: LifeBuoy },
+        { href: '/dashboard', labelKey: 'sidebar.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard, adminOnly: true },
+        { href: '/weather', labelKey: 'sidebar.weather', defaultLabel: 'Weather Forecast', icon: Sun },
+        { href: '/advisory', labelKey: 'sidebar.advisory', defaultLabel: 'Advisory Alerts', icon: MessageSquareWarning },
+        { href: '/diagnosis', labelKey: 'sidebar.diagnosis', defaultLabel: 'Crop Diagnosis', icon: Stethoscope },
+        { href: '/market-prices', labelKey: 'sidebar.market', defaultLabel: 'Market Prices', icon: TrendingUp },
+        { href: '/chat', labelKey: 'sidebar.chat', defaultLabel: 'Chat Assistant', icon: Bot, adminOnly: true },
+        { href: '/history', labelKey: 'sidebar.history', defaultLabel: 'SMS History', icon: History },
+        { href: '/help', labelKey: 'sidebar.help', defaultLabel: 'Help Center', icon: LifeBuoy },
     ];
 
     const filteredNavItems = isFarmerPortal 
@@ -54,7 +52,7 @@ export function Sidebar() {
                 >
                     <Link href={item.href} className="flex items-center py-2">
                         <item.icon className="mr-2 h-5 w-5 flex-shrink-0" />
-                        <span className="whitespace-normal break-words">{item.label}</span>
+                        <span className="whitespace-normal break-words">{t(item.labelKey, item.defaultLabel)}</span>
                     </Link>
                 </Button>
             ))}
