@@ -503,5 +503,3 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
     </Card>
   );
 }
-
-    
