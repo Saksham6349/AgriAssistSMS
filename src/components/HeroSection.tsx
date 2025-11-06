@@ -37,7 +37,7 @@ export function HeroSection() {
   return (
     <>
       <section 
-        className="w-full text-sm pb-44 bg-card/10 backdrop-blur-sm"
+        className="w-full text-sm"
       >
         <nav className="flex items-center justify-between p-4 md:px-16 lg:px-24 xl:px-32 md:py-6 w-full text-white">
           <Link href="/" aria-label="AgriAssist SMS home" className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export function HeroSection() {
           </button>
         </nav>
 
-        <h1 className="text-4xl md:text-7xl font-medium max-w-[850px] text-center mx-auto mt-32 md:mt-32 text-black">
+        <h1 className="text-4xl md:text-7xl font-medium max-w-[850px] text-center mx-auto pt-32 md:pt-32 text-black">
           Empowering Farmers with AI-Powered SMS Alerts
         </h1>
 
@@ -97,7 +97,7 @@ export function HeroSection() {
           Bridge the information gap with real-time, actionable insights on weather, market prices, and crop health, delivered directly to any mobile phone.
         </p>
 
-        <div className="mx-auto w-full flex items-center justify-center gap-3 mt-4">
+        <div className="mx-auto w-full flex items-center justify-center gap-3 mt-4 pb-44">
           <Link href="/dashboard" className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-full font-medium transition">
             Admin Portal
           </Link>

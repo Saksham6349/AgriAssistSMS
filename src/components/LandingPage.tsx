@@ -52,7 +52,7 @@ export function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-transparent text-white">
       <main className="flex-1">
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
               <div className="inline-block rounded-lg bg-black/20 px-3 py-1 text-sm">Key Features</div>
@@ -81,7 +81,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-muted/20 backdrop-blur-sm">
+        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
             <div className="space-y-3 fade-in">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-charcoal">How It Works</h2>
@@ -115,7 +115,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-card/20 backdrop-blur-sm">
+        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-charcoal">Trusted by Farmers</h2>
@@ -165,7 +165,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="py-6 px-4 md:px-6 border-t border-white/10 bg-black/20 backdrop-blur-sm">
+      <footer className="py-6 px-4 md:px-6 border-t border-white/10">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between text-sm text-white/70">
           <p>© {new Date().getFullYear()} AgriAssist SMS. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
