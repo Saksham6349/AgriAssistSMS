@@ -11,18 +11,20 @@ export default function FarmerPage() {
       style={{backgroundImage: "url('https://picsum.photos/seed/green-farm/1920/1080')"}}
       data-ai-hint="farm field"
     >
-        <div className="container mx-auto">
-            <div className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-2xl">
-                 <div className="text-left mb-8">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-1">
-                    {t('sidebar.dashboard', 'Dashboard')}
-                  </h2>
-                  <p className="text-muted-foreground max-w-2xl">
-                    {t('dashboard.description')}
-                  </p>
-                </div>
-                <UserManagement isAdmin={false} />
-            </div>
+      <div className="bg-black/40 backdrop-blur-sm">
+          <div className="container mx-auto">
+              <div className="max-w-4xl mx-auto py-12">
+                   <div className="text-left mb-8 text-white">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-1">
+                      {t('sidebar.dashboard', 'Dashboard')}
+                    </h2>
+                    <p className="text-white/80 max-w-2xl">
+                      {t('dashboard.description')}
+                    </p>
+                  </div>
+                  <UserManagement isAdmin={false} />
+              </div>
+          </div>
         </div>
     </div>
   );

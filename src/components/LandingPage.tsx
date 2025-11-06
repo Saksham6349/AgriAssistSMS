@@ -56,7 +56,7 @@ export function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
               <div className="inline-block rounded-lg bg-black/20 px-3 py-1 text-sm">Key Features</div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-charcoal">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                 A Comprehensive Toolkit for Modern Agriculture
               </h2>
               <p className="max-w-[900px] mx-auto text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
@@ -65,7 +65,7 @@ export function LandingPage() {
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {features.map((feature, index) => (
-                <Card key={index} className="flex flex-col feature-card transition-all duration-300 fade-in bg-card/80" style={{ animationDelay: `${index * 150}ms` }}>
+                <Card key={index} className="flex flex-col feature-card transition-all duration-300 fade-in bg-card/80 backdrop-blur-sm" style={{ animationDelay: `${index * 150}ms` }}>
                   <CardHeader className="flex flex-row items-center gap-4 pb-4">
                     <div className="p-3 bg-primary/10 rounded-full">
                         {feature.icon}
@@ -84,32 +84,32 @@ export function LandingPage() {
         <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
             <div className="space-y-3 fade-in">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-charcoal">How It Works</h2>
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">How It Works</h2>
               <p className="mx-auto max-w-[600px] text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Simple steps to connect farmers with vital information.
               </p>
             </div>
             <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-              <div className="flex flex-col items-center space-y-4 fade-in delay-200">
+              <div className="flex flex-col items-center space-y-4 fade-in delay-200 p-6 rounded-lg bg-card/80 backdrop-blur-sm">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
                   <User className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-white">1. Register Farmer</h3>
-                <p className="text-sm text-white/80">Easily register a farmer with their phone number, location, and primary crops via the dashboard.</p>
+                <h3 className="text-xl font-bold text-card-foreground">1. Register Farmer</h3>
+                <p className="text-sm text-muted-foreground">Easily register a farmer with their phone number, location, and primary crops via the dashboard.</p>
               </div>
-              <div className="flex flex-col items-center space-y-4 fade-in delay-400">
+              <div className="flex flex-col items-center space-y-4 fade-in delay-400 p-6 rounded-lg bg-card/80 backdrop-blur-sm">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
                   <Wheat className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-white">2. Generate Insight</h3>
-                <p className="text-sm text-white/80">Use AI tools to get weather forecasts, generate pest alerts, or diagnose crop diseases from a photo.</p>
+                <h3 className="text-xl font-bold text-card-foreground">2. Generate Insight</h3>
+                <p className="text-sm text-muted-foreground">Use AI tools to get weather forecasts, generate pest alerts, or diagnose crop diseases from a photo.</p>
               </div>
-              <div className="flex flex-col items-center space-y-4 fade-in delay-600">
+              <div className="flex flex-col items-center space-y-4 fade-in delay-600 p-6 rounded-lg bg-card/80 backdrop-blur-sm">
                 <div className="p-4 bg-primary rounded-full text-primary-foreground">
                   <Smartphone className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-white">3. Send SMS</h3>
-                <p className="text-sm text-white/80">Instantly send the generated insight as a translated SMS, accessible on any mobile phone.</p>
+                <h3 className="text-xl font-bold text-card-foreground">3. Send SMS</h3>
+                <p className="text-sm text-muted-foreground">Instantly send the generated insight as a translated SMS, accessible on any mobile phone.</p>
               </div>
             </div>
           </div>
@@ -118,13 +118,13 @@ export function LandingPage() {
         <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12 space-y-2 fade-in">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-charcoal">Trusted by Farmers</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Trusted by Farmers</h2>
               <p className="max-w-2xl mx-auto text-white/80 md:text-xl/relaxed">
                 Hear what farmers are saying about AgriAssist SMS.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="fade-in delay-200 bg-card/80">
+              <Card className="fade-in delay-200 bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground">"The weather alerts are incredibly accurate and have helped me plan my irrigation schedule perfectly. I've saved water and my crops are healthier."</p>
                   <div className="mt-4 flex items-center gap-4">
@@ -136,7 +136,7 @@ export function LandingPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="fade-in delay-400 bg-card/80">
+              <Card className="fade-in delay-400 bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground">"I used the photo diagnosis feature when my tomato plants were sick. It correctly identified blight and suggested a treatment that saved my harvest."</p>
                   <div className="mt-4 flex items-center gap-4">
@@ -148,7 +148,7 @@ export function LandingPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="fade-in delay-600 bg-card/80">
+              <Card className="fade-in delay-600 bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground">"Getting daily market prices on my phone has been a game-changer. I know exactly when to sell my produce to get the best price. Highly recommended!"</p>
                   <div className="mt-4 flex items-center gap-4">

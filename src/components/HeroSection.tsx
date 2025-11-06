@@ -42,7 +42,7 @@ export function HeroSection() {
         <nav className="flex items-center justify-between p-4 md:px-16 lg:px-24 xl:px-32 md:py-6 w-full text-white">
           <Link href="/" aria-label="AgriAssist SMS home" className="flex items-center gap-2">
             <Leaf className="w-8 h-8 text-primary" />
-            <span className="font-bold text-lg text-black">AgriAssist SMS</span>
+            <span className="font-bold text-lg">AgriAssist SMS</span>
           </Link>
 
           <div
@@ -56,9 +56,9 @@ export function HeroSection() {
             ].join(' ')}
             aria-hidden={!menuOpen}
           >
-            <a href="#features" className="hover:text-primary transition-colors text-black">Features</a>
-            <a href="#how-it-works" className="hover:text-primary transition-colors text-black">How It Works</a>
-            <a href="#testimonials" className="hover:text-primary transition-colors text-black">Testimonials</a>
+            <a href="#features" className="hover:text-primary transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
+            <a href="#testimonials" className="hover:text-primary transition-colors">Testimonials</a>
 
             <button
               onClick={() => setMenuOpen(false)}
@@ -89,15 +89,15 @@ export function HeroSection() {
           </button>
         </nav>
 
-        <h1 className="text-4xl md:text-7xl font-medium max-w-[850px] text-center mx-auto pt-32 md:pt-32 text-black">
+        <h1 className="text-4xl md:text-7xl font-medium max-w-[850px] text-center mx-auto pt-32 md:pt-32 text-white">
           Empowering Farmers with AI-Powered SMS Alerts
         </h1>
 
-        <p className="text-sm md:text-base mx-auto max-w-2xl text-center mt-6 max-md:px-2 text-muted-foreground">
+        <p className="text-sm md:text-base mx-auto max-w-2xl text-center mt-6 max-md:px-2 text-white/80">
           Bridge the information gap with real-time, actionable insights on weather, market prices, and crop health, delivered directly to any mobile phone.
         </p>
 
-        <div className="mx-auto w-full flex items-center justify-center gap-3 mt-4 pb-44">
+        <div className="mx-auto w-full flex items-center justify-center gap-3 mt-4">
           <Link href="/dashboard" className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-full font-medium transition">
             Admin Portal
           </Link>

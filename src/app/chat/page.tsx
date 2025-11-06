@@ -8,9 +8,11 @@ export default function ChatPage() {
             style={{backgroundImage: "url('https://picsum.photos/seed/green-farm/1920/1080')"}}
             data-ai-hint="sunrise farm"
         >
-            <div className="container mx-auto">
-                <div className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-2xl">
-                    <ChatAssistant />
+             <div className="bg-black/40 backdrop-blur-sm">
+                <div className="container mx-auto">
+                    <div className="max-w-4xl mx-auto py-12">
+                        <ChatAssistant />
+                    </div>
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ export default function Home() {
       style={{backgroundImage: "url('https://picsum.photos/seed/greenery-farm/1920/1080')"}}
       data-ai-hint="green farm"
     >
-      <div className="bg-black/40 backdrop-blur-sm">
+      <div className="bg-black/60 backdrop-blur-sm pb-44">
         <HeroSection />
         <LandingPage />
       </div>
