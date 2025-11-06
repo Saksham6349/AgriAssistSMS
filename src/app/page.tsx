@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <div 
       className="w-full bg-no-repeat bg-cover bg-center"
-      style={{backgroundImage: "url('https://picsum.photos/seed/farm-sunrise/1920/1080')"}}
-      data-ai-hint="agriculture field"
+      style={{backgroundImage: "url('https://picsum.photos/seed/green-farm/1920/1080')"}}
+      data-ai-hint="agriculture farming"
     >
       <HeroSection />
       <LandingPage />
