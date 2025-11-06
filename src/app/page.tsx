@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <div 
       className="w-full bg-no-repeat bg-cover bg-center"
-      style={{backgroundImage: "url('https://picsum.photos/seed/night-farm/1920/1080')"}}
-      data-ai-hint="farm night"
+      style={{backgroundImage: "url('https://picsum.photos/seed/greenery-farm/1920/1080')"}}
+      data-ai-hint="green farm"
     >
       <div className="bg-black/40 backdrop-blur-sm">
         <HeroSection />
