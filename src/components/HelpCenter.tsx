@@ -43,12 +43,12 @@ export function HelpCenter() {
 
   return (
     <div className="space-y-8">
-      <div className="text-left">
+      <div className="text-left text-white">
         <h2 className="text-2xl md:text-3xl font-bold mb-1 flex items-center gap-3">
           <LifeBuoy className="w-8 h-8 text-primary" />
           {t('help.title', 'Help Center')}
         </h2>
-        <p className="text-muted-foreground max-w-2xl">
+        <p className="text-white/80 max-w-2xl">
           {t('help.description', 'Find answers to your questions and get the support you need.')}
         </p>
       </div>
@@ -101,5 +101,3 @@ export function HelpCenter() {
     </div>
   );
 }
-
-    
