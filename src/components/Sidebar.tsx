@@ -13,7 +13,7 @@ export function Sidebar() {
     const isFarmerPortal = pathname.startsWith('/farmer');
     
     const navItems = [
-        { href: '/dashboard', labelKey: 'sidebar.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard, adminOnly: true },
+        { href: '/dashboard', labelKey: 'sidebar.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
         { href: '/weather', labelKey: 'sidebar.weather', defaultLabel: 'Weather Forecast', icon: Sun },
         { href: '/advisory', labelKey: 'sidebar.advisory', defaultLabel: 'Advisory Alerts', icon: MessageSquareWarning },
         { href: '/diagnosis', labelKey: 'sidebar.diagnosis', defaultLabel: 'Crop Diagnosis', icon: Stethoscope },
