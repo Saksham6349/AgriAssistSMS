@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -30,8 +31,18 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useFarmerAppContext } from "@/context/FarmerAppContext";
 
 export function AdvisoryAlerts() {
+  const pathname = usePathname();
+  const isFarmerPortal = pathname.startsWith('/farmer');
+
   const { registeredFarmer, addSmsToHistory } = useAppContext();
-  const { availableLanguages } = useFarmerAppContext();
+  
+  // Conditionally get farmer-specific context
+  let farmerContext;
+  if (isFarmerPortal) {
+    farmerContext = useFarmerAppContext();
+  }
+  const { availableLanguages = { English: 'English' } } = farmerContext || {};
+  
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [isGeneratePending, startGenerateTransition] = useTransition();
@@ -46,14 +57,15 @@ export function AdvisoryAlerts() {
 
   useEffect(() => {
     if (registeredFarmer) {
-      setLanguage(registeredFarmer.language);
+      const farmerLang = isFarmerPortal ? farmerContext?.language : registeredFarmer.language;
+      setLanguage(farmerLang || 'English');
       handleGenerateAlert();
     } else {
       setAlertText("");
       setTranslatedText(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registeredFarmer]);
+  }, [registeredFarmer, isFarmerPortal, farmerContext?.language]);
 
   const handleGenerateAlert = () => {
     if (!registeredFarmer) {
@@ -311,5 +323,3 @@ export function AdvisoryAlerts() {
     </Card>
   );
 }
-
-    

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useTransition, useEffect, FormEvent } from "react";
+import { usePathname } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -38,8 +39,17 @@ type ServerActionResult = {
 };
 
 export function WeatherCard() {
+  const pathname = usePathname();
+  const isFarmerPortal = pathname.startsWith('/farmer');
+
   const { registeredFarmer, addSmsToHistory } = useAppContext();
-  const { availableLanguages } = useFarmerAppContext();
+  
+  let farmerContext;
+  if (isFarmerPortal) {
+    farmerContext = useFarmerAppContext();
+  }
+  const { availableLanguages = { English: 'English' } } = farmerContext || {};
+  
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [isAudioPending, startAudioTransition] = useTransition();
@@ -128,16 +138,17 @@ export function WeatherCard() {
     if (registeredFarmer) {
       const fullLocation = `${registeredFarmer.village}, ${registeredFarmer.district}`;
       setLocation(fullLocation);
-      setLanguage(registeredFarmer.language);
+      const farmerLang = isFarmerPortal ? farmerContext?.language : registeredFarmer.language;
+      setLanguage(farmerLang || 'English');
       if (registeredFarmer.village && registeredFarmer.district) {
-        getForecastForLocation(fullLocation, registeredFarmer.language);
+        getForecastForLocation(fullLocation, farmerLang || 'English');
       }
     } else {
       setLocation("");
       setResult(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registeredFarmer]);
+  }, [registeredFarmer, isFarmerPortal, farmerContext?.language]);
   
   const handleGetForecast = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -313,5 +324,3 @@ export function WeatherCard() {
     </Card>
   );
 }
-
-    
