@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -11,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { History } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export type SmsMessage = {
   to: string;
@@ -21,6 +23,7 @@ export type SmsMessage = {
 
 export function SmsHistory() {
   const { smsHistory } = useAppContext();
+  const { t } = useTranslation();
 
   return (
     <Card>
@@ -30,9 +33,9 @@ export function SmsHistory() {
             <History className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>SMS History</CardTitle>
+            <CardTitle>{t('history.title', 'SMS History')}</CardTitle>
             <CardDescription>
-              A log of all sent weather and advisory alerts.
+              {t('history.description', 'A log of all sent weather and advisory alerts.')}
             </CardDescription>
           </div>
         </div>
@@ -41,7 +44,7 @@ export function SmsHistory() {
         <ScrollArea className="h-72 w-full">
           {smsHistory.length === 0 ? (
             <div className="flex items-center justify-center h-full">
-              <p className="text-muted-foreground">No messages sent yet.</p>
+              <p className="text-muted-foreground">{t('history.noMessages', 'No messages sent yet.')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -69,3 +72,5 @@ export function SmsHistory() {
     </Card>
   );
 }
+
+    

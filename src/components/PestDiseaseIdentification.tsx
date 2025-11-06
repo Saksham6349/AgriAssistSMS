@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useTransition, ChangeEvent } from "react";
@@ -19,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from "@/context/AppContext";
 import { sendSms } from "@/ai/flows/send-sms";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function PestDiseaseIdentification() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
@@ -33,6 +35,7 @@ export function PestDiseaseIdentification() {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -194,9 +197,9 @@ export function PestDiseaseIdentification() {
             <Stethoscope className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>Crop Health Diagnosis</CardTitle>
+            <CardTitle>{t('diagnosis.title', 'Crop Health Diagnosis')}</CardTitle>
             <CardDescription>
-              Upload a photo of a plant to identify pests and diseases.
+              {t('diagnosis.description', 'Upload a photo of a plant to identify pests and diseases.')}
             </CardDescription>
           </div>
         </div>
@@ -234,8 +237,8 @@ export function PestDiseaseIdentification() {
           ) : (
             <div className="flex flex-col items-center gap-2 text-muted-foreground">
               <Upload className="w-8 h-8" />
-              <p className="font-semibold">Click to upload an image</p>
-              <p className="text-xs">PNG, JPG, or WEBP up to 4MB</p>
+              <p className="font-semibold">{t('diagnosis.uploadPrompt', 'Click to upload an image')}</p>
+              <p className="text-xs">{t('diagnosis.uploadHint', 'PNG, JPG, or WEBP up to 4MB')}</p>
             </div>
           )}
         </div>
@@ -243,10 +246,10 @@ export function PestDiseaseIdentification() {
         <Button onClick={handleSubmit} disabled={!imageData || isPending} className="w-full">
           {isPending ? (
             <>
-              <Loader2 className="animate-spin" /> Diagnosing...
+              <Loader2 className="animate-spin" /> {t('diagnosis.diagnosing', 'Diagnosing...')}
             </>
           ) : (
-            "Diagnose Plant Health"
+            t('diagnosis.diagnose', 'Diagnose Plant Health')
           )}
         </Button>
         
@@ -270,20 +273,20 @@ export function PestDiseaseIdentification() {
         {result && !isPending && (
           <div className="prose prose-sm max-w-none text-foreground pt-4">
             <div className="flex justify-between items-start">
-                <h4 className="font-semibold text-foreground mb-2">Diagnosis Results:</h4>
+                <h4 className="font-semibold text-foreground mb-2">{t('diagnosis.results', 'Diagnosis Results:')}</h4>
                 <Button variant="ghost" size="icon" onClick={handlePlayAudio} disabled={isAudioPending}>
                     {isAudioPending ? <Loader2 className="animate-spin" /> : (audio ? <StopCircle /> : <PlayCircle />)}
                 </Button>
             </div>
             <ul>
-              <li><strong>Identification:</strong> {result.identification.commonName} (<em>{result.identification.latinName}</em>)</li>
+              <li><strong>{t('diagnosis.identification', 'Identification:')}</strong> {result.identification.commonName} (<em>{result.identification.latinName}</em>)</li>
               <li>
-                <strong>Health Status:</strong> 
+                <strong>{t('diagnosis.healthStatus', 'Health Status:')}</strong> 
                 <span className={`font-semibold ml-1 ${result.diagnosis.isHealthy ? 'text-green-600' : 'text-destructive'}`}>
-                  {result.diagnosis.isHealthy ? "Healthy" : "Needs Attention"}
+                  {result.diagnosis.isHealthy ? t('diagnosis.healthy', "Healthy") : t('diagnosis.needsAttention', "Needs Attention")}
                 </span>
               </li>
-              <li><strong>Analysis:</strong> {result.diagnosis.diagnosis}</li>
+              <li><strong>{t('diagnosis.analysis', 'Analysis:')}</strong> {result.diagnosis.diagnosis}</li>
             </ul>
           </div>
         )}
@@ -301,9 +304,11 @@ export function PestDiseaseIdentification() {
       </CardContent>
       <CardFooter>
         <Button onClick={handleSendSms} disabled={!result || isPending || isSmsPending} className="w-full" variant="secondary" size="sm">
-            {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
+            {isSmsPending ? <><Loader2 className="animate-spin" /> {t('diagnosis.sending', 'Sending...')}</> : <><Send /> {t('diagnosis.sendSms', 'Send as SMS')}</>}
         </Button>
       </CardFooter>
     </Card>
   );
 }
+
+    

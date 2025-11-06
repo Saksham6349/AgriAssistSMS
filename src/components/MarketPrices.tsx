@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, FC, useTransition } from "react";
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { sendSms } from "@/ai/flows/send-sms";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type CropData = {
   cropKey: string;
@@ -67,6 +69,7 @@ export function MarketPrices() {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const sortedData = useMemo(() => {
     if (!sortKey) return mockMarketData;
@@ -115,13 +118,13 @@ export function MarketPrices() {
     const primaryCropData = mockMarketData.find(c => c.name.toLowerCase() === registeredFarmer.crop.toLowerCase());
     const secondaryCropData = mockMarketData.find(c => c.name.toLowerCase() === registeredFarmer.secondaryCrop.toLowerCase());
     
-    let message = `Market Prices (INR/quintal): `;
+    let message = `${t('market.smsTitle', 'Market Prices (INR/quintal)')}: `;
     if (primaryCropData) {
-      const cropName = primaryCropData.name;
+      const cropName = t(`market.crops.${primaryCropData.cropKey}`, primaryCropData.name);
       message += `${cropName} @ ${primaryCropData.price}. `;
     }
     if (secondaryCropData) {
-      const cropName = secondaryCropData.name;
+      const cropName = t(`market.crops.${secondaryCropData.cropKey}`, secondaryCropData.name);
       message += `${cropName} @ ${secondaryCropData.price}.`;
     }
 
@@ -171,9 +174,9 @@ export function MarketPrices() {
             <TrendingUp className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>Market Prices</CardTitle>
+            <CardTitle>{t('market.title', 'Market Prices')}</CardTitle>
             <CardDescription>
-              Live mandi rates for key crops in your area. Prices per quintal.
+              {t('market.description', 'Live mandi rates for key crops in your area. Prices per quintal.')}
             </CardDescription>
           </div>
         </div>
@@ -184,17 +187,17 @@ export function MarketPrices() {
             <TableRow>
               <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('name')} className="px-0 hover:bg-transparent">
-                  Crop {getSortIcon('name')}
+                  {t('market.crop', 'Crop')} {getSortIcon('name')}
                 </Button>
               </TableHead>
               <TableHead className="text-right">
                 <Button variant="ghost" onClick={() => handleSort('price')} className="px-0 hover:bg-transparent">
-                  Price (INR) {getSortIcon('price')}
+                  {t('market.price', 'Price (INR)')} {getSortIcon('price')}
                 </Button>
               </TableHead>
               <TableHead className="text-right">
                 <Button variant="ghost" onClick={() => handleSort('change')} className="px-0 hover:bg-transparent">
-                  Change {getSortIcon('change')}
+                  {t('market.change', 'Change')} {getSortIcon('change')}
                 </Button>
               </TableHead>
             </TableRow>
@@ -205,7 +208,7 @@ export function MarketPrices() {
                 <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
                         <item.icon className="w-5 h-5 text-muted-foreground" />
-                        <span>{item.name}</span>
+                        <span>{t(`market.crops.${item.cropKey}`, item.name)}</span>
                     </div>
                 </TableCell>
                 <TableCell className="text-right font-mono">{item.price.toLocaleString('en-IN')}</TableCell>
@@ -236,9 +239,11 @@ export function MarketPrices() {
       </CardContent>
       <CardFooter>
         <Button onClick={handleSendSms} disabled={!registeredFarmer || isSmsPending} className="w-full" variant="secondary" size="sm">
-            {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
+            {isSmsPending ? <><Loader2 className="animate-spin" /> {t('market.sending', 'Sending...')}</> : <><Send /> {t('market.sendSms', 'Send as SMS')}</>}
         </Button>
       </CardFooter>
     </Card>
   );
 }
+
+    

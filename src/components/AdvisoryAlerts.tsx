@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
@@ -25,9 +26,12 @@ import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
 import { generateAdvisoryAlert } from "@/ai/flows/generate-advisory-alert";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useFarmerAppContext } from "@/context/FarmerAppContext";
 
 export function AdvisoryAlerts() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
+  const { availableLanguages } = useFarmerAppContext();
   const [isTranslatePending, startTranslateTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [isGeneratePending, startGenerateTransition] = useTransition();
@@ -38,6 +42,7 @@ export function AdvisoryAlerts() {
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (registeredFarmer) {
@@ -210,9 +215,9 @@ export function AdvisoryAlerts() {
             <MessageSquareWarning className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>Advisory & Pest Alerts</CardTitle>
+            <CardTitle>{t('advisory.title', 'Advisory & Pest Alerts')}</CardTitle>
             <CardDescription>
-              Generate and send critical alerts to farmers.
+              {t('advisory.description', 'Generate and send critical alerts to farmers.')}
             </CardDescription>
           </div>
         </div>
@@ -222,11 +227,11 @@ export function AdvisoryAlerts() {
           <Button onClick={handleGenerateAlert} disabled={isGeneratePending || !registeredFarmer} className="w-full">
               {isGeneratePending ? (
                 <>
-                  <Loader2 className="animate-spin" /> Generating...
+                  <Loader2 className="animate-spin" /> {t('advisory.generating', 'Generating...')}
                 </>
               ) : (
                 <>
-                  <Lightbulb /> Generate Alert for {registeredFarmer ? `${registeredFarmer.village}, ${registeredFarmer.district}` : '...'}
+                  <Lightbulb /> {t('advisory.generateAlert', 'Generate Alert for')} {registeredFarmer ? `${registeredFarmer.village}, ${registeredFarmer.district}` : '...'}
                 </>
               )}
           </Button>
@@ -234,7 +239,7 @@ export function AdvisoryAlerts() {
           {(alertText && !isGeneratePending) && (
             <div className="p-4 bg-muted rounded-md border mt-4">
               <div className="flex justify-between items-start">
-                  <h4 className="font-semibold mb-2">Generated Alert (English):</h4>
+                  <h4 className="font-semibold mb-2">{t('advisory.generatedAlert', 'Generated Alert (English):')}</h4>
                    <Button variant="ghost" size="icon" onClick={() => handlePlayAudio(alertText)} disabled={isAudioPending}>
                       {isAudioPending && !translatedText ? <Loader2 className="animate-spin" /> : (audio && !translatedText ? <StopCircle /> : <PlayCircle />)}
                    </Button>
@@ -245,32 +250,25 @@ export function AdvisoryAlerts() {
           
           <form onSubmit={handleTranslate} className="space-y-4 pt-4 border-t">
             <div className="space-y-2">
-              <label htmlFor="language-select" className="text-sm font-medium">Target Language</label>
+              <label htmlFor="language-select" className="text-sm font-medium">{t('advisory.targetLanguage', 'Target Language')}</label>
               <Select value={language} onValueChange={setLanguage} disabled={!alertText}>
                 <SelectTrigger id="language-select" className="w-full">
-                  <SelectValue placeholder="Select a language" />
+                  <SelectValue placeholder={t('advisory.selectLanguage', 'Select a language')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="English">English</SelectItem>
-                  <SelectItem value="Hindi">Hindi</SelectItem>
-                  <SelectItem value="Bengali">Bengali</SelectItem>
-                  <SelectItem value="Telugu">Telugu</SelectItem>
-                  <SelectItem value="Marathi">Marathi</SelectItem>
-                  <SelectItem value="Tamil">Tamil</SelectItem>
-                  <SelectItem value="Urdu">Urdu</SelectItem>
-                  <SelectItem value="Gujarati">Gujarati</SelectItem>
-                  <SelectItem value="Kannada">Kannada</SelectItem>
-                  <SelectItem value="Punjabi">Punjabi</SelectItem>
+                  {Object.entries(availableLanguages).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <Button type="submit" disabled={isTranslatePending || !alertText} className="w-full">
               {isTranslatePending ? (
                 <>
-                  <Loader2 className="animate-spin" /> Translating...
+                  <Loader2 className="animate-spin" /> {t('advisory.translating', 'Translating...')}
                 </>
               ) : (
-                "Translate Alert"
+                t('advisory.translate', 'Translate Alert')
               )}
             </Button>
           </form>
@@ -278,7 +276,7 @@ export function AdvisoryAlerts() {
           {translatedText && !isTranslatePending && (
             <div className="p-4 bg-muted rounded-md border mt-4">
               <div className="flex justify-between items-start">
-                  <h4 className="font-semibold mb-2">Translated Alert ({language}):</h4>
+                  <h4 className="font-semibold mb-2">{t('advisory.translatedAlert', 'Translated Alert')} ({language}):</h4>
                   <Button variant="ghost" size="icon" onClick={() => handlePlayAudio(translatedText)} disabled={isAudioPending}>
                       {isAudioPending && !!translatedText ? <Loader2 className="animate-spin" /> : (audio && !!translatedText ? <StopCircle /> : <PlayCircle />)}
                    </Button>
@@ -290,7 +288,7 @@ export function AdvisoryAlerts() {
           {smsStatus && !isSmsPending && (
             <Alert className="mt-4">
               <Send className="w-4 h-4" />
-              <AlertTitle>SMS Status</AlertTitle>
+              <AlertTitle>{t('advisory.smsStatus', 'SMS Status')}</AlertTitle>
               <AlertDescription className="text-xs whitespace-pre-wrap break-words">
                  {smsStatus} for farmer {registeredFarmer?.name}.
               </AlertDescription>
@@ -306,10 +304,12 @@ export function AdvisoryAlerts() {
             variant="secondary"
             size="sm"
           >
-             {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
+             {isSmsPending ? <><Loader2 className="animate-spin" /> {t('advisory.sending', 'Sending...')}</> : <><Send /> {t('advisory.sendSms', 'Send as SMS')}</>}
           </Button>
         </CardFooter>
       </div>
     </Card>
   );
 }
+
+    

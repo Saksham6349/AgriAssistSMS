@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition, useEffect, FormEvent } from "react";
@@ -28,6 +29,8 @@ import { sendSms } from "@/ai/flows/send-sms";
 import { useAppContext } from "@/context/AppContext";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
 import { fetchWeatherData } from "@/app/actions/weather";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useFarmerAppContext } from "@/context/FarmerAppContext";
 
 type ServerActionResult = {
   summary: string | null;
@@ -36,6 +39,7 @@ type ServerActionResult = {
 
 export function WeatherCard() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
+  const { availableLanguages } = useFarmerAppContext();
   const [isForecastPending, startForecastTransition] = useTransition();
   const [isSmsPending, startSmsTransition] = useTransition();
   const [isAudioPending, startAudioTransition] = useTransition();
@@ -45,6 +49,7 @@ export function WeatherCard() {
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const getForecastForLocation = (loc: string, lang: string) => {
     if (!loc) {
@@ -65,22 +70,18 @@ export function WeatherCard() {
             setAudio(null);
         }
         
-        // Attempt to fetch weather data for the given location
         let weatherData = await fetchWeatherData(loc);
         
-        // If the initial location fails, and it seems to be a combined "village, district" string,
-        // try searching for just the district part as a fallback.
         if (weatherData.error && loc.includes(',')) {
             const district = loc.split(',')[1]?.trim();
             if (district) {
                 weatherData = await fetchWeatherData(district);
                 if (!weatherData.error) {
-                    setLocation(district); // Update location state to the successful one
+                    setLocation(district); 
                 }
             }
         }
         
-        // If there's still an error after trying fallbacks, throw it.
         if (weatherData.error) {
             throw new Error(weatherData.error);
         }
@@ -225,9 +226,9 @@ export function WeatherCard() {
             <Sun className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>Weather Forecast</CardTitle>
+            <CardTitle>{t('weather.title', 'Weather Forecast')}</CardTitle>
             <CardDescription>
-              Get AI-powered weather summaries for your location.
+              {t('weather.description', 'Get AI-powered weather summaries for your location.')}
             </CardDescription>
           </div>
         </div>
@@ -240,7 +241,7 @@ export function WeatherCard() {
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Enter location..."
+                  placeholder={t('weather.locationPlaceholder', 'Enter location...')}
                   className="pl-10"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -252,20 +253,13 @@ export function WeatherCard() {
                           <SelectValue placeholder="Language" />
                       </SelectTrigger>
                       <SelectContent>
-                          <SelectItem value="English">English</SelectItem>
-                          <SelectItem value="Hindi">Hindi</SelectItem>
-                          <SelectItem value="Bengali">Bengali</SelectItem>
-                          <SelectItem value="Telugu">Telugu</SelectItem>
-                          <SelectItem value="Marathi">Marathi</SelectItem>
-                          <SelectItem value="Tamil">Tamil</SelectItem>
-                          <SelectItem value="Urdu">Urdu</SelectItem>
-                          <SelectItem value="Gujarati">Gujarati</SelectItem>
-                          <SelectItem value="Kannada">Kannada</SelectItem>
-                          <SelectItem value="Punjabi">Punjabi</SelectItem>
+                        {Object.entries(availableLanguages).map(([key, value]) => (
+                            <SelectItem key={key} value={key}>{value}</SelectItem>
+                        ))}
                       </SelectContent>
                   </Select>
                   <Button type="submit" disabled={isForecastPending} className="flex-grow">
-                      {isForecastPending ? <Loader2 className="animate-spin" /> : "Get Forecast"}
+                      {isForecastPending ? <Loader2 className="animate-spin" /> : t('weather.getForecast', 'Get Forecast')}
                   </Button>
               </div>
             </div>
@@ -286,7 +280,7 @@ export function WeatherCard() {
             {result?.summary && !isForecastPending && (
               <div className="prose prose-sm max-w-none text-foreground">
                 <div className="flex justify-between items-start">
-                    <h4 className="font-semibold mb-2 text-foreground">Weather Summary ({language}):</h4>
+                    <h4 className="font-semibold mb-2 text-foreground">{t('weather.summary', 'Weather Summary')} ({language}):</h4>
                     <Button variant="ghost" size="icon" onClick={handlePlayAudio} disabled={isAudioPending}>
                         {isAudioPending ? <Loader2 className="animate-spin" /> : (audio ? <StopCircle /> : <PlayCircle />)}
                     </Button>
@@ -305,17 +299,19 @@ export function WeatherCard() {
             )}
             {!result && !isForecastPending && !smsStatus && (
                 <div className="text-center text-muted-foreground py-4">
-                    <p>Enter a location to see the weather summary.</p>
+                    <p>{t('weather.enterLocationPrompt', 'Enter a location to see the weather summary.')}</p>
                 </div>
             )}
           </div>
         </CardContent>
         <CardFooter>
             <Button onClick={handleSendSms} disabled={!result?.summary || isForecastPending || isSmsPending} className="w-full" variant="secondary" size="sm">
-                {isSmsPending ? <><Loader2 className="animate-spin" /> Sending...</> : <><Send /> Send as SMS</>}
+                {isSmsPending ? <><Loader2 className="animate-spin" /> {t('advisory.sending', 'Sending...')}</> : <><Send /> {t('weather.sendSms', 'Send as SMS')}</>}
             </Button>
         </CardFooter>
       </div>
     </Card>
   );
 }
+
+    

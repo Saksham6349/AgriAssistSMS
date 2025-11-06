@@ -1,3 +1,4 @@
+
 "use client";
 
 import { chat, ChatInput } from "@/ai/flows/chat";
@@ -17,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Bot, Loader2, Send, User, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { FormEvent, useRef, useState, useTransition, KeyboardEvent, ChangeEvent, useEffect } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type ContentPart = { text: string; media?: never } | { text?: never; media: { url: string } };
 
@@ -34,6 +36,7 @@ export function ChatAssistant() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   const viewportRef = useRef<HTMLDivElement>(null);
 
@@ -147,9 +150,9 @@ export function ChatAssistant() {
             <Bot className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <CardTitle>AI Chat Assistant</CardTitle>
+            <CardTitle>{t('chat.title', 'AI Chat Assistant')}</CardTitle>
             <CardDescription>
-              Ask me anything about farming, crops, and weather.
+              {t('chat.description', 'Ask me anything about farming, crops, and weather.')}
             </CardDescription>
           </div>
         </div>
@@ -211,7 +214,7 @@ export function ChatAssistant() {
                     </div>
                     <div className="bg-muted text-foreground rounded-lg px-4 py-2 text-sm flex items-center">
                         <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
-                        Thinking...
+                        {t('chat.thinking', 'Thinking...')}
                     </div>
                 </div>
             )}
@@ -238,11 +241,11 @@ export function ChatAssistant() {
                 />
                 <Button type="button" variant="outline" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isPending}>
                     <Upload />
-                    <span className="sr-only">Upload Image</span>
+                    <span className="sr-only">{t('chat.uploadImage', 'Upload Image')}</span>
                 </Button>
                 <Input
                     type="text"
-                    placeholder="Ask a question..."
+                    placeholder={t('chat.placeholder', 'Ask a question...')}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -251,7 +254,7 @@ export function ChatAssistant() {
                 />
                 <Button type="submit" disabled={isPending || (!input.trim() && !imageData)}>
                     {isPending ? <Loader2 className="animate-spin"/> : <Send/>}
-                    <span className="sr-only">Send</span>
+                    <span className="sr-only">{t('chat.send', 'Send')}</span>
                 </Button>
             </form>
         </div>
@@ -259,3 +262,5 @@ export function ChatAssistant() {
     </Card>
   );
 }
+
+    
