@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -165,8 +166,8 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/10">
-        <div className="container flex flex-col md:flex-row items-center justify-between py-4 text-sm text-white/70">
+      <footer className="border-t border-white/10 py-4">
+        <div className="container flex flex-col md:flex-row items-center justify-between text-sm text-white/70">
           <p>© {new Date().getFullYear()} AgriAssist SMS. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <Link href="#" className="hover:text-white">Privacy Policy</Link>

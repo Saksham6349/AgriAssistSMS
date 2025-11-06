@@ -1,3 +1,4 @@
+
 import { HeroSection } from "@/components/HeroSection";
 import { LandingPage } from "@/components/LandingPage";
 import './landing.css';
@@ -6,10 +7,11 @@ export default function Home() {
   return (
     <div 
       className="w-full bg-no-repeat bg-cover bg-center"
-      style={{backgroundImage: "url('https://picsum.photos/seed/greenery-farm/1920/1080')"}}
-      data-ai-hint="green farm"
+      style={{backgroundImage: "url('https://picsum.photos/seed/harvest-field/1920/1080')"}}
+      data-ai-hint="harvest field"
     >
-      <div className="bg-black/60 backdrop-blur-sm pb-44">
+      <div className="bg-black/60 backdrop-blur-sm">
+        {/* Removed the container from here to let child components manage their own layout */}
         <HeroSection />
         <LandingPage />
       </div>
