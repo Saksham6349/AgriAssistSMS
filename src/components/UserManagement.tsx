@@ -323,7 +323,7 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="district" className="text-sm font-medium">{T('userManagement.district', 'District')}</label>
+                <label htmlFor="district" className="text-sm font-medium">District</label>
                 <div className="relative flex items-center">
                     <Globe className="absolute left-3 w-5 h-5 text-muted-foreground" />
                     <Input id="district" name="district" placeholder="e.g., Sitapur" value={formData.district} onChange={handleChange} required className="pl-10" />
