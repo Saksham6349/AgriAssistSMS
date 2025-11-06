@@ -165,7 +165,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="py-6 border-t border-white/10">
+      <footer className="py-4 border-t border-white/10">
         <div className="container flex flex-col md:flex-row items-center justify-between text-sm text-white/70">
           <p>© {new Date().getFullYear()} AgriAssist SMS. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
