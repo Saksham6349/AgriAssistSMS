@@ -15,13 +15,13 @@ export default function FarmerPage() {
             <div className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-2xl">
                  <div className="text-left mb-8">
                   <h2 className="text-2xl md:text-3xl font-bold mb-1">
-                    {t('dashboard.title')}
+                    {t('sidebar.dashboard', 'Dashboard')}
                   </h2>
                   <p className="text-muted-foreground max-w-2xl">
                     {t('dashboard.description')}
                   </p>
                 </div>
-                <UserManagement />
+                <UserManagement isAdmin={false} />
             </div>
         </div>
     </div>
