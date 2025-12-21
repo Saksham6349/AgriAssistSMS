@@ -98,6 +98,11 @@
     "sendSms": "Send as SMS",
     "sending": "Sending...",
     "smsTitle": "Market Prices (INR/quintal)",
+    "showingFor": "Showing prices for",
+    "location": "Market Location",
+    "minPrice": "Min Price (INR)",
+    "modalPrice": "Modal Price (INR)",
+    "maxPrice": "Max Price (INR)",
     "crops": {
       "wheat": "Wheat",
       "rice": "Rice",

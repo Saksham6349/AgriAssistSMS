@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, FC, useTransition } from "react";
+import { useState, useMemo, FC, useTransition, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,45 +19,15 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Leaf, Apple, Carrot, ArrowUp, ArrowDown, ChevronsUpDown, Loader2, Send } from "lucide-react";
+import { TrendingUp, Leaf, Loader2, Send, Wheat, MapPin } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { sendSms } from "@/ai/flows/send-sms";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useTranslation } from "@/hooks/useTranslation";
-
-type CropData = {
-  cropKey: string;
-  name: string;
-  price: number;
-  change: number;
-  icon: FC<React.ComponentProps<"svg">>;
-};
-
-const mockMarketData: CropData[] = [
-  { cropKey: "wheat", name: "Wheat", price: 2275, change: 1.5, icon: Leaf },
-  { cropKey: "rice", name: "Rice", price: 3100, change: -0.8, icon: Leaf },
-  { cropKey: "corn", name: "Corn", price: 2150, change: 2.1, icon: Leaf },
-  { cropKey: "soybeans", name: "Soybeans", price: 4800, change: 0.5, icon: Leaf },
-  { cropKey: "cotton", name: "Cotton", price: 7200, change: -1.2, icon: Leaf },
-  { cropKey: "sugarcane", name: "Sugarcane", price: 350, change: 3.0, icon: Leaf },
-  { cropKey: "potatoes", name: "Potatoes", price: 1800, change: 1.8, icon: Carrot },
-  { cropKey: "onions", name: "Onions", price: 2500, change: -2.5, icon: Carrot },
-  { cropKey: "tomatoes", name: "Tomatoes", price: 2000, change: 4.2, icon: Carrot },
-  { cropKey: "apples", name: "Apples", price: 8500, change: 0.9, icon: Apple },
-  { cropKey: "bananas", name: "Bananas", price: 1500, change: 1.1, icon: Apple },
-  { cropKey: "barley", name: "Barley", price: 1900, change: -0.5, icon: Leaf },
-  { cropKey: "chickpeas", name: "Chickpeas", price: 5200, change: 2.3, icon: Leaf },
-  { cropKey: "coffee", name: "Coffee", price: 10500, change: -1.8, icon: Leaf },
-  { cropKey: "grapes", name: "Grapes", price: 6000, change: 3.5, icon: Apple },
-  { cropKey: "jute", name: "Jute", price: 4500, change: 0.2, icon: Leaf },
-  { cropKey: "lentils", name: "Lentils", price: 6800, change: -0.9, icon: Leaf },
-  { cropKey: "mangoes", name: "Mangoes", price: 7500, change: 5.0, icon: Apple },
-  { cropKey: "millet", name: "Millet", price: 2800, change: 1.2, icon: Leaf },
-  { cropKey: "tea", name: "Tea", price: 12000, change: -2.1, icon: Leaf },
-];
+import { getMarketPrices, MarketPriceOutput } from "@/ai/tools/agri-tools";
+import { Skeleton } from "./ui/skeleton";
 
 type SortKey = "name" | "price" | "change" | null;
 type SortDirection = "asc" | "desc";
@@ -65,45 +35,49 @@ type SortDirection = "asc" | "desc";
 export function MarketPrices() {
   const { registeredFarmer, addSmsToHistory } = useAppContext();
   const [isSmsPending, startSmsTransition] = useTransition();
+  const [isDataLoading, startDataLoadingTransition] = useTransition();
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>("name");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [marketData, setMarketData] = useState<MarketPriceOutput[]>([]);
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  const sortedData = useMemo(() => {
-    if (!sortKey) return mockMarketData;
-    
-    const sorted = [...mockMarketData].sort((a, b) => {
-      const aValue = a[sortKey];
-      const bValue = b[sortKey];
+  useEffect(() => {
+    if (registeredFarmer?.district) {
+      startDataLoadingTransition(async () => {
+        setMarketData([]);
+        setSmsStatus(null);
+        try {
+          const cropsToFetch = [registeredFarmer.crop, registeredFarmer.secondaryCrop].filter(Boolean);
+          const pricePromises = cropsToFetch.map(crop => 
+            getMarketPrices({ crop, location: registeredFarmer.district })
+          );
+          const results = await Promise.all(pricePromises);
+          
+          // Filter out results that indicate no data was found
+          const validResults = results.filter(res => res.found);
+          setMarketData(validResults);
 
-      if (aValue < bValue) return -1;
-      if (aValue > bValue) return 1;
-      return 0;
-    });
+          if (validResults.length === 0) {
+            toast({
+              variant: "default",
+              title: "No Price Data Available",
+              description: `Could not find market price data for the registered crops in ${registeredFarmer.district}.`,
+            });
+          }
 
-    return sortDirection === "asc" ? sorted : sorted.reverse();
-  }, [sortKey, sortDirection]);
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
+        } catch (error) {
+          console.error("Failed to fetch market prices:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to fetch market price data. Please try again later.",
+          });
+        }
+      });
     } else {
-      setSortKey(key);
-      setSortDirection("asc");
+        setMarketData([]);
     }
-  };
-  
-  const getSortIcon = (key: SortKey) => {
-    if (sortKey !== key) {
-        return <ChevronsUpDown className="ml-2 h-4 w-4 text-muted-foreground/50" />;
-    }
-    if (sortDirection === 'asc') {
-        return <ArrowUp className="ml-2 h-4 w-4" />;
-    }
-    return <ArrowDown className="ml-2 h-4 w-4" />;
-  };
+  }, [registeredFarmer, toast]);
 
   const handleSendSms = () => {
     if (!registeredFarmer) {
@@ -115,29 +89,22 @@ export function MarketPrices() {
       return;
     }
 
-    const primaryCropData = mockMarketData.find(c => c.name.toLowerCase() === registeredFarmer.crop.toLowerCase());
-    const secondaryCropData = mockMarketData.find(c => c.name.toLowerCase() === registeredFarmer.secondaryCrop.toLowerCase());
-    
-    let message = `${t('market.smsTitle', 'Market Prices (INR/quintal)')}: `;
-    if (primaryCropData) {
-      const cropName = t(`market.crops.${primaryCropData.cropKey}`, primaryCropData.name);
-      message += `${cropName} @ ${primaryCropData.price}. `;
-    }
-    if (secondaryCropData) {
-      const cropName = t(`market.crops.${secondaryCropData.cropKey}`, secondaryCropData.name);
-      message += `${cropName} @ ${secondaryCropData.price}.`;
-    }
-
-    if (!primaryCropData && !secondaryCropData) {
+    if (marketData.length === 0) {
         toast({
             variant: "destructive",
             title: "No Price Data",
-            description: "No market price data found for the farmer's registered crops.",
+            description: "No market price data available to send.",
         });
         return;
     }
     
-    message = message.substring(0, 160);
+    let message = `${t('market.smsTitle', 'Market Prices (INR/quintal)')}: `;
+    marketData.forEach(item => {
+        const cropName = t(`market.crops.${item.crop.toLowerCase()}`, item.crop);
+        message += `${cropName} @ ${item.modalPrice}. `;
+    });
+    
+    message = message.trim().substring(0, 160);
 
     setSmsStatus(null);
     startSmsTransition(async () => {
@@ -176,7 +143,9 @@ export function MarketPrices() {
           <div>
             <CardTitle>{t('market.title', 'Market Prices')}</CardTitle>
             <CardDescription>
-              {t('market.description', 'Live mandi rates for key crops in your area. Prices per quintal.')}
+              {registeredFarmer 
+                ? `${t('market.showingFor', 'Showing prices for')} ${registeredFarmer.district}`
+                : t('market.description', 'Live mandi rates for key crops in your area. Prices per quintal.')}
             </CardDescription>
           </div>
         </div>
@@ -185,46 +154,51 @@ export function MarketPrices() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('name')} className="px-0 hover:bg-transparent">
-                  {t('market.crop', 'Crop')} {getSortIcon('name')}
-                </Button>
-              </TableHead>
-              <TableHead className="text-right">
-                <Button variant="ghost" onClick={() => handleSort('price')} className="px-0 hover:bg-transparent">
-                  {t('market.price', 'Price (INR)')} {getSortIcon('price')}
-                </Button>
-              </TableHead>
-              <TableHead className="text-right">
-                <Button variant="ghost" onClick={() => handleSort('change')} className="px-0 hover:bg-transparent">
-                  {t('market.change', 'Change')} {getSortIcon('change')}
-                </Button>
-              </TableHead>
+              <TableHead>{t('market.crop', 'Crop')}</TableHead>
+              <TableHead>{t('market.location', 'Market Location')}</TableHead>
+              <TableHead className="text-right">{t('market.minPrice', 'Min Price (INR)')}</TableHead>
+              <TableHead className="text-right">{t('market.modalPrice', 'Modal Price (INR)')}</TableHead>
+              <TableHead className="text-right">{t('market.maxPrice', 'Max Price (INR)')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedData.map((item) => (
-              <TableRow key={item.cropKey}>
-                <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                        <item.icon className="w-5 h-5 text-muted-foreground" />
-                        <span>{t(`market.crops.${item.cropKey}`, item.name)}</span>
-                    </div>
-                </TableCell>
-                <TableCell className="text-right font-mono">{item.price.toLocaleString('en-IN')}</TableCell>
-                <TableCell className="text-right">
-                  <Badge
-                    variant={item.change >= 0 ? "default" : "destructive"}
-                    className="bg-opacity-20 text-opacity-100 tabular-nums"
-                  >
-                    <div className="flex items-center gap-1">
-                        {item.change >= 0 ? <ArrowUp className="w-3 h-3"/> : <ArrowDown className="w-3 h-3"/>}
-                        <span>{item.change > 0 ? '+' : ''}{item.change}%</span>
-                    </div>
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isDataLoading ? (
+                [...Array(2)].map((_, i) => (
+                    <TableRow key={i}>
+                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                        <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                        <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                        <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                    </TableRow>
+                ))
+            ) : marketData.length > 0 ? (
+                marketData.map((item) => (
+                    <TableRow key={`${item.crop}-${item.location}`}>
+                        <TableCell className="font-medium">
+                            <div className="flex items-center gap-3">
+                                <Wheat className="w-5 h-5 text-muted-foreground" />
+                                <span>{t(`market.crops.${item.crop.toLowerCase()}`, item.crop)}</span>
+                            </div>
+                        </TableCell>
+                        <TableCell>
+                            <div className="flex items-center gap-3">
+                                <MapPin className="w-5 h-5 text-muted-foreground" />
+                                <span>{item.location}</span>
+                            </div>
+                        </TableCell>
+                        <TableCell className="text-right font-mono">{item.minPrice?.toLocaleString('en-IN')}</TableCell>
+                        <TableCell className="text-right font-mono font-bold text-primary">{item.modalPrice?.toLocaleString('en-IN')}</TableCell>
+                        <TableCell className="text-right font-mono">{item.maxPrice?.toLocaleString('en-IN')}</TableCell>
+                    </TableRow>
+                ))
+            ) : (
+                <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        {registeredFarmer ? 'No price data found for registered crops in this area.' : 'Please register a farmer to see market prices.'}
+                    </TableCell>
+                </TableRow>
+            )}
           </TableBody>
         </Table>
         {smsStatus && !isSmsPending && (
@@ -238,12 +212,10 @@ export function MarketPrices() {
         )}
       </CardContent>
       <CardFooter>
-        <Button onClick={handleSendSms} disabled={!registeredFarmer || isSmsPending} className="w-full" variant="secondary" size="sm">
+        <Button onClick={handleSendSms} disabled={!registeredFarmer || isSmsPending || isDataLoading || marketData.length === 0} className="w-full" variant="secondary" size="sm">
             {isSmsPending ? <><Loader2 className="animate-spin" /> {t('market.sending', 'Sending...')}</> : <><Send /> {t('market.sendSms', 'Send as SMS')}</>}
         </Button>
       </CardFooter>
     </Card>
   );
 }
-
-    

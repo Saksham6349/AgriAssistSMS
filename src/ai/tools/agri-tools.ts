@@ -94,6 +94,16 @@ export const getWeatherSummary = ai.defineTool(
     }
 );
 
+const MarketPriceOutputSchema = z.object({
+  found: z.boolean().describe("Whether price data was found for the given crop and location."),
+  crop: z.string().describe("The name of the crop."),
+  location: z.string().describe("The market location for the price."),
+  minPrice: z.number().optional().describe("The minimum price per quintal."),
+  modalPrice: z.number().optional().describe("The most common (modal) price per quintal."),
+  maxPrice: z.number().optional().describe("The maximum price per quintal."),
+});
+export type MarketPriceOutput = z.infer<typeof MarketPriceOutputSchema>;
+
 export const getMarketPrices = ai.defineTool(
   {
     name: 'getMarketPrices',
@@ -102,7 +112,7 @@ export const getMarketPrices = ai.defineTool(
       crop: z.string().describe('The name of the crop to get the price for.'),
       location: z.string().describe('The market location (mandi) for the price check.'),
     }),
-    outputSchema: z.string(),
+    outputSchema: MarketPriceOutputSchema,
   },
   async (input) => {
     const cropName = input.crop.toLowerCase() as keyof typeof mockMarketData;
@@ -110,7 +120,7 @@ export const getMarketPrices = ai.defineTool(
 
     const cropData = mockMarketData[cropName];
     if (!cropData) {
-      return `No price data available for ${input.crop}.`;
+      return { found: false, crop: input.crop, location: input.location };
     }
 
     // Find the location with a case-insensitive match
@@ -119,11 +129,18 @@ export const getMarketPrices = ai.defineTool(
     ) as keyof typeof cropData | undefined;
     
     if (!locationKey) {
-        return `No price data available for ${input.crop} in ${input.location}.`;
+        return { found: false, crop: input.crop, location: input.location };
     }
 
     const priceInfo = cropData[locationKey];
-    return `The price for ${input.crop} in ${locationKey} is: Min: ₹${priceInfo.min}, Modal: ₹${priceInfo.modal}, Max: ₹${priceInfo.max} per quintal.`;
+    return {
+        found: true,
+        crop: input.crop,
+        location: locationKey,
+        minPrice: priceInfo.min,
+        modalPrice: priceInfo.modal,
+        maxPrice: priceInfo.max,
+    };
   }
 );
 
