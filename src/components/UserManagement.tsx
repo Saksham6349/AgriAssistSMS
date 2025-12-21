@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useRef, ChangeEvent, useTransition } from "react";
@@ -27,9 +26,11 @@ import { useToast } from "@/hooks/use-toast";
 import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { db } from '@/lib/firebase';
-import { collection, addDoc, Timestamp, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, addDoc, Timestamp, query, orderBy, limit, getDocs, Firestore } from "firebase/firestore";
 import { Progress } from "./ui/progress";
 import { useTranslation } from "@/hooks/useTranslation";
+import { errorEmitter } from "@/lib/error-emitter";
+import { FirestorePermissionError } from "@/lib/errors";
 
 // This type is for the app's context (the active farmer)
 export type FarmerData = {
@@ -185,23 +186,32 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
       console.error("Firestore is not initialized. Check your Firebase config.");
       throw new Error("Firestore is not connected.");
     }
-    try {
-      const docData: FarmerRegistrationDoc = {
-        name: data.name,
-        phone: data.phone,
-        village: data.village,
-        district: data.district,
-        crop: data.crop,
-        secondaryCrop: data.secondaryCrop,
-        language: data.language,
-        createdAt: Timestamp.now(),
-      };
-      const docRef = await addDoc(collection(db, "farmerregs"), docData);
-      console.log("✅ Farmer registered successfully in Firestore with ID: ", docRef.id);
-    } catch (e) {
-      console.error("❌ Error registering farmer:", e);
-      throw e; // Re-throw to be caught by the caller
-    }
+    const docData: FarmerRegistrationDoc = {
+      name: data.name,
+      phone: data.phone,
+      village: data.village,
+      district: data.district,
+      crop: data.crop,
+      secondaryCrop: data.secondaryCrop,
+      language: data.language,
+      createdAt: Timestamp.now(),
+    };
+    const collectionRef = collection(db, "farmerregs");
+
+    // Do not `await` the promise. Instead, chain a `.catch` to handle potential errors.
+    addDoc(collectionRef, docData)
+      .then(docRef => {
+        console.log("✅ Farmer registered successfully in Firestore with ID: ", docRef.id);
+      })
+      .catch(serverError => {
+        const permissionError = new FirestorePermissionError({
+            path: collectionRef.path,
+            operation: 'create',
+            requestResourceData: docData,
+        });
+        // Emit the error so the central listener can catch it.
+        errorEmitter.emit('permission-error', permissionError);
+      });
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -217,21 +227,18 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
 
     startRegisterTransition(async () => {
         try {
-            // Save every new farmer to the `farmerregs` collection
             await registerFarmerInFirestore(formData);
-            
-            // Set this newly registered farmer as the "active" one for the UI
             setRegisteredFarmer(formData);
-
             toast({
                 title: "Farmer Registered!",
                 description: `${formData.name} is now ready to receive alerts.`,
             });
-        } catch (error) {
+        } catch (error: any) {
+            // This will now only catch non-Firestore errors, as permission errors are handled in registerFarmerInFirestore
             toast({
                 variant: "destructive",
                 title: "Registration Failed",
-                description: "Could not save farmer data to the database. Please check console for errors.",
+                description: "Could not save farmer data. Please check console for errors.",
             });
         }
     });

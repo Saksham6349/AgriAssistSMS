@@ -4,6 +4,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import type { FarmerData } from '@/components/UserManagement';
 import type { SmsMessage } from '@/components/SmsHistory';
+import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
 import en from '@/translations/en.json';
 
@@ -73,6 +74,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppContext.Provider value={value}>
       {children}
+      <FirebaseErrorListener />
     </AppContext.Provider>
   );
 };
