@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf, Globe } from "lucide-react";
+import { UserPlus, UserCheck, FilePenLine, Loader2, Upload, X, ShieldCheck, ShieldAlert, BadgeCheck, FileText, User, Phone, MapPin, Leaf, Globe, Lightbulb } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { errorEmitter } from "@/lib/error-emitter";
 import { FirestorePermissionError } from "@/lib/errors";
 import { ensureAuth } from "@/lib/firebaseAuth";
+import { suggestCrops } from "@/ai/flows/suggest-crops";
 
 // This type is for the app's context (the active farmer)
 export type FarmerData = {
@@ -78,8 +79,10 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
   const [filePreview, setFilePreview] = useState<FilePreview | null>(null);
   const [isVerifyPending, startVerifyTransition] = useTransition();
   const [isRegisterPending, startRegisterTransition] = useTransition();
+  const [isSuggestPending, startSuggestTransition] = useTransition();
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('unverified');
   const [verificationResult, setVerificationResult] = useState<VerifyIdOutput | null>(null);
+  const [suggestedCrops, setSuggestedCrops] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -103,6 +106,7 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
               setFormData(initialFormData);
               setFilePreview(null);
               setVerificationStatus('unverified');
+              setSuggestedCrops([]);
           }
       }
   }, [registeredFarmer, isLoaded]);
@@ -248,6 +252,31 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
     });
   };
 
+  const handleSuggestCrops = () => {
+    if (!formData.district) {
+      toast({
+        variant: "destructive",
+        title: "Location Needed",
+        description: "Please enter a District to get crop suggestions.",
+      });
+      return;
+    }
+    setSuggestedCrops([]);
+    startSuggestTransition(async () => {
+      try {
+        const result = await suggestCrops({ location: formData.district });
+        setSuggestedCrops(result.suggestedCrops);
+      } catch (error) {
+        console.error("Crop suggestion failed:", error);
+        toast({
+          variant: "destructive",
+          title: "Suggestion Error",
+          description: "Could not get crop suggestions. Please try again.",
+        });
+      }
+    });
+  };
+
   const handleReset = () => {
     setRegisteredFarmer(null);
   };
@@ -361,7 +390,13 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label htmlFor="crop-select" className="text-sm font-medium">{T('userManagement.primaryCropLabel', 'Primary Crop')}</label>
+                <div className="flex items-center justify-between">
+                    <label htmlFor="crop-select" className="text-sm font-medium">{T('userManagement.primaryCropLabel', 'Primary Crop')}</label>
+                    <Button type="button" variant="link" size="sm" onClick={handleSuggestCrops} disabled={isSuggestPending || !formData.district} className="h-auto p-0">
+                        {isSuggestPending ? <Loader2 className="w-4 h-4 animate-spin"/> : <Lightbulb className="w-4 h-4" />}
+                        Suggest Crops
+                    </Button>
+                </div>
                 <Select name="crop" value={formData.crop} onValueChange={handleSelectChange('crop')} required>
                   <SelectTrigger id="crop-select">
                     <SelectValue placeholder={T('userManagement.selectCrop', 'Select crop')} />
@@ -389,6 +424,20 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
                     <SelectItem value="Wheat">Wheat</SelectItem>
                   </SelectContent>
                 </Select>
+                 {suggestedCrops.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                        {suggestedCrops.map(crop => (
+                            <Badge 
+                                key={crop} 
+                                variant="outline" 
+                                className="cursor-pointer hover:bg-accent"
+                                onClick={() => handleSelectChange('crop')(crop)}
+                            >
+                                {crop}
+                            </Badge>
+                        ))}
+                    </div>
+                 )}
               </div>
                <div className="space-y-2">
                 <label htmlFor="secondary-crop-select" className="text-sm font-medium">{T('userManagement.secondaryCropLabel', 'Secondary Crop (Optional)')}</label>
