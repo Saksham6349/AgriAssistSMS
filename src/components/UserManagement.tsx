@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useRef, ChangeEvent, useTransition } from "react";
@@ -26,11 +27,12 @@ import { useToast } from "@/hooks/use-toast";
 import { verifyId, VerifyIdOutput } from "@/ai/flows/verify-id";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { db } from '@/lib/firebase';
-import { collection, addDoc, Timestamp, query, orderBy, limit, getDocs, Firestore } from "firebase/firestore";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { Progress } from "./ui/progress";
 import { useTranslation } from "@/hooks/useTranslation";
 import { errorEmitter } from "@/lib/error-emitter";
 import { FirestorePermissionError } from "@/lib/errors";
+import { ensureAuth } from "@/lib/firebaseAuth";
 
 // This type is for the app's context (the active farmer)
 export type FarmerData = {
@@ -182,6 +184,8 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
   };
 
   async function registerFarmerInFirestore(data: FarmerData) {
+    await ensureAuth(); // Ensure user is authenticated
+
     if (!db) {
       console.error("Firestore is not initialized. Check your Firebase config.");
       throw new Error("Firestore is not connected.");
