@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow anyone to create a document in the farmerregs collection.
+    // This is necessary for the initial farmer registration to work without user authentication.
+    match /farmerregs/{farmerId} {
+      allow create: if true;
+      allow read: if true;
+    }
+
+    // Allow read and write access to the activeFarmer document.
+    // This is used to persist the currently selected farmer in the UI across sessions.
+    match /activeFarmer/{docId} {
+        allow read, write: if true;
+    }
+
+    // By default, deny all other reads and writes to the database.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
