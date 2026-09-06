@@ -26,7 +26,7 @@ export function LandingPage() {
     {
       icon: <TrendingUp className="w-8 h-8 text-primary" />,
       title: "Market Prices",
-      description: "Access live mandi rates for key crops to make informed selling decisions.",
+      description: "Access indicative mandi rates for key crops to make informed selling decisions.",
     },
     {
       icon: <Bot className="w-8 h-8 text-primary" />,
