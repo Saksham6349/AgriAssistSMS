@@ -206,12 +206,11 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
     };
     const collectionRef = collection(db, "farmerregs");
 
-    // Do not `await` the promise. Instead, chain a `.catch` to handle potential errors.
-    addDoc(collectionRef, docData)
-      .then(docRef => {
-        console.log("✅ Farmer registered successfully in Firestore with ID: ", docRef.id);
-      })
-      .catch(serverError => {
+    try {
+      const docRef = await addDoc(collectionRef, docData);
+      console.log("✅ Farmer registered successfully in Firestore with ID: ", docRef.id);
+    } catch (serverError: any) {
+      if (serverError?.code === 'permission-denied') {
         const permissionError = new FirestorePermissionError({
             path: collectionRef.path,
             operation: 'create',
@@ -219,7 +218,9 @@ export function UserManagement({ isAdmin = false }: { isAdmin?: boolean }) {
         });
         // Emit the error so the central listener can catch it.
         errorEmitter.emit('permission-error', permissionError);
-      });
+      }
+      throw serverError;
+    }
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

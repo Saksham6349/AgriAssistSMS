@@ -91,7 +91,7 @@
   },
   "market": {
     "title": "Market Prices",
-    "description": "Live mandi rates for key crops in your area. Prices per quintal.",
+    "description": "Indicative mandi rates for key crops in your area. Prices per quintal.",
     "crop": "Crop",
     "price": "Price (INR)",
     "change": "Change",

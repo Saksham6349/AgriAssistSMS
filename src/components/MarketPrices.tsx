@@ -145,7 +145,7 @@ export function MarketPrices() {
             <CardDescription>
               {registeredFarmer 
                 ? `${t('market.showingFor', 'Showing prices for')} ${registeredFarmer.district}`
-                : t('market.description', 'Live mandi rates for key crops in your area. Prices per quintal.')}
+                : t('market.description', 'Indicative mandi rates for key crops in your area. Prices per quintal.')}
             </CardDescription>
           </div>
         </div>

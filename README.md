@@ -12,7 +12,7 @@ The platform features two distinct portals: an **Admin Portal** for registering 
 - **AI-Powered Weather Forecasts**: Get concise, actionable weather summaries for any location, translated into the farmer's preferred language.
 - **AI Crop Health Diagnosis**: Upload a photo of a plant to get an AI-driven diagnosis of potential diseases or pests, along with recommended actions.
 - **Advisory & Pest Alerts**: Admins can generate and broadcast critical alerts about potential threats like pest infestations or adverse weather events.
-- **Real-Time Market Prices**: Access live mandi (market) rates for a wide variety of crops to help farmers decide the best time to sell.
+- **Market Price Guidance**: Access indicative mandi (market) rates for key crops to support selling decisions.
 - **Multilingual Support**: All information and alerts can be translated into 10 different Indian languages, with both text and voice (Text-to-Speech) output.
 - **SMS Integration**: Powered by Twilio, the platform delivers all generated insights directly to any mobile phone, ensuring accessibility for all farmers.
 - **AI Chat Assistant**: A knowledgeable chatbot that can answer farming-related questions about weather, market prices, crop diseases, and more.

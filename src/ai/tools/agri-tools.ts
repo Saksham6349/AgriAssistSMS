@@ -44,16 +44,20 @@ const mockMarketData = {
 
 
 async function fetchWeatherDataForTool(location: string): Promise<string> {
+    const normalizedLocation = location.trim();
+    if (!normalizedLocation) {
+      return "Location is required.";
+    }
     if (!openWeatherApiKey) {
       return "OpenWeather API key is not configured. I cannot fetch live weather data.";
     }
-    const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${openWeatherApiKey}`);
+    const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(normalizedLocation)}&limit=1&appid=${openWeatherApiKey}`);
     if (!geoResponse.ok) {
-      return `Failed to geocode location '${location}'. The API key might be invalid or inactive.`;
+      return `Failed to geocode location '${normalizedLocation}'. The API key might be invalid or inactive.`;
     }
     const geoData = await geoResponse.json();
     if (geoData.length === 0) {
-      return `Could not find location: ${location}`;
+      return `Could not find location: ${normalizedLocation}`;
     }
     const { lat, lon } = geoData[0];
   
@@ -71,7 +75,7 @@ async function fetchWeatherDataForTool(location: string): Promise<string> {
       precipitation_chance: item.pop,
     }));
   
-    return JSON.stringify({ location, forecast: simplifiedForecast }, null, 2);
+    return JSON.stringify({ location: normalizedLocation, forecast: simplifiedForecast }, null, 2);
 }
 
 export const getWeatherSummary = ai.defineTool(
@@ -107,7 +111,7 @@ export type MarketPriceOutput = z.infer<typeof MarketPriceOutputSchema>;
 export const getMarketPrices = ai.defineTool(
   {
     name: 'getMarketPrices',
-    description: 'Returns the current market price (per quintal) for a specified crop in a given location from Agmarknet.',
+    description: 'Returns indicative market price (per quintal) for a specified crop and location from the app dataset.',
     inputSchema: z.object({
       crop: z.string().describe('The name of the crop to get the price for.'),
       location: z.string().describe('The market location (mandi) for the price check.'),
@@ -154,11 +158,15 @@ export const getAgricultureNews = ai.defineTool(
         outputSchema: z.string(),
     },
     async ({ country }) => {
+        const normalizedCountry = country.trim().toLowerCase();
+        if (!/^[a-z]{2}$/.test(normalizedCountry)) {
+            return 'Country must be a 2-letter ISO country code (e.g., in, us).';
+        }
         if (!newsApiKey) {
             return 'News API key is not configured. I cannot fetch news articles.';
         }
         
-        const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=science&q=agriculture&pageSize=5&apiKey=${newsApiKey}`;
+        const url = `https://newsapi.org/v2/top-headlines?country=${encodeURIComponent(normalizedCountry)}&category=science&q=agriculture&pageSize=5&apiKey=${newsApiKey}`;
         
         try {
             const response = await fetch(url);

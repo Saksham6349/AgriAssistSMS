@@ -5,12 +5,16 @@ import { weatherConfig } from '@/config';
 
 export async function fetchWeatherData(location: string): Promise<any> {
     const { apiKey } = weatherConfig;
+    const normalizedLocation = location.trim();
 
     if (!apiKey) {
         return { error: 'OpenWeather API key is not configured.' };
     }
+    if (!normalizedLocation) {
+        return { error: 'Location is required.' };
+    }
 
-    const GEO_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${apiKey}`;
+    const GEO_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(normalizedLocation)}&limit=1&appid=${apiKey}`;
     const WEATHER_URL = `https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid=${apiKey}&units=metric`;
 
     try {
@@ -18,7 +22,7 @@ export async function fetchWeatherData(location: string): Promise<any> {
         const geoData = await geoResponse.json();
 
         if (!geoData || geoData.length === 0) {
-            return { error: `Location "${location}" not found.` };
+            return { error: `Location "${normalizedLocation}" not found.` };
         }
 
         const { lat, lon } = geoData[0];
