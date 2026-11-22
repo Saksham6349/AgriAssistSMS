@@ -1,0 +1,134 @@
+
+'use server';
+/**
+ * @fileOverview A flow to send an SMS using Twilio.
+ *
+ * - sendSms - A function that sends an SMS message.
+ * - SendSmsInput - The input type for the sendSms function.
+ * - SendSmsOutput - The return type for the sendSms function.
+ */
+
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import Twilio from 'twilio';
+import { twilioConfig } from '@/config';
+
+const MAX_SMS_LENGTH = 160;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_PER_RECIPIENT = 3;
+const recipientSendLog = new Map<string, number[]>();
+
+const SendSmsInputSchema = z.object({
+  to: z.string().describe('The phone number to send the SMS to, in E.164 format (e.g., +15551234567).'),
+  message: z.string().describe('The content of the SMS message.'),
+});
+export type SendSmsInput = z.infer<typeof SendSmsInputSchema>;
+
+const SendSmsOutputSchema = z.object({
+  status: z.string().describe('The status of the SMS sending attempt.'),
+  messageSid: z.string().optional().describe('The SID of the message from Twilio.'),
+});
+export type SendSmsOutput = z.infer<typeof SendSmsOutputSchema>;
+
+export async function sendSms(input: SendSmsInput): Promise<SendSmsOutput> {
+  return sendSmsFlow(input);
+}
+
+function enforceRecipientRateLimit(recipient: string) {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const history = recipientSendLog.get(recipient) ?? [];
+  const recent = history.filter(timestamp => timestamp >= windowStart);
+
+  if (recent.length >= RATE_LIMIT_MAX_PER_RECIPIENT) {
+    throw new Error('Rate limit exceeded for this recipient. Please wait before sending another SMS.');
+  }
+}
+
+function recordSuccessfulSend(recipient: string) {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const history = recipientSendLog.get(recipient) ?? [];
+  const recent = history.filter(timestamp => timestamp >= windowStart);
+  recent.push(now);
+  recipientSendLog.set(recipient, recent);
+}
+
+const sendSmsFlow = ai.defineFlow(
+  {
+    name: 'sendSmsFlow',
+    inputSchema: SendSmsInputSchema,
+    outputSchema: SendSmsOutputSchema,
+  },
+  async (input) => {
+    let { to, message } = input;
+    const { accountSid, authToken, messagingServiceSid } = twilioConfig;
+
+    const isTwilioConfigured = Boolean(
+      accountSid &&
+      authToken &&
+      messagingServiceSid &&
+      !accountSid.includes('xxxx') &&
+      !authToken.includes('your_') &&
+      !messagingServiceSid.includes('xxxx')
+    );
+
+    message = message.trim();
+    if (!message) {
+      throw new Error('SMS message cannot be empty.');
+    }
+    if (message.length > MAX_SMS_LENGTH) {
+      message = `${message.substring(0, MAX_SMS_LENGTH - 3)}...`;
+    }
+
+    to = to.trim();
+    if (!to.startsWith('+')) {
+      to = `+${to}`;
+    }
+
+    // Validate E.164 format (e.g. +919876543210 or +15551234567)
+    const e164Regex = /^\+[1-9]\d{1,14}$/;
+    if (!e164Regex.test(to)) {
+      throw new Error(`Invalid phone number format: ${to}. Number must be in E.164 format with country code (e.g., +919876543210).`);
+    }
+
+    enforceRecipientRateLimit(to);
+
+    // 1. Live Twilio Production Dispatch
+    if (isTwilioConfigured) {
+      try {
+        const client = Twilio(accountSid, authToken);
+        const twilioMessage = await client.messages.create({
+          body: message,
+          messagingServiceSid: messagingServiceSid,
+          to: to,
+        });
+        recordSuccessfulSend(to);
+
+        console.log(`[Twilio GSM] Real SMS dispatched successfully. SID: ${twilioMessage.sid} to ${to}`);
+        return {
+          status: `SMS dispatched via Twilio GSM network to ${to}`,
+          messageSid: twilioMessage.sid,
+        };
+      } catch (error: any) {
+        console.error('Failed to send SMS via Twilio:', error);
+        throw new Error(`Failed to send SMS. Twilio error: ${error.message}`);
+      }
+    }
+
+    // 2. Development / Demo Simulation Mode (when Twilio credentials are placeholders)
+    recordSuccessfulSend(to);
+    const mockSid = `SM_DEV_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 7)}`;
+    console.log(`\n========================================`);
+    console.log(`[SMS SIMULATOR (Demo Mode)] To: ${to}`);
+    console.log(`[PAYLOAD (${message.length}/160 chars)]: "${message}"`);
+    console.log(`[STATUS]: Delivered successfully (Mock SID: ${mockSid})`);
+    console.log(`(To send real GSM SMS to physical phones, add your Twilio credentials in .env)`);
+    console.log(`========================================\n`);
+
+    return {
+      status: `SMS simulated to ${to} (Twilio Simulator: View in SMS History)`,
+      messageSid: mockSid,
+    };
+  }
+);

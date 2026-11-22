@@ -1,0 +1,42 @@
+name: Daily Agmarknet Mandi Price Sync
+
+on:
+  schedule:
+    # Runs daily at 00:30 UTC (06:00 AM IST when APMC mandis publish morning arrival sheets)
+    - cron: '30 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  sync-mandi-prices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scikit-learn joblib
+
+      - name: Run Agmarknet Scraping Pipeline
+        run: |
+          python ml_service/sync_agmarknet.py
+
+      - name: Retrain Gradient Boosting Price Model
+        run: |
+          python ml_service/train_mandi_model.py
+
+      - name: Commit & Push Updated Mandi Data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Agmarknet Sync Bot"
+          git add ml_service/mandi_market_data.json ml_service/agmarknet_sync_log.json ml_service/mandi_price_model.joblib
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore(mandi): daily agmarknet price bulletin sync [skip ci]"
+          git push
+        continue-on-error: true

@@ -1,0 +1,16 @@
+{
+  "name": "AgriAssist SMS - Kisan Precision Platform",
+  "short_name": "AgriAssist",
+  "description": "AI & Machine Learning crop advisory, soil nutrition, and mandi price forecasting for Indian farmers.",
+  "start_url": "/farmer",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#047857",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
