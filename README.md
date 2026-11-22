@@ -196,7 +196,7 @@ Over **65% of Indian smallholder farmers** do not possess high-speed 4G smartpho
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/AgriAssistSMS.git
+   git clone https://github.com/Saksham6349/AgriAssistSMS.git
    cd AgriAssistSMS
    ```
 
