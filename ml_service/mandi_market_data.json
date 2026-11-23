@@ -3,7 +3,7 @@
     "crop": "Paddy (Dhan)",
     "category": "Cereals",
     "msp": 2300,
-    "base_price": 2408,
+    "base_price": 2420,
     "volatility": 0.04,
     "peak_months": [
       10,
@@ -11,9 +11,6 @@
       12,
       1
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Punjab",
@@ -46,16 +43,13 @@
     "crop": "Wheat (Gehun)",
     "category": "Cereals",
     "msp": 2275,
-    "base_price": 2567,
+    "base_price": 2580,
     "volatility": 0.035,
     "peak_months": [
       3,
       4,
       5
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Madhya Pradesh",
@@ -88,16 +82,13 @@
     "crop": "Maize (Makka)",
     "category": "Cereals",
     "msp": 2090,
-    "base_price": 2199,
+    "base_price": 2210,
     "volatility": 0.05,
     "peak_months": [
       9,
       10,
       11
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Karnataka",
@@ -125,7 +116,7 @@
     "crop": "Cotton (Kapas)",
     "category": "Commercial",
     "msp": 7121,
-    "base_price": 7413,
+    "base_price": 7450,
     "volatility": 0.06,
     "peak_months": [
       10,
@@ -134,9 +125,6 @@
       1,
       2
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Gujarat",
@@ -164,16 +152,13 @@
     "crop": "Chickpea (Chana)",
     "category": "Pulses",
     "msp": 5440,
-    "base_price": 6119,
+    "base_price": 6150,
     "volatility": 0.045,
     "peak_months": [
       3,
       4,
       5
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Madhya Pradesh",
@@ -201,16 +186,13 @@
     "crop": "Soybean",
     "category": "Oilseeds",
     "msp": 4892,
-    "base_price": 4696,
+    "base_price": 4720,
     "volatility": 0.055,
     "peak_months": [
       10,
       11,
       12
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Madhya Pradesh",
@@ -233,16 +215,13 @@
     "crop": "Mustard (Sarson)",
     "category": "Oilseeds",
     "msp": 5650,
-    "base_price": 5890,
+    "base_price": 5920,
     "volatility": 0.04,
     "peak_months": [
       2,
       3,
       4
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Rajasthan",
@@ -265,7 +244,7 @@
     "crop": "Tomato",
     "category": "Vegetables",
     "msp": 0,
-    "base_price": 1841,
+    "base_price": 1850,
     "volatility": 0.18,
     "peak_months": [
       6,
@@ -274,9 +253,6 @@
       11,
       12
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Karnataka",
@@ -304,7 +280,7 @@
     "crop": "Onion (Pyaz)",
     "category": "Vegetables",
     "msp": 0,
-    "base_price": 2438,
+    "base_price": 2450,
     "volatility": 0.15,
     "peak_months": [
       11,
@@ -314,9 +290,6 @@
       4,
       5
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Maharashtra",
@@ -344,16 +317,13 @@
     "crop": "Potato (Aloo)",
     "category": "Vegetables",
     "msp": 0,
-    "base_price": 1343,
+    "base_price": 1350,
     "volatility": 0.12,
     "peak_months": [
       1,
       2,
       3
     ],
-    "last_synced": "2026-11-22 23:34:00",
-    "arrival_date": "22-Nov-2026",
-    "source": "Agmarknet APMC Daily Bulletin",
     "mandis": [
       {
         "state": "Uttar Pradesh",
