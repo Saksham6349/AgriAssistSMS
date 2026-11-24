@@ -1,10 +1,10 @@
 {
-  "sync_id": "sync_1795420980",
-  "timestamp": "2026-11-23 08:02:59",
+  "sync_id": "sync_1795515601",
+  "timestamp": "2026-11-24 10:20:00",
   "status": "SUCCESS",
   "portal_connected": false,
   "commodities_synced": 10,
   "total_apmc_mandis": 40,
-  "arrival_date": "23-Nov-2026",
+  "arrival_date": "24-Nov-2026",
   "file_updated": "/home/runner/work/AgriAssistSMS/AgriAssistSMS/ml_service/mandi_market_data.json"
 }
